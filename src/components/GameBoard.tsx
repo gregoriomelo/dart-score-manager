@@ -151,20 +151,6 @@ const GameBoard: React.FC<GameBoardProps> = ({
           </div>
 
           {error && <div className="error-message">{error}</div>}
-
-          <div className="quick-scores">
-            <span>Quick scores:</span>
-            {[0, 20, 40, 60, 80, 100, 120, 140, 160, 180].map((quickScore) => (
-              <button
-                key={quickScore}
-                onClick={() => setScoreInput(quickScore.toString())}
-                className="quick-score-btn"
-                disabled={quickScore > currentPlayer.score}
-              >
-                {quickScore}
-              </button>
-            ))}
-          </div>
         </div>
       )}
     </div>

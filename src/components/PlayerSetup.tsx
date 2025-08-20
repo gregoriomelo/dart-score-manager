@@ -44,16 +44,15 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onStartGame }) => {
       <div className="setup-form">
         <div className="starting-score-section">
           <label htmlFor="starting-score">Starting Score:</label>
-          <select
+          <input
+            type="number"
             id="starting-score"
             value={startingScore}
-            onChange={(e) => setStartingScore(Number(e.target.value))}
-          >
-            <option value={301}>301</option>
-            <option value={501}>501</option>
-            <option value={701}>701</option>
-            <option value={1001}>1001</option>
-          </select>
+            onChange={(e) => setStartingScore(parseInt(e.target.value) || 501)}
+            min="1"
+            step="1"
+            placeholder="501"
+          />
         </div>
 
         <div className="game-rules-section">
