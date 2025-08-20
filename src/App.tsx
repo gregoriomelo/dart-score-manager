@@ -1,24 +1,43 @@
 import React from 'react';
-import logo from './logo.svg';
+import { useGameState } from './hooks/useGameState';
+import PlayerSetup from './components/PlayerSetup';
+import GameBoard from './components/GameBoard';
 import './App.css';
 
 function App() {
+  const {
+    gameState,
+    currentPlayer,
+    initializeGame,
+    startNewGame,
+    submitScore,
+    goToNextPlayer,
+    resetCurrentGame,
+  } = useGameState();
+
+  const handleStartGame = (playerNames: string[], startingScore: number, doubleOutRule: boolean) => {
+    initializeGame(playerNames, startingScore, doubleOutRule);
+    startNewGame();
+  };
+
+  const handleNewGame = () => {
+    initializeGame([], 501);
+  };
+
+  if (!gameState.gameStarted || gameState.players.length === 0) {
+    return <PlayerSetup onStartGame={handleStartGame} />;
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <GameBoard
+        gameState={gameState}
+        currentPlayer={currentPlayer}
+        onSubmitScore={submitScore}
+        onNextPlayer={goToNextPlayer}
+        onResetGame={resetCurrentGame}
+        onNewGame={handleNewGame}
+      />
     </div>
   );
 }

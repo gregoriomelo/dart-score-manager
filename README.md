@@ -1,46 +1,136 @@
-# Getting Started with Create React App
+# Dart Score Manager
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern web application for managing dart game scores, built with React and TypeScript. Keep track of multiple players, countdown from customizable starting scores, and enjoy a clean, responsive interface.
+
+## Features
+
+- **Multi-player support**: Add 2-8 players with custom names
+- **Customizable starting scores**: Choose from 301, 501, 701, or 1001
+- **Score validation**: Prevents invalid scores and negative results
+- **Quick score buttons**: Fast input for common dart scores
+- **Winner detection**: Automatic game completion when a player reaches exactly 0
+- **Game management**: Reset current game or start completely new games
+- **Responsive design**: Works great on desktop and mobile devices
+- **Modern UI**: Clean, intuitive interface with visual feedback
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18.x or higher
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd dart-score-manager
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Start the development server:
+```bash
+npm start
+```
+
+Open [http://localhost:3000](http://localhost:3000) to view the app in your browser.
 
 ## Available Scripts
 
-In the project directory, you can run:
-
 ### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Runs the app in development mode with hot reloading.
 
 ### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Launches the test runner in interactive watch mode.
 
 ### `npm run build`
+Builds the app for production to the `build` folder.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### `npm run test:coverage`
+Runs tests with coverage reporting.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## How to Play
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. **Setup**: Enter player names (2-8 players) and select starting score
+2. **Gameplay**: Current player enters their score for each turn
+3. **Scoring**: Scores are subtracted from the player's remaining total
+4. **Winning**: First player to reach exactly 0 wins the game
+5. **Game Management**: Use "Reset Game" to restart with same players, or "New Game" to start over
 
-### `npm run eject`
+## Game Rules
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- Players must score exactly their remaining points to win
+- Maximum score per turn is 180 (theoretical maximum in darts)
+- Scores that would result in negative points are invalid
+- Players take turns in the order they were added
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Testing
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+The project includes comprehensive tests for:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- **Game Logic**: Core scoring and game state management
+- **Components**: UI rendering and user interactions  
+- **Hooks**: Custom React hooks functionality
 
-## Learn More
+Run tests with:
+```bash
+npm test
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Generate coverage report:
+```bash
+npm test -- --coverage --watchAll=false
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## CI/CD
+
+The project includes GitHub Actions workflows for:
+
+- **Continuous Integration**: Automated testing on multiple Node.js versions
+- **Build Verification**: Ensures the app builds successfully
+- **Code Coverage**: Tracks test coverage metrics
+- **Deployment**: Automatic deployment to GitHub Pages on main branch
+
+## Technology Stack
+
+- **Frontend**: React 18 with TypeScript
+- **Styling**: CSS3 with modern features
+- **Testing**: Jest and React Testing Library
+- **Build Tool**: Create React App
+- **CI/CD**: GitHub Actions
+
+## Project Structure
+
+```
+src/
+├── components/          # React components
+│   ├── GameBoard.tsx   # Main game interface
+│   ├── PlayerSetup.tsx # Player configuration
+│   └── __tests__/      # Component tests
+├── hooks/              # Custom React hooks
+│   ├── useGameState.ts # Game state management
+│   └── __tests__/      # Hook tests
+├── types/              # TypeScript type definitions
+│   └── game.ts         # Game-related types
+├── utils/              # Utility functions
+│   ├── gameLogic.ts    # Core game logic
+│   └── __tests__/      # Logic tests
+└── App.tsx             # Main application component
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is open source and available under the [MIT License](LICENSE).
