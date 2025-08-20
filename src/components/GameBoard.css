@@ -149,7 +149,7 @@
 }
 
 .new-game-btn {
-  background: #3b82f6;
+  background: #ef4444;
   color: white;
   border: none;
   padding: 0.875rem 1.5rem;
@@ -162,7 +162,7 @@
 }
 
 .new-game-btn:hover {
-  background: #2563eb;
+  background: #dc2626;
 }
 
 .back-to-setup-btn {
