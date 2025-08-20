@@ -183,6 +183,23 @@
   border-color: #9ca3af;
 }
 
+.winner-new-game-btn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.875rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  min-height: 44px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.winner-new-game-btn:hover {
+  background: #2563eb;
+}
+
 @media (max-width: 480px) {
   .game-board {
     margin: 0.5rem auto;

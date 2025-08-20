@@ -65,7 +65,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
         </div>
         <div className="game-actions">
           <button className="new-game-btn" onClick={onResetGame}>Play Again</button>
-          <button className="back-to-setup-btn" onClick={onNewGame}>New Game</button>
+          <button className="winner-new-game-btn" onClick={onNewGame}>New Game</button>
         </div>
       </div>
     );
