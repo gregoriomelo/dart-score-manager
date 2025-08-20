@@ -1,145 +1,200 @@
 .player-setup {
-  max-width: 600px;
-  margin: 0 auto;
+  max-width: min(90vw, 500px);
+  margin: 2rem auto;
   padding: 2rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #fafafa;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .player-setup h1 {
   text-align: center;
-  color: #2c3e50;
   margin-bottom: 2rem;
-  font-size: 2.5rem;
-}
-
-.setup-form {
-  background: #f8f9fa;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.starting-score-section {
-  margin-bottom: 2rem;
-}
-
-.starting-score-section label {
-  display: block;
-  margin-bottom: 0.5rem;
+  font-size: 2rem;
   font-weight: 600;
-  color: #34495e;
+  color: #1a1a1a;
+  letter-spacing: -0.02em;
 }
 
-.starting-score-section select,
-.starting-score-section input[type="number"] {
-  width: 100%;
-  padding: 0.75rem;
-  border: 2px solid #e9ecef;
-  border-radius: 8px;
-  font-size: 1rem;
-  background: white;
+.setup-form div {
+  margin-bottom: 1.5rem;
 }
 
-.starting-score-section input[type="number"]:focus {
-  outline: none;
-  border-color: #3498db;
+.setup-form label {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #374151;
 }
 
-.game-rules-section {
-  margin-bottom: 2rem;
-}
-
-.game-rules-section label {
+.setup-form label:has(input[type="checkbox"]) {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-weight: 600;
-  color: #34495e;
-  cursor: pointer;
+  gap: 0.75rem;
+  margin-bottom: 0;
 }
 
-.game-rules-section input[type="checkbox"] {
+.setup-form input {
+  padding: 0.875rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  min-height: 44px;
+  background: white;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.setup-form input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.setup-form input[type="number"] {
+  width: min(150px, 40vw);
+}
+
+.setup-form input[type="checkbox"] {
   width: 18px;
   height: 18px;
+  accent-color: #3b82f6;
   cursor: pointer;
-}
-
-.players-section h3 {
-  color: #34495e;
-  margin-bottom: 1rem;
 }
 
 .player-input {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.75rem;
   margin-bottom: 1rem;
   align-items: center;
 }
 
 .player-input input {
   flex: 1;
-  padding: 0.75rem;
-  border: 2px solid #e9ecef;
-  border-radius: 8px;
+  padding: 0.875rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 6px;
   font-size: 1rem;
+  min-height: 44px;
+  background: white;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .player-input input:focus {
   outline: none;
-  border-color: #3498db;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .remove-player-btn {
-  background: #e74c3c;
+  background: #ef4444;
   color: white;
   border: none;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
+  border-radius: 6px;
+  width: 44px;
+  height: 44px;
   cursor: pointer;
   font-size: 1.2rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background-color 0.2s ease;
 }
 
 .remove-player-btn:hover {
-  background: #c0392b;
+  background: #dc2626;
 }
 
 .add-player-btn {
-  background: #27ae60;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  background: #f9fafb;
+  border: 1.5px solid #d1d5db;
+  color: #374151;
+  padding: 0.875rem 1.5rem;
+  border-radius: 6px;
   cursor: pointer;
+  margin-bottom: 1.5rem;
+  min-height: 44px;
   font-size: 1rem;
-  margin-bottom: 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
 .add-player-btn:hover {
-  background: #229954;
+  background: #f3f4f6;
+  border-color: #9ca3af;
 }
 
 .start-game-btn {
   width: 100%;
-  background: #3498db;
+  background: #3b82f6;
   color: white;
   border: none;
   padding: 1rem;
-  border-radius: 8px;
-  font-size: 1.2rem;
-  font-weight: 600;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background 0.3s;
+  min-height: 44px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
 }
 
 .start-game-btn:hover:not(:disabled) {
-  background: #2980b9;
+  background: #2563eb;
 }
 
 .start-game-btn:disabled {
-  background: #bdc3c7;
+  background: #9ca3af;
   cursor: not-allowed;
+}
+
+.start-game-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .player-setup {
+    margin: 0.5rem auto;
+    padding: 0.75rem;
+  }
+  
+  .player-setup h1 {
+    font-size: 1.6rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .setup-form input {
+    padding: 1rem;
+    font-size: 1.1rem;
+  }
+  
+  .setup-form input[type="number"] {
+    width: min(180px, 50vw);
+  }
+  
+  .player-input {
+    margin-bottom: 1rem;
+  }
+  
+  .player-input input {
+    padding: 1rem;
+    font-size: 1.1rem;
+  }
+  
+  .remove-player-btn {
+    width: 48px;
+    height: 48px;
+    font-size: 1.4rem;
+  }
+  
+  .add-player-btn {
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+  }
+  
+  .start-game-btn {
+    padding: 1.25rem;
+    font-size: 1.2rem;
+  }
 }

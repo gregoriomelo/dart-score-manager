@@ -40,29 +40,26 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onStartGame }) => {
 
   return (
     <div className="player-setup">
-      <h1>Dart Score Manager</h1>
+      <h1>Dart Score</h1>
       <div className="setup-form">
-        <div className="starting-score-section">
-          <label htmlFor="starting-score">Starting Score:</label>
+        <div>
+          <label>Starting Score:</label>
           <input
             type="number"
-            id="starting-score"
             value={startingScore}
             onChange={(e) => setStartingScore(parseInt(e.target.value) || 501)}
-            min="1"
-            step="1"
             placeholder="501"
           />
         </div>
 
-        <div className="game-rules-section">
+        <div>
           <label>
             <input
               type="checkbox"
               checked={doubleOutRule}
               onChange={(e) => setDoubleOutRule(e.target.checked)}
             />
-            Double-out rule (must finish on double)
+            Double-out rule
           </label>
         </div>
 

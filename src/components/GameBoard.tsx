@@ -60,26 +60,12 @@ const GameBoard: React.FC<GameBoardProps> = ({
     return (
       <div className="game-board">
         <div className="winner-announcement">
-          <h1>🎉 {gameState.winner.name} Wins! 🎉</h1>
-          <div className="game-actions">
-            <button onClick={onResetGame} className="reset-btn">
-              Play Again
-            </button>
-            <button onClick={onNewGame} className="new-game-btn">
-              New Game
-            </button>
-          </div>
+          <h2>🎉 Congratulations!</h2>
+          <p>{gameState.winner.name} wins!</p>
         </div>
-        <div className="final-scores">
-          <h3>Final Scores:</h3>
-          <div className="players-grid">
-            {gameState.players.map((player) => (
-              <div key={player.id} className={`player-card ${player.isWinner ? 'winner' : ''}`}>
-                <div className="player-name">{player.name}</div>
-                <div className="player-score">{player.score}</div>
-              </div>
-            ))}
-          </div>
+        <div className="game-actions">
+          <button className="new-game-btn" onClick={onResetGame}>Play Again</button>
+          <button className="back-to-setup-btn" onClick={onNewGame}>New Game</button>
         </div>
       </div>
     );
@@ -87,74 +73,50 @@ const GameBoard: React.FC<GameBoardProps> = ({
 
   return (
     <div className="game-board">
-      <div className="game-header">
-        <h2>Dart Game - Starting Score: {gameState.startingScore}</h2>
-        <div className="game-actions">
-          <button onClick={onResetGame} className="reset-btn">
-            Reset Game
-          </button>
-          <button onClick={onNewGame} className="new-game-btn">
-            New Game
-          </button>
-        </div>
-      </div>
-
-      <div className="players-grid">
+      <h1>Dart Score Manager</h1>
+      
+      <div className="players-list">
         {gameState.players.map((player) => (
-          <div
-            key={player.id}
-            className={`player-card ${
-              currentPlayer?.id === player.id ? 'current-player' : ''
-            }`}
+          <div 
+            key={player.id} 
+            className={`player-card ${currentPlayer?.id === player.id ? 'current-player' : ''}`}
           >
-            <div className="player-name">{player.name}</div>
-            <div className="player-score">{player.score}</div>
-            {currentPlayer?.id === player.id && (
-              <div className="current-indicator">Current Turn</div>
-            )}
+            <span className="player-name">{player.name}</span>
+            <span className="player-score">{player.score}</span>
           </div>
         ))}
       </div>
 
       {currentPlayer && (
         <div className="score-input-section">
-          <h3>
-            {currentPlayer.name}'s Turn
-            <span className="remaining-score">({currentPlayer.score} remaining)</span>
-            {gameState.doubleOutRule && <span className="double-out-indicator">Double-out rule</span>}
-          </h3>
-          
+          <h3>{currentPlayer.name}'s Turn</h3>
           {gameState.lastThrowWasBust && (
-            <div className="bust-message">
-              BUST! Score reverted to {currentPlayer.score}
-            </div>
+            <div className="bust-message">BUST! Score reverted to turn start.</div>
           )}
-          
-          <div className="score-input-controls">
+          <div className="score-input">
             <input
               type="number"
               value={scoreInput}
               onChange={(e) => setScoreInput(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Enter score (0-180)"
-              min="0"
-              max="180"
-              className="score-input"
+              autoFocus
             />
-            <button
-              onClick={handleSubmitScore}
-              disabled={!scoreInput}
-              className="submit-score-btn"
-            >
-              Submit Score
+            <button className="submit-score-btn" onClick={handleSubmitScore}>
+              Submit
             </button>
           </div>
-
-          {error && <div className="error-message">{error}</div>}
+          {error && <div className="bust-message">{error}</div>}
         </div>
       )}
+      
+      <div className="game-actions">
+        <button className="new-game-btn" onClick={onResetGame}>Reset Game</button>
+        <button className="back-to-setup-btn" onClick={onNewGame}>Back to Setup</button>
+      </div>
     </div>
   );
+
 };
 
 export default GameBoard;
