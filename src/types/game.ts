@@ -9,12 +9,8 @@ export interface Player {
 export interface GameState {
   players: Player[];
   currentPlayerIndex: number;
-  startingScore: number;
-  gameStarted: boolean;
   gameFinished: boolean;
   winner: Player | null;
-  currentDart: number; // 1, 2, or 3
-  doubleOutRule: boolean; // Must finish on double
   lastThrowWasBust: boolean;
 }
 

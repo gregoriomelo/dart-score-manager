@@ -8,18 +8,12 @@ export const createPlayer = (name: string, startingScore: number = 501): Player 
   turnStartScore: startingScore,
 });
 
-export const createGameState = (playerNames: string[], startingScore: number = 501, doubleOutRule: boolean = true): GameState => {
-  const players = playerNames.map(name => createPlayer(name, startingScore));
-  
+export const createGameState = (players: Player[], startingScore: number = 501): GameState => {
   return {
-    players,
+    players: players.map(player => ({ ...player, score: startingScore, turnStartScore: startingScore })),
     currentPlayerIndex: 0,
-    startingScore,
-    gameStarted: false,
     gameFinished: false,
     winner: null,
-    currentDart: 1,
-    doubleOutRule,
     lastThrowWasBust: false,
   };
 };
@@ -29,24 +23,14 @@ export const isValidScore = (currentScore: number, scoreToSubtract: number): boo
   return scoreToSubtract >= 0 && scoreToSubtract <= 180 && scoreToSubtract <= currentScore;
 };
 
-export const isBust = (currentScore: number, scoreToSubtract: number, doubleOutRule: boolean = false): boolean => {
+export const isBust = (currentScore: number, scoreToSubtract: number): boolean => {
   const newScore = currentScore - scoreToSubtract;
   
-  // Basic bust: would go below zero
+  // Bust if would go below zero
   if (newScore < 0) return true;
   
-  // Double-out rule specific checks
-  if (doubleOutRule) {
-    // Cannot finish on 1 - impossible to reach with a double
-    if (newScore === 1) return true;
-    
-    // Must finish exactly on zero with a double
-    if (newScore === 0) {
-      // For simplicity, we'll assume scores ending in even numbers could be doubles
-      // In a real implementation, you'd track the specific dart thrown (single, double, triple)
-      return scoreToSubtract % 2 !== 0; // Odd scores can't be doubles
-    }
-  }
+  // Bust if remaining score would be 1
+  if (newScore === 1) return true;
   
   return false;
 };
@@ -62,7 +46,6 @@ export const startNewTurn = (gameState: GameState): GameState => {
   return {
     ...gameState,
     players: updatedPlayers,
-    currentDart: 1,
     lastThrowWasBust: false,
   };
 };
@@ -85,7 +68,7 @@ export const updatePlayerScore = (
   }
 
   // Check for bust
-  const bustOccurred = isBust(currentPlayer.score, scoreToSubtract, gameState.doubleOutRule);
+  const bustOccurred = isBust(currentPlayer.score, scoreToSubtract);
   const updatedPlayers = [...gameState.players];
   
   if (bustOccurred) {
@@ -138,25 +121,22 @@ export const nextPlayer = (gameState: GameState): GameState => {
 
 export const startGame = (gameState: GameState): GameState => ({
   ...gameState,
-  gameStarted: true,
 });
 
-export const resetGame = (gameState: GameState): GameState => {
+export const resetGame = (gameState: GameState, startingScore: number = 501): GameState => {
   const resetPlayers = gameState.players.map(player => ({
     ...player,
-    score: gameState.startingScore,
+    score: startingScore,
     isWinner: false,
-    turnStartScore: gameState.startingScore,
+    turnStartScore: startingScore,
   }));
 
   return {
     ...gameState,
     players: resetPlayers,
     currentPlayerIndex: 0,
-    gameStarted: false,
     gameFinished: false,
     winner: null,
-    currentDart: 1,
     lastThrowWasBust: false,
   };
 };

@@ -15,8 +15,8 @@ function App() {
     resetCurrentGame,
   } = useGameState();
 
-  const handleStartGame = (playerNames: string[], startingScore: number, doubleOutRule: boolean) => {
-    initializeGame(playerNames, startingScore, doubleOutRule);
+  const handleStartGame = (playerNames: string[], startingScore: number) => {
+    initializeGame(playerNames, startingScore);
     startNewGame();
   };
 
@@ -24,7 +24,7 @@ function App() {
     initializeGame([], 501);
   };
 
-  if (!gameState.gameStarted || gameState.players.length === 0) {
+  if (gameState.players.length === 0) {
     return <PlayerSetup onStartGame={handleStartGame} />;
   }
 

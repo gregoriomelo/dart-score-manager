@@ -2,13 +2,12 @@ import React, { useState } from 'react';
 import './PlayerSetup.css';
 
 interface PlayerSetupProps {
-  onStartGame: (playerNames: string[], startingScore: number, doubleOutRule: boolean) => void;
+  onStartGame: (playerNames: string[], startingScore: number) => void;
 }
 
 const PlayerSetup: React.FC<PlayerSetupProps> = ({ onStartGame }) => {
   const [playerNames, setPlayerNames] = useState<string[]>(['', '']);
   const [startingScore, setStartingScore] = useState<number>(501);
-  const [doubleOutRule, setDoubleOutRule] = useState<boolean>(true);
 
   const handlePlayerNameChange = (index: number, name: string) => {
     const updatedNames = [...playerNames];
@@ -32,7 +31,7 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onStartGame }) => {
   const handleStartGame = () => {
     const validNames = playerNames.filter(name => name.trim() !== '').map(name => name.trim());
     if (validNames.length >= 2) {
-      onStartGame(validNames, startingScore, doubleOutRule);
+      onStartGame(validNames, startingScore);
     }
   };
 
@@ -52,16 +51,6 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onStartGame }) => {
           />
         </div>
 
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              checked={doubleOutRule}
-              onChange={(e) => setDoubleOutRule(e.target.checked)}
-            />
-            Double-out rule
-          </label>
-        </div>
 
         <div className="players-section">
           <h3>Players (minimum 2):</h3>

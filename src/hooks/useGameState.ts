@@ -13,17 +13,20 @@ export const useGameState = () => {
   const [gameState, setGameState] = useState<GameState>({
     players: [],
     currentPlayerIndex: 0,
-    startingScore: 501,
-    gameStarted: false,
     gameFinished: false,
     winner: null,
-    currentDart: 1,
-    doubleOutRule: false,
     lastThrowWasBust: false,
   });
 
-  const initializeGame = useCallback((playerNames: string[], startingScore: number = 501, doubleOutRule: boolean = false) => {
-    const newGameState = createGameState(playerNames, startingScore, doubleOutRule);
+  const initializeGame = useCallback((playerNames: string[], startingScore: number = 501) => {
+    const players = playerNames.map(name => ({ 
+      id: Math.random().toString(36).substr(2, 9),
+      name: name.trim(),
+      score: startingScore,
+      isWinner: false,
+      turnStartScore: startingScore,
+    }));
+    const newGameState = createGameState(players, startingScore);
     setGameState(newGameState);
   }, []);
 
