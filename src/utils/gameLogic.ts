@@ -8,7 +8,7 @@ export const createPlayer = (name: string, startingScore: number = 501): Player 
   turnStartScore: startingScore,
 });
 
-export const createGameState = (playerNames: string[], startingScore: number = 501, doubleOutRule: boolean = false): GameState => {
+export const createGameState = (playerNames: string[], startingScore: number = 501, doubleOutRule: boolean = true): GameState => {
   const players = playerNames.map(name => createPlayer(name, startingScore));
   
   return {

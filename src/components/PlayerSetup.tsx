@@ -8,7 +8,7 @@ interface PlayerSetupProps {
 const PlayerSetup: React.FC<PlayerSetupProps> = ({ onStartGame }) => {
   const [playerNames, setPlayerNames] = useState<string[]>(['', '']);
   const [startingScore, setStartingScore] = useState<number>(501);
-  const [doubleOutRule, setDoubleOutRule] = useState<boolean>(false);
+  const [doubleOutRule, setDoubleOutRule] = useState<boolean>(true);
 
   const handlePlayerNameChange = (index: number, name: string) => {
     const updatedNames = [...playerNames];
