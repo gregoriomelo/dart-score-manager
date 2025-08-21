@@ -1,12 +1,13 @@
 import { useState, useCallback } from 'react';
 import { GameState } from '../types/game';
-import {
+import { 
+  createPlayer,
   createGameState,
-  updatePlayerScore,
-  nextPlayer,
-  startGame,
-  resetGame,
-  getCurrentPlayer,
+  updatePlayerScore, 
+  nextPlayer, 
+  resetGame, 
+  getCurrentPlayer, 
+  startGame 
 } from '../utils/gameLogic';
 
 export const useGameState = () => {
@@ -19,15 +20,8 @@ export const useGameState = () => {
   });
 
   const initializeGame = useCallback((playerNames: string[], startingScore: number = 501) => {
-    const players = playerNames.map(name => ({ 
-      id: Math.random().toString(36).substr(2, 9),
-      name: name.trim(),
-      score: startingScore,
-      isWinner: false,
-      turnStartScore: startingScore,
-    }));
-    const newGameState = createGameState(players, startingScore);
-    setGameState(newGameState);
+    const players = playerNames.map(name => createPlayer(name, startingScore));
+    setGameState(createGameState(players));
   }, []);
 
   const startNewGame = useCallback(() => {

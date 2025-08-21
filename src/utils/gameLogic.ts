@@ -8,9 +8,9 @@ export const createPlayer = (name: string, startingScore: number = 501): Player 
   turnStartScore: startingScore,
 });
 
-export const createGameState = (players: Player[], startingScore: number = 501): GameState => {
+export const createGameState = (players: Player[]): GameState => {
   return {
-    players: players.map(player => ({ ...player, score: startingScore, turnStartScore: startingScore })),
+    players: players.map(player => ({ ...player, turnStartScore: player.score })),
     currentPlayerIndex: 0,
     gameFinished: false,
     winner: null,

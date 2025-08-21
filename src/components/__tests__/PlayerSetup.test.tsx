@@ -13,8 +13,8 @@ describe('PlayerSetup', () => {
   it('renders with default values', () => {
     render(<PlayerSetup onStartGame={mockOnStartGame} />);
     
-    expect(screen.getByText('Dart Score Manager')).toBeInTheDocument();
-    expect(screen.getByLabelText('Starting Score:')).toHaveValue('501');
+    expect(screen.getByText('Dart Score')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('501')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Player 1 name')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Player 2 name')).toBeInTheDocument();
     expect(screen.getByText('Start Game')).toBeDisabled();
@@ -24,10 +24,12 @@ describe('PlayerSetup', () => {
     const user = userEvent.setup();
     render(<PlayerSetup onStartGame={mockOnStartGame} />);
     
-    const scoreSelect = screen.getByLabelText('Starting Score:');
-    await user.selectOptions(scoreSelect, '301');
+    const scoreInput = screen.getByDisplayValue('501') as HTMLInputElement;
+    scoreInput.focus();
+    scoreInput.select();
+    await user.keyboard('301');
     
-    expect(scoreSelect).toHaveValue('301');
+    expect(scoreInput).toHaveValue(301);
   });
 
   it('allows entering player names', async () => {
@@ -62,7 +64,7 @@ describe('PlayerSetup', () => {
     const user = userEvent.setup();
     render(<PlayerSetup onStartGame={mockOnStartGame} />);
     
-    expect(screen.getAllByRole('textbox')).toHaveLength(2); // 2 player inputs (select is not textbox)
+    expect(screen.getAllByRole('textbox')).toHaveLength(2); // 2 player inputs (score input is type="number")
     
     await user.click(screen.getByText('Add Player'));
     
@@ -76,7 +78,7 @@ describe('PlayerSetup', () => {
     
     // Add a third player
     await user.click(screen.getByText('Add Player'));
-    expect(screen.getAllByRole('textbox')).toHaveLength(3);
+    expect(screen.getAllByRole('textbox')).toHaveLength(3); // 3 player inputs
     
     // Remove buttons should now be visible
     const removeButtons = screen.getAllByLabelText(/Remove player/);
@@ -84,7 +86,7 @@ describe('PlayerSetup', () => {
     
     // Remove the third player
     await user.click(removeButtons[2]);
-    expect(screen.getAllByRole('textbox')).toHaveLength(2);
+    expect(screen.getAllByRole('textbox')).toHaveLength(2); // 2 player inputs
   });
 
   it('does not show remove buttons when there are only 2 players', () => {
@@ -110,7 +112,10 @@ describe('PlayerSetup', () => {
     
     await user.type(screen.getByPlaceholderText('Player 1 name'), 'Alice');
     await user.type(screen.getByPlaceholderText('Player 2 name'), 'Bob');
-    await user.selectOptions(screen.getByLabelText('Starting Score:'), '301');
+    const scoreInput = screen.getByDisplayValue('501') as HTMLInputElement;
+    scoreInput.focus();
+    scoreInput.select();
+    await user.keyboard('301');
     
     await user.click(screen.getByText('Start Game'));
     

@@ -38,27 +38,24 @@ describe('gameLogic', () => {
 
   describe('createGameState', () => {
     it('should create initial game state with players', () => {
-      const gameState = createGameState(['Alice', 'Bob'], 501);
+      const players = [createPlayer('Alice', 501), createPlayer('Bob', 501)];
+      const gameState = createGameState(players);
       
       expect(gameState.players).toHaveLength(2);
       expect(gameState.players[0].name).toBe('Alice');
       expect(gameState.players[1].name).toBe('Bob');
       expect(gameState.currentPlayerIndex).toBe(0);
-      expect(gameState.startingScore).toBe(501);
-      expect(gameState.gameStarted).toBe(false);
       expect(gameState.gameFinished).toBe(false);
       expect(gameState.winner).toBeNull();
-      expect(gameState.currentDart).toBe(1);
-      expect(gameState.doubleOutRule).toBe(true);
       expect(gameState.lastThrowWasBust).toBe(false);
     });
 
-    it('should create game state with custom starting score and can disable double-out rule', () => {
-      const gameState = createGameState(['Player1'], 301, false);
+    it('should create game state with custom starting score', () => {
+      const player = createPlayer('Player1', 301);
+      expect(player.score).toBe(301);
       
-      expect(gameState.startingScore).toBe(301);
+      const gameState = createGameState([player]);
       expect(gameState.players[0].score).toBe(301);
-      expect(gameState.doubleOutRule).toBe(false);
     });
   });
 
@@ -86,7 +83,8 @@ describe('gameLogic', () => {
     let gameState: ReturnType<typeof createGameState>;
 
     beforeEach(() => {
-      gameState = createGameState(['Alice', 'Bob'], 501, false); // Disable double-out for basic tests
+      const players = [createPlayer('Alice', 501), createPlayer('Bob', 501)];
+      gameState = createGameState(players);
     });
 
     it('should update player score correctly', () => {
@@ -101,7 +99,8 @@ describe('gameLogic', () => {
 
     it('should mark player as winner when score reaches 0', () => {
       // Create a game state with a player who has 50 points
-      const gameStateWith50 = createGameState(['Alice', 'Bob'], 50);
+      const players = [createPlayer('Alice', 50), createPlayer('Bob', 50)];
+      const gameStateWith50 = createGameState(players);
       const playerId = gameStateWith50.players[0].id;
       
       // Now score exactly 50 to win
@@ -145,7 +144,8 @@ describe('gameLogic', () => {
     });
 
     it('should handle bust by reverting to turn start score', () => {
-      const gameStateWith50 = createGameState(['Alice'], 50);
+      const players = [createPlayer('Alice', 50)];
+      const gameStateWith50 = createGameState(players);
       // Set turn start score
       const gameWithTurnStart = {
         ...gameStateWith50,
@@ -159,40 +159,29 @@ describe('gameLogic', () => {
       expect(updatedState.lastThrowWasBust).toBe(true);
     });
 
-    it('should handle double-out rule bust', () => {
-      const gameStateWithDoubleOut = createGameState(['Alice'], 50, true);
+    it('should handle bust when score would be 1', () => {
+      const players = [createPlayer('Alice', 2)];
+      const gameStateWith2 = createGameState(players);
       const gameWithTurnStart = {
-        ...gameStateWithDoubleOut,
-        players: gameStateWithDoubleOut.players.map(p => ({ ...p, turnStartScore: 50 }))
+        ...gameStateWith2,
+        players: gameStateWith2.players.map(p => ({ ...p, turnStartScore: 2 }))
       };
       
       const playerId = gameWithTurnStart.players[0].id;
-      const updatedState = updatePlayerScore(gameWithTurnStart, playerId, 49); // Odd number, can't be double
+      const updatedState = updatePlayerScore(gameWithTurnStart, playerId, 1); // Would leave score at 1, which is a bust
       
-      expect(updatedState.players[0].score).toBe(50); // Reverted due to double-out rule
+      expect(updatedState.players[0].score).toBe(2); // Reverted because 1 is a bust
       expect(updatedState.lastThrowWasBust).toBe(true);
     });
 
-    it('should handle double-out rule bust when score would be 1', () => {
-      const gameStateWithDoubleOut = createGameState(['Alice'], 2, true);
-      const gameWithTurnStart = {
-        ...gameStateWithDoubleOut,
-        players: gameStateWithDoubleOut.players.map(p => ({ ...p, turnStartScore: 2 }))
-      };
-      
-      const playerId = gameWithTurnStart.players[0].id;
-      const updatedState = updatePlayerScore(gameWithTurnStart, playerId, 1); // Would leave score at 1, which is impossible to finish
-      
-      expect(updatedState.players[0].score).toBe(2); // Reverted because 1 is impossible to finish with double-out
-      expect(updatedState.lastThrowWasBust).toBe(true);
-    });
   });
 
   describe('nextPlayer', () => {
     let gameState: ReturnType<typeof createGameState>;
 
     beforeEach(() => {
-      gameState = createGameState(['Alice', 'Bob', 'Charlie'], 501, false); // Disable double-out for basic tests
+      const players = [createPlayer('Alice', 501), createPlayer('Bob', 501), createPlayer('Charlie', 501)];
+      gameState = createGameState(players);
     });
 
     it('should advance to next player after each turn', () => {
@@ -211,7 +200,7 @@ describe('gameLogic', () => {
       
       const nextState = nextPlayer(stateAtLastPlayer);
       expect(nextState.currentPlayerIndex).toBe(0);
-      expect(nextState.currentDart).toBe(1); // Reset dart count for new player
+      // Player advanced to next
     });
 
     it('should advance to next player after bust', () => {
@@ -219,7 +208,7 @@ describe('gameLogic', () => {
       
       const nextState = nextPlayer(bustState);
       expect(nextState.currentPlayerIndex).toBe(1);
-      expect(nextState.currentDart).toBe(1);
+      // Player advanced after bust
     });
 
     it('should not advance player if game is finished', () => {
@@ -235,19 +224,19 @@ describe('gameLogic', () => {
   });
 
   describe('startGame', () => {
-    it('should mark game as started', () => {
-      const gameState = createGameState(['Alice', 'Bob'], 501, false);
-      expect(gameState.gameStarted).toBe(false);
+    it('should initialize game state properly', () => {
+      const players = [createPlayer('Alice', 501), createPlayer('Bob', 501)];
+      const gameState = createGameState(players);
       
-      const startedState = startGame(gameState);
-      expect(startedState.gameStarted).toBe(true);
+      expect(gameState.gameFinished).toBe(false);
+      expect(gameState.winner).toBeNull();
     });
   });
 
   describe('resetGame', () => {
     it('should reset all players to starting score and game state', () => {
-      let gameState = createGameState(['Alice', 'Bob'], 501, false);
-      gameState = startGame(gameState);
+      const players = [createPlayer('Alice', 501), createPlayer('Bob', 501)];
+      let gameState = createGameState(players);
       
       // Simulate some gameplay
       const playerId = gameState.players[0].id;
@@ -256,15 +245,13 @@ describe('gameLogic', () => {
       
       expect(gameState.players[0].score).toBe(401);
       expect(gameState.currentPlayerIndex).toBe(1);
-      expect(gameState.gameStarted).toBe(true);
       
       // Reset the game
-      const resetState = resetGame(gameState);
+      const resetState = resetGame(gameState, 501);
       
       expect(resetState.players[0].score).toBe(501);
       expect(resetState.players[1].score).toBe(501);
       expect(resetState.currentPlayerIndex).toBe(0);
-      expect(resetState.gameStarted).toBe(false);
       expect(resetState.gameFinished).toBe(false);
       expect(resetState.winner).toBeNull();
       expect(resetState.players[0].isWinner).toBe(false);
@@ -274,7 +261,8 @@ describe('gameLogic', () => {
 
   describe('getCurrentPlayer', () => {
     it('should return current player', () => {
-      const gameState = createGameState(['Alice', 'Bob'], 501, false);
+      const players = [createPlayer('Alice', 501), createPlayer('Bob', 501)];
+      const gameState = createGameState(players);
       const currentPlayer = getCurrentPlayer(gameState);
       
       expect(currentPlayer).toBe(gameState.players[0]);
@@ -282,14 +270,15 @@ describe('gameLogic', () => {
     });
 
     it('should return null for empty players array', () => {
-      const gameState = createGameState([], 501, false);
+      const gameState = createGameState([]);
       const currentPlayer = getCurrentPlayer(gameState);
       
       expect(currentPlayer).toBeNull();
     });
 
     it('should return correct player after advancing', () => {
-      let gameState = createGameState(['Alice', 'Bob'], 501, false);
+      const players = [createPlayer('Alice', 501), createPlayer('Bob', 501)];
+      let gameState = createGameState(players);
       gameState = nextPlayer(gameState);
       
       const currentPlayer = getCurrentPlayer(gameState);

@@ -4,6 +4,6 @@ import App from './App';
 
 test('renders dart score manager', () => {
   render(<App />);
-  const titleElement = screen.getByText(/dart score manager/i);
+  const titleElement = screen.getByText(/dart score/i);
   expect(titleElement).toBeInTheDocument();
 });

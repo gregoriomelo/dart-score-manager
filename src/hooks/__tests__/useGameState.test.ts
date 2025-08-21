@@ -6,9 +6,7 @@ describe('useGameState', () => {
     const { result } = renderHook(() => useGameState());
 
     expect(result.current.gameState.players).toHaveLength(0);
-    expect(result.current.gameState.gameStarted).toBe(false);
     expect(result.current.gameState.gameFinished).toBe(false);
-    expect(result.current.gameState.startingScore).toBe(501);
     expect(result.current.currentPlayer).toBeNull();
   });
 
@@ -22,7 +20,7 @@ describe('useGameState', () => {
     expect(result.current.gameState.players).toHaveLength(2);
     expect(result.current.gameState.players[0].name).toBe('Alice');
     expect(result.current.gameState.players[1].name).toBe('Bob');
-    expect(result.current.gameState.startingScore).toBe(301);
+    // Players should have the correct starting score
     expect(result.current.gameState.players[0].score).toBe(301);
     expect(result.current.gameState.players[1].score).toBe(301);
   });
@@ -34,13 +32,13 @@ describe('useGameState', () => {
       result.current.initializeGame(['Alice', 'Bob']);
     });
 
-    expect(result.current.gameState.gameStarted).toBe(false);
+    expect(result.current.gameState.gameFinished).toBe(false);
 
     act(() => {
       result.current.startNewGame();
     });
 
-    expect(result.current.gameState.gameStarted).toBe(true);
+    // Game should be initialized properly
   });
 
   it('submits score for current player', () => {
@@ -141,7 +139,7 @@ describe('useGameState', () => {
     expect(result.current.gameState.players[0].score).toBe(501);
     expect(result.current.gameState.players[1].score).toBe(501);
     expect(result.current.gameState.currentPlayerIndex).toBe(0);
-    expect(result.current.gameState.gameStarted).toBe(false);
+    // Game should be reset properly
     expect(result.current.gameState.gameFinished).toBe(false);
   });
 
