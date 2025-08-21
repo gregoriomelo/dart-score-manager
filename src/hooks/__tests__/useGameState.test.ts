@@ -2,6 +2,11 @@ import { renderHook, act } from '@testing-library/react';
 import { useGameState } from '../useGameState';
 
 describe('useGameState', () => {
+  beforeEach(() => {
+    // Clear localStorage before each test
+    localStorage.clear();
+  });
+
   it('initializes with empty game state', () => {
     const { result } = renderHook(() => useGameState());
 
@@ -165,7 +170,7 @@ describe('useGameState', () => {
 
   it('returns correct current player', () => {
     const { result } = renderHook(() => useGameState());
-
+    
     expect(result.current.currentPlayer).toBeNull();
 
     act(() => {

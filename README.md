@@ -9,6 +9,8 @@ A modern web application for managing dart game scores, built with React and Typ
 - **Score validation**: Prevents invalid scores and negative results
 - **Quick score buttons**: Fast input for common dart scores
 - **Winner detection**: Automatic game completion when a player reaches exactly 0
+- **Score history tracking**: Individual player history and consolidated game view with detailed progression
+- **Persistent game state**: Automatically saves progress - resume after browser refresh
 - **Game management**: Reset current game or start completely new games
 - **Responsive design**: Works great on desktop and mobile devices
 - **Modern UI**: Clean, intuitive interface with visual feedback
@@ -17,7 +19,7 @@ A modern web application for managing dart game scores, built with React and Typ
 
 ### Prerequisites
 
-- Node.js 18.x or higher
+- Node.js 20.x or higher
 - npm or yarn
 
 ### Installation
@@ -59,8 +61,10 @@ Runs tests with coverage reporting.
 1. **Setup**: Enter player names (2-8 players) and select starting score
 2. **Gameplay**: Current player enters their score for each turn
 3. **Scoring**: Scores are subtracted from the player's remaining total
-4. **Winning**: First player to reach exactly 0 wins the game
-5. **Game Management**: Use "Reset Game" to restart with same players, or "New Game" to start over
+4. **History Tracking**: View individual player history (📊 button) or consolidated game history ("📊 All History")
+5. **Winning**: First player to reach exactly 0 wins the game
+6. **Game Management**: Use "Reset Game" to restart with same players, or "New Game" to start over
+7. **Auto-Save**: Game progress is automatically saved - refresh the page to continue where you left off
 
 ## Game Rules
 
@@ -104,24 +108,6 @@ The project includes GitHub Actions workflows for:
 - **Build Tool**: Create React App
 - **CI/CD**: GitHub Actions
 
-## Project Structure
-
-```
-src/
-├── components/          # React components
-│   ├── GameBoard.tsx   # Main game interface
-│   ├── PlayerSetup.tsx # Player configuration
-│   └── __tests__/      # Component tests
-├── hooks/              # Custom React hooks
-│   ├── useGameState.ts # Game state management
-│   └── __tests__/      # Hook tests
-├── types/              # TypeScript type definitions
-│   └── game.ts         # Game-related types
-├── utils/              # Utility functions
-│   ├── gameLogic.ts    # Core game logic
-│   └── __tests__/      # Logic tests
-└── App.tsx             # Main application component
-```
 
 ## Contributing
 

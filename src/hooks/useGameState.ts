@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { GameState } from '../types/game';
 import { 
   createPlayer,
@@ -9,15 +9,27 @@ import {
   getCurrentPlayer, 
   startGame 
 } from '../utils/gameLogic';
+import { saveGameState, loadGameState, clearGameState } from '../utils/localStorage';
 
 export const useGameState = () => {
-  const [gameState, setGameState] = useState<GameState>({
-    players: [],
-    currentPlayerIndex: 0,
-    gameFinished: false,
-    winner: null,
-    lastThrowWasBust: false,
+  const [gameState, setGameState] = useState<GameState>(() => {
+    // Try to load saved game state on initialization
+    const savedState = loadGameState();
+    return savedState || {
+      players: [],
+      currentPlayerIndex: 0,
+      gameFinished: false,
+      winner: null,
+      lastThrowWasBust: false,
+    };
   });
+
+  // Save game state to localStorage whenever it changes
+  useEffect(() => {
+    if (gameState.players.length > 0) {
+      saveGameState(gameState);
+    }
+  }, [gameState]);
 
   const initializeGame = useCallback((playerNames: string[], startingScore: number = 501) => {
     const players = playerNames.map(name => createPlayer(name, startingScore));
@@ -48,6 +60,17 @@ export const useGameState = () => {
     setGameState(prevState => resetGame(prevState));
   }, []);
 
+  const clearStoredGame = useCallback(() => {
+    clearGameState();
+    setGameState({
+      players: [],
+      currentPlayerIndex: 0,
+      gameFinished: false,
+      winner: null,
+      lastThrowWasBust: false,
+    });
+  }, []);
+
   const currentPlayer = getCurrentPlayer(gameState);
 
   return {
@@ -58,5 +81,6 @@ export const useGameState = () => {
     submitScore,
     goToNextPlayer,
     resetCurrentGame,
+    clearStoredGame,
   };
 };

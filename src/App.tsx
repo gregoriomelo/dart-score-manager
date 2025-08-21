@@ -13,6 +13,7 @@ function App() {
     submitScore,
     goToNextPlayer,
     resetCurrentGame,
+    clearStoredGame,
   } = useGameState();
 
   const handleStartGame = (playerNames: string[], startingScore: number) => {
@@ -21,7 +22,7 @@ function App() {
   };
 
   const handleNewGame = () => {
-    initializeGame([], 501);
+    clearStoredGame();
   };
 
   if (gameState.players.length === 0) {
