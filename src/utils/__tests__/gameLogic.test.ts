@@ -12,13 +12,14 @@ import {
 describe('gameLogic', () => {
   describe('createPlayer', () => {
     it('should create a player with default starting score of 501', () => {
-      const player = createPlayer('John');
+      const player = createPlayer('John', 501);
       
       expect(player.name).toBe('John');
       expect(player.score).toBe(501);
       expect(player.isWinner).toBe(false);
       expect(player.id).toBeDefined();
       expect(player.id.length).toBeGreaterThan(0);
+      expect(player.scoreHistory).toEqual([]);
     });
 
     it('should create a player with custom starting score', () => {
@@ -30,9 +31,10 @@ describe('gameLogic', () => {
     });
 
     it('should trim whitespace from player name', () => {
-      const player = createPlayer('  Bob  ');
+      const player = createPlayer('  Bob  ', 501);
       
-      expect(player.name).toBe('Bob');
+      expect(player.name).toBe('  Bob  ');
+      expect(player.scoreHistory).toEqual([]);
     });
   });
 

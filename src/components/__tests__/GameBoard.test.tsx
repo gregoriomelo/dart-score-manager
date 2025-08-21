@@ -16,6 +16,7 @@ describe('GameBoard', () => {
     score,
     isWinner,
     turnStartScore: score,
+    scoreHistory: [],
   });
 
   const createMockGameState = (players: Player[], currentPlayerIndex = 0, gameFinished = false): GameState => ({
@@ -298,7 +299,7 @@ describe('GameBoard', () => {
         />
       );
 
-      expect(screen.getByText('Play Again')).toBeInTheDocument();
+      expect(screen.getByText('Reset Game')).toBeInTheDocument();
       expect(screen.getByText('New Game')).toBeInTheDocument();
     });
 

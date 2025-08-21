@@ -1,11 +1,12 @@
 import { Player, GameState } from '../types/game';
 
-export const createPlayer = (name: string, startingScore: number = 501): Player => ({
-  id: Math.random().toString(36).substr(2, 9),
-  name: name.trim(),
+export const createPlayer = (name: string, startingScore: number): Player => ({
+  id: `player-${name.toLowerCase().replace(/\s+/g, '-')}`,
+  name,
   score: startingScore,
   isWinner: false,
   turnStartScore: startingScore,
+  scoreHistory: [],
 });
 
 export const createGameState = (players: Player[]): GameState => {
@@ -71,11 +72,23 @@ export const updatePlayerScore = (
   const bustOccurred = isBust(currentPlayer.score, scoreToSubtract);
   const updatedPlayers = [...gameState.players];
   
+  // Calculate turn number based on existing history
+  const turnNumber = currentPlayer.scoreHistory.length + 1;
+  
   if (bustOccurred) {
+    // Add bust entry to history
+    const historyEntry = {
+      score: scoreToSubtract,
+      previousScore: currentPlayer.score,
+      timestamp: new Date(),
+      turnNumber,
+    };
+    
     // Revert to turn start score on bust
     updatedPlayers[playerIndex] = {
       ...currentPlayer,
       score: currentPlayer.turnStartScore,
+      scoreHistory: [...currentPlayer.scoreHistory, historyEntry],
     };
     
     return {
@@ -87,10 +100,18 @@ export const updatePlayerScore = (
 
   // Normal score update
   const newScore = currentPlayer.score - scoreToSubtract;
+  const historyEntry = {
+    score: scoreToSubtract,
+    previousScore: currentPlayer.score,
+    timestamp: new Date(),
+    turnNumber,
+  };
+  
   updatedPlayers[playerIndex] = {
     ...currentPlayer,
     score: newScore,
     isWinner: newScore === 0,
+    scoreHistory: [...currentPlayer.scoreHistory, historyEntry],
   };
 
   const winner = updatedPlayers.find(p => p.isWinner) || null;

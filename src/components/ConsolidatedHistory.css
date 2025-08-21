@@ -1,0 +1,242 @@
+.consolidated-history-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.consolidated-history-modal {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  max-width: 900px;
+  width: 95%;
+  max-height: 85vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.consolidated-history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #e0e0e0;
+  background: #f8f9fa;
+}
+
+.consolidated-history-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.close-button:hover {
+  background-color: #e0e0e0;
+}
+
+.sort-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.sort-controls label {
+  font-weight: 600;
+  color: #555;
+}
+
+.sort-controls select {
+  padding: 6px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: white;
+  font-size: 0.9rem;
+}
+
+.consolidated-history-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.no-history {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 40px 20px;
+}
+
+.consolidated-table {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.consolidated-header {
+  display: grid;
+  grid-template-columns: 120px 60px 80px 80px 80px 80px;
+  gap: 12px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  font-weight: bold;
+  color: #555;
+  font-size: 0.9rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.consolidated-row {
+  display: grid;
+  grid-template-columns: 120px 60px 80px 80px 80px 80px;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+  font-size: 0.9rem;
+}
+
+.consolidated-row:hover {
+  background-color: #f8f9fa;
+}
+
+.consolidated-row.bust {
+  background-color: #fff5f5;
+  border-color: #fed7d7;
+}
+
+.consolidated-row.bust:hover {
+  background-color: #fef2f2;
+}
+
+.player-name-cell {
+  font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.turn-number {
+  font-weight: bold;
+  color: #4a5568;
+  text-align: center;
+}
+
+.time {
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.score-thrown {
+  font-weight: bold;
+  color: #2d3748;
+  text-align: center;
+}
+
+.previous-score, .new-score {
+  font-weight: 500;
+  text-align: center;
+}
+
+.bust-indicator {
+  color: #e53e3e;
+  font-weight: bold;
+  font-size: 0.8rem;
+}
+
+.consolidated-history-footer {
+  padding: 20px;
+  border-top: 1px solid #e0e0e0;
+  background: #f8f9fa;
+}
+
+.current-scores h4 {
+  margin: 0 0 10px 0;
+  color: #2d3748;
+  font-size: 1.1rem;
+}
+
+.current-scores-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.current-score-item {
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.winner-badge {
+  font-size: 1.2rem;
+}
+
+@media (max-width: 800px) {
+  .consolidated-history-modal {
+    width: 98%;
+    max-height: 90vh;
+  }
+  
+  .consolidated-header,
+  .consolidated-row {
+    grid-template-columns: 100px 50px 70px 60px 60px 60px;
+    gap: 8px;
+    padding: 8px;
+    font-size: 0.8rem;
+  }
+  
+  .consolidated-history-header h2 {
+    font-size: 1.3rem;
+  }
+  
+  .current-scores-list {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .consolidated-header,
+  .consolidated-row {
+    grid-template-columns: 80px 40px 60px 50px 50px 50px;
+    gap: 6px;
+    padding: 6px;
+    font-size: 0.75rem;
+  }
+  
+  .player-name-cell {
+    font-size: 0.8rem;
+  }
+}

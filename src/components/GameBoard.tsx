@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { GameState, Player } from '../types/game';
+import ScoreHistory from './ScoreHistory';
+import ConsolidatedHistory from './ConsolidatedHistory';
 import './GameBoard.css';
 
 interface GameBoardProps {
@@ -21,6 +23,8 @@ const GameBoard: React.FC<GameBoardProps> = ({
 }) => {
   const [scoreInput, setScoreInput] = useState<string>('');
   const [error, setError] = useState<string>('');
+  const [historyPlayer, setHistoryPlayer] = useState<Player | null>(null);
+  const [showConsolidatedHistory, setShowConsolidatedHistory] = useState<boolean>(false);
 
   const handleSubmitScore = () => {
     if (!currentPlayer) return;
@@ -63,10 +67,52 @@ const GameBoard: React.FC<GameBoardProps> = ({
           <h2>🎉 Congratulations!</h2>
           <p>{gameState.winner.name} wins!</p>
         </div>
-        <div className="game-actions">
-          <button className="new-game-btn" onClick={onResetGame}>Play Again</button>
-          <button className="winner-new-game-btn" onClick={onNewGame}>New Game</button>
+        
+        <div className="final-scores">
+          <h3>Final Scores & History</h3>
+          <div className="players-list">
+            {gameState.players.map((player) => (
+              <div 
+                key={player.id} 
+                className={`player-card ${player.isWinner ? 'winner' : ''}`}
+              >
+                <span className="player-name">{player.name}</span>
+                <span className="player-score">{player.score}</span>
+                <button 
+                  className="history-btn"
+                  onClick={() => setHistoryPlayer(player)}
+                  title={`View ${player.name}'s score history`}
+                >
+                  📊
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
+        
+        <div className="game-controls">
+          <button onClick={() => setShowConsolidatedHistory(true)} className="consolidated-history-button">
+            📊 All History
+          </button>
+          <button onClick={onResetGame} className="reset-button">
+            Reset Game
+          </button>
+          <button onClick={onNewGame} className="new-game-button">
+            New Game
+          </button>
+        </div>
+
+        <ScoreHistory 
+          player={historyPlayer!}
+          isOpen={historyPlayer !== null}
+          onClose={() => setHistoryPlayer(null)}
+        />
+        
+        <ConsolidatedHistory 
+          players={gameState.players}
+          isOpen={showConsolidatedHistory}
+          onClose={() => setShowConsolidatedHistory(false)}
+        />
       </div>
     );
   }
@@ -83,6 +129,13 @@ const GameBoard: React.FC<GameBoardProps> = ({
           >
             <span className="player-name">{player.name}</span>
             <span className="player-score">{player.score}</span>
+            <button 
+              className="history-btn"
+              onClick={() => setHistoryPlayer(player)}
+              title={`View ${player.name}'s score history`}
+            >
+              📊
+            </button>
           </div>
         ))}
       </div>
@@ -111,9 +164,24 @@ const GameBoard: React.FC<GameBoardProps> = ({
       )}
       
       <div className="game-actions">
+        <button onClick={() => setShowConsolidatedHistory(true)} className="consolidated-history-button">
+          📊 All History
+        </button>
         <button className="new-game-btn" onClick={onResetGame}>Reset Game</button>
         <button className="back-to-setup-btn" onClick={onNewGame}>Back to Setup</button>
       </div>
+
+      <ScoreHistory 
+        player={historyPlayer!}
+        isOpen={historyPlayer !== null}
+        onClose={() => setHistoryPlayer(null)}
+      />
+      
+      <ConsolidatedHistory 
+        players={gameState.players}
+        isOpen={showConsolidatedHistory}
+        onClose={() => setShowConsolidatedHistory(false)}
+      />
     </div>
   );
 
