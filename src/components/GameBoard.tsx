@@ -35,10 +35,6 @@ const GameBoard: React.FC<GameBoardProps> = ({
       return;
     }
 
-    if (score > currentPlayer.score) {
-      setError('Score cannot be higher than remaining points');
-      return;
-    }
 
     try {
       onSubmitScore(currentPlayer.id, score);

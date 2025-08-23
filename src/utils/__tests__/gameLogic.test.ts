@@ -124,10 +124,6 @@ describe('gameLogic', () => {
       const playerId = gameState.players[0].id;
       
       expect(() => {
-        updatePlayerScore(gameState, playerId, 502);
-      }).toThrow('Invalid score');
-      
-      expect(() => {
         updatePlayerScore(gameState, playerId, -1);
       }).toThrow('Invalid score');
       
@@ -173,6 +169,21 @@ describe('gameLogic', () => {
       const updatedState = updatePlayerScore(gameWithTurnStart, playerId, 1); // Would leave score at 1, which is a bust
       
       expect(updatedState.players[0].score).toBe(2); // Reverted because 1 is a bust
+      expect(updatedState.lastThrowWasBust).toBe(true);
+    });
+
+    it('should handle bust when score exceeds remaining points', () => {
+      const players = [createPlayer('Alice', 80)];
+      const gameStateWith80 = createGameState(players);
+      const gameWithTurnStart = {
+        ...gameStateWith80,
+        players: gameStateWith80.players.map(p => ({ ...p, turnStartScore: 80 }))
+      };
+      
+      const playerId = gameWithTurnStart.players[0].id;
+      const updatedState = updatePlayerScore(gameWithTurnStart, playerId, 82); // Score exceeds remaining points
+      
+      expect(updatedState.players[0].score).toBe(80); // Reverted to turn start
       expect(updatedState.lastThrowWasBust).toBe(true);
     });
 

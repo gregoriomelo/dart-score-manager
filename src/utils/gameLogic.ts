@@ -25,6 +25,9 @@ export const isValidScore = (currentScore: number, scoreToSubtract: number): boo
 };
 
 export const isBust = (currentScore: number, scoreToSubtract: number): boolean => {
+  // Bust if score exceeds remaining points
+  if (scoreToSubtract > currentScore) return true;
+  
   const newScore = currentScore - scoreToSubtract;
   
   // Bust if would go below zero

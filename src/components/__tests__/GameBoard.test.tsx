@@ -129,7 +129,7 @@ describe('GameBoard', () => {
       expect(mockOnSubmitScore).not.toHaveBeenCalled();
     });
 
-    it('shows error when score exceeds remaining points', async () => {
+    it('allows scores that exceed remaining points (will be handled as bust by game logic)', async () => {
       const user = userEvent.setup();
       render(
         <GameBoard
@@ -145,11 +145,10 @@ describe('GameBoard', () => {
       const scoreInput = screen.getByPlaceholderText('Enter score (0-180)');
       const submitButton = screen.getByText('Submit');
 
-      await user.type(scoreInput, '350'); // More than Alice's remaining 301
+      await user.type(scoreInput, '150'); // Valid dart score, even if it exceeds remaining points
       await user.click(submitButton);
 
-      expect(screen.getByText('Please enter a valid score (0-180)')).toBeInTheDocument();
-      expect(mockOnSubmitScore).not.toHaveBeenCalled();
+      expect(mockOnSubmitScore).toHaveBeenCalledWith('player-alice', 150);
     });
 
     it('allows manual score input', async () => {
