@@ -1,4 +1,5 @@
 import React from 'react';
+import { GameMode } from './types/game';
 import { useGameState } from './hooks/useGameState';
 import PlayerSetup from './components/PlayerSetup';
 import GameBoard from './components/GameBoard';
@@ -14,10 +15,12 @@ function App() {
     goToNextPlayer,
     resetCurrentGame,
     clearStoredGame,
+    setChallengeForHighLow,
+    submitHighLowScore,
   } = useGameState();
 
-  const handleStartGame = (playerNames: string[], startingScore: number) => {
-    initializeGame(playerNames, startingScore);
+  const handleStartGame = (playerNames: string[], gameMode: GameMode, startingScore: number, startingLives: number) => {
+    initializeGame(playerNames, gameMode, startingScore, startingLives);
     startNewGame();
   };
 
@@ -38,6 +41,8 @@ function App() {
         onNextPlayer={goToNextPlayer}
         onResetGame={resetCurrentGame}
         onNewGame={handleNewGame}
+        onSetChallenge={setChallengeForHighLow}
+        onSubmitHighLowScore={submitHighLowScore}
       />
     </div>
   );

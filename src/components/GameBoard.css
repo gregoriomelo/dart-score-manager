@@ -10,11 +10,26 @@
 
 .game-board h1 {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   font-size: 2rem;
   font-weight: 600;
   color: #1a1a1a;
   letter-spacing: -0.02em;
+}
+
+.game-mode-indicator {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 0.5rem 1rem;
+  background: #e0f2fe;
+  color: #0277bd;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-block;
+  width: 100%;
 }
 
 .players-list {
@@ -52,6 +67,34 @@
   font-weight: 700;
   color: #2563eb;
   text-align: center;
+}
+
+.player-lives {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #dc2626;
+  text-align: center;
+  background: #fef2f2;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  border: 1px solid #fecaca;
+}
+
+.player-card.eliminated {
+  opacity: 0.5;
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.player-card.eliminated .player-name {
+  color: #9ca3af;
+  text-decoration: line-through;
+}
+
+.player-card.eliminated .player-lives {
+  background: #f3f4f6;
+  color: #6b7280;
+  border-color: #d1d5db;
 }
 
 .history-btn {

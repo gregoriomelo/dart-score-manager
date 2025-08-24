@@ -1,21 +1,25 @@
-import { Player, GameState } from '../types/game';
+import { Player, GameState, GameMode } from '../types/game';
 
-export const createPlayer = (name: string, startingScore: number): Player => ({
+export const createPlayer = (name: string, startingScore: number, gameMode: GameMode = 'countdown', startingLives?: number): Player => ({
   id: `player-${name.toLowerCase().replace(/\s+/g, '-')}`,
   name,
-  score: startingScore,
+  score: gameMode === 'high-low' ? 40 : startingScore,
   isWinner: false,
-  turnStartScore: startingScore,
+  turnStartScore: gameMode === 'high-low' ? 40 : startingScore,
   scoreHistory: [],
+  lives: gameMode === 'high-low' ? startingLives || 5 : undefined,
 });
 
-export const createGameState = (players: Player[]): GameState => {
+export const createGameState = (players: Player[], gameMode: GameMode = 'countdown', startingScore?: number, startingLives?: number): GameState => {
   return {
     players: players.map(player => ({ ...player, turnStartScore: player.score })),
     currentPlayerIndex: 0,
     gameFinished: false,
     winner: null,
     lastThrowWasBust: false,
+    gameMode,
+    startingScore,
+    startingLives,
   };
 };
 
@@ -134,7 +138,24 @@ export const nextPlayer = (gameState: GameState): GameState => {
     return gameState;
   }
 
-  // Move to next player and start new turn
+  // In high-low mode, skip players with 0 lives
+  if (gameState.gameMode === 'high-low') {
+    let nextIndex = (gameState.currentPlayerIndex + 1) % gameState.players.length;
+    let attempts = 0;
+    
+    // Find next player with lives remaining
+    while (attempts < gameState.players.length && (gameState.players[nextIndex].lives || 0) <= 0) {
+      nextIndex = (nextIndex + 1) % gameState.players.length;
+      attempts++;
+    }
+    
+    return startNewTurn({
+      ...gameState,
+      currentPlayerIndex: nextIndex,
+    });
+  }
+
+  // Regular countdown mode - move to next player
   const nextIndex = (gameState.currentPlayerIndex + 1) % gameState.players.length;
   
   return startNewTurn({
@@ -150,9 +171,10 @@ export const startGame = (gameState: GameState): GameState => ({
 export const resetGame = (gameState: GameState, startingScore: number = 501): GameState => {
   const resetPlayers = gameState.players.map(player => ({
     ...player,
-    score: startingScore,
+    score: gameState.gameMode === 'high-low' ? 40 : startingScore,
     isWinner: false,
-    turnStartScore: startingScore,
+    turnStartScore: gameState.gameMode === 'high-low' ? 40 : startingScore,
+    lives: gameState.gameMode === 'high-low' ? gameState.startingLives || 5 : undefined,
   }));
 
   return {
@@ -162,10 +184,116 @@ export const resetGame = (gameState: GameState, startingScore: number = 501): Ga
     gameFinished: false,
     winner: null,
     lastThrowWasBust: false,
+    highLowChallenge: undefined,
   };
 };
 
 export const getCurrentPlayer = (gameState: GameState): Player | null => {
   if (gameState.players.length === 0) return null;
   return gameState.players[gameState.currentPlayerIndex];
+};
+
+// High-Low specific game logic
+export const setHighLowChallenge = (gameState: GameState, direction: 'higher' | 'lower', targetScore: number): GameState => {
+  if (gameState.gameMode !== 'high-low') {
+    throw new Error('High-Low challenge can only be set in high-low game mode');
+  }
+  
+  const currentPlayer = getCurrentPlayer(gameState);
+  if (!currentPlayer) {
+    throw new Error('No current player');
+  }
+  
+  return {
+    ...gameState,
+    highLowChallenge: {
+      playerId: currentPlayer.id,
+      targetScore,
+      direction,
+    },
+  };
+};
+
+export const processHighLowTurn = (gameState: GameState, playerId: string, score: number): GameState => {
+  if (gameState.gameMode !== 'high-low') {
+    throw new Error('High-Low turn can only be processed in high-low game mode');
+  }
+  
+  if (!gameState.highLowChallenge) {
+    throw new Error('No high-low challenge set');
+  }
+  
+  if (gameState.highLowChallenge.playerId !== playerId) {
+    throw new Error('Challenge is not for this player');
+  }
+  
+  const playerIndex = gameState.players.findIndex(p => p.id === playerId);
+  if (playerIndex === -1) throw new Error('Player not found');
+
+  const currentPlayer = gameState.players[playerIndex];
+  const challenge = gameState.highLowChallenge;
+  
+  if (!challenge) throw new Error('No active challenge');
+
+  // Check if challenge was successful
+  const isSuccessful = 
+    (challenge.direction === 'higher' && score > challenge.targetScore) ||
+    (challenge.direction === 'lower' && score < challenge.targetScore);
+
+  const updatedPlayers = [...gameState.players];
+  const turnNumber = currentPlayer.scoreHistory.length + 1;
+
+  const historyEntry = {
+    score,
+    previousScore: currentPlayer.score,
+    timestamp: new Date(),
+    turnNumber,
+  };
+
+  if (isSuccessful) {
+    // Player succeeded - they get to set next challenge
+    updatedPlayers[playerIndex] = {
+      ...currentPlayer,
+      score,
+      scoreHistory: [...currentPlayer.scoreHistory, historyEntry],
+    };
+
+    return nextPlayer({
+      ...gameState,
+      players: updatedPlayers,
+      highLowChallenge: undefined, // Clear challenge, successful player will set new one
+    });
+  } else {
+    // Player failed - lose a life
+    const newLives = (currentPlayer.lives || 0) - 1;
+
+    updatedPlayers[playerIndex] = {
+      ...currentPlayer,
+      score,
+      lives: newLives,
+      isWinner: false,
+      scoreHistory: [...currentPlayer.scoreHistory, historyEntry],
+    };
+
+    // Check if game is over (only one player left with lives)
+    const playersWithLives = updatedPlayers.filter(p => (p.lives || 0) > 0);
+    const gameFinished = playersWithLives.length <= 1;
+    const winner = gameFinished ? playersWithLives[0] || null : null;
+
+    if (winner) {
+      updatedPlayers[updatedPlayers.findIndex(p => p.id === winner.id)].isWinner = true;
+    }
+
+    return nextPlayer({
+      ...gameState,
+      players: updatedPlayers,
+      gameFinished,
+      winner,
+      highLowChallenge: undefined, // Next player will decide challenge based on this score
+    });
+  }
+};
+
+export const isHighLowGameMode = (gameState: GameState): boolean => {
+  return gameState.gameMode === 'high-low';
 };

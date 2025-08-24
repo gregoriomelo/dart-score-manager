@@ -298,8 +298,8 @@ describe('GameBoard', () => {
         />
       );
 
-      expect(screen.getByText('Reset Game')).toBeInTheDocument();
-      expect(screen.getByText('New Game')).toBeInTheDocument();
+      expect(screen.getByText('Play Again')).toBeInTheDocument();
+      expect(screen.getByText('Back to Setup')).toBeInTheDocument();
     });
 
     it('does not show score input section when game is finished', () => {

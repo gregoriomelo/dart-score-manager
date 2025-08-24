@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { GameState } from '../types/game';
+import { GameState, GameMode } from '../types/game';
 import { 
   createPlayer,
   createGameState,
@@ -7,8 +7,11 @@ import {
   nextPlayer, 
   resetGame, 
   getCurrentPlayer, 
-  startGame 
-} from '../utils/gameLogic';
+  startGame,
+  setHighLowChallenge,
+  processHighLowTurn,
+  isHighLowGameMode
+} from '../utils/gameLogic/index';
 import { saveGameState, loadGameState, clearGameState } from '../utils/localStorage';
 
 export const useGameState = () => {
@@ -21,6 +24,7 @@ export const useGameState = () => {
       gameFinished: false,
       winner: null,
       lastThrowWasBust: false,
+      gameMode: 'countdown',
     };
   });
 
@@ -31,9 +35,8 @@ export const useGameState = () => {
     }
   }, [gameState]);
 
-  const initializeGame = useCallback((playerNames: string[], startingScore: number = 501) => {
-    const players = playerNames.map(name => createPlayer(name, startingScore));
-    setGameState(createGameState(players));
+  const initializeGame = useCallback((playerNames: string[], gameMode: GameMode = 'countdown', startingScore: number = 501, startingLives: number = 5) => {
+    setGameState(createGameState(playerNames, startingScore, gameMode, startingLives));
   }, []);
 
   const startNewGame = useCallback(() => {
@@ -57,7 +60,7 @@ export const useGameState = () => {
   }, []);
 
   const resetCurrentGame = useCallback(() => {
-    setGameState(prevState => resetGame(prevState));
+    setGameState(prevState => resetGame(prevState, prevState.startingLives, prevState.startingScore));
   }, []);
 
   const clearStoredGame = useCallback(() => {
@@ -68,6 +71,26 @@ export const useGameState = () => {
       gameFinished: false,
       winner: null,
       lastThrowWasBust: false,
+      gameMode: 'countdown',
+    });
+  }, []);
+
+  // High-Low specific functions
+  const setChallengeForHighLow = useCallback((direction: 'higher' | 'lower', targetScore: number, challengerId?: string) => {
+    setGameState(prevState => {
+      const currentPlayerId = challengerId || prevState.players[prevState.currentPlayerIndex]?.id || '';
+      return setHighLowChallenge(prevState, currentPlayerId, direction, targetScore);
+    });
+  }, []);
+
+  const submitHighLowScore = useCallback((playerId: string, score: number) => {
+    setGameState(prevState => {
+      try {
+        return processHighLowTurn(prevState, playerId, score);
+      } catch (error) {
+        console.error('Error processing high-low turn:', error);
+        return prevState;
+      }
     });
   }, []);
 
@@ -82,5 +105,8 @@ export const useGameState = () => {
     goToNextPlayer,
     resetCurrentGame,
     clearStoredGame,
+    setChallengeForHighLow,
+    submitHighLowScore,
+    isHighLowMode: isHighLowGameMode(gameState),
   };
 };

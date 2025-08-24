@@ -7,6 +7,9 @@ import {
   startGame,
   resetGame,
   getCurrentPlayer,
+  setHighLowChallenge,
+  processHighLowTurn,
+  isHighLowGameMode
 } from '../gameLogic';
 
 describe('gameLogic', () => {
@@ -20,6 +23,24 @@ describe('gameLogic', () => {
       expect(player.id).toBeDefined();
       expect(player.id.length).toBeGreaterThan(0);
       expect(player.scoreHistory).toEqual([]);
+    });
+
+    it('should create a High-Low player with score 40 and lives', () => {
+      const player = createPlayer('John', 501, 'high-low', 5);
+      
+      expect(player.name).toBe('John');
+      expect(player.score).toBe(40); // Should be 40 for High-Low, not 501
+      expect(player.lives).toBe(5);
+      expect(player.isWinner).toBe(false);
+      expect(player.turnStartScore).toBe(40);
+    });
+
+    it('should create a High-Low player with default 5 lives', () => {
+      const player = createPlayer('Jane', 301, 'high-low');
+      
+      expect(player.name).toBe('Jane');
+      expect(player.score).toBe(40); // Should be 40 for High-Low
+      expect(player.lives).toBe(5); // Default lives
     });
 
     it('should create a player with custom starting score', () => {
@@ -270,6 +291,27 @@ describe('gameLogic', () => {
       expect(resetState.players[0].isWinner).toBe(false);
       expect(resetState.players[1].isWinner).toBe(false);
     });
+
+    it('should reset High-Low players to score 40', () => {
+      const players = [createPlayer('Alice', 501, 'high-low', 3), createPlayer('Bob', 501, 'high-low', 3)];
+      let gameState = createGameState(players, 'high-low', undefined, 3);
+      
+      // Simulate some gameplay - modify scores and lives
+      gameState.players[0].score = 75;
+      gameState.players[0].lives = 1;
+      gameState.players[1].score = 25;
+      gameState.players[1].lives = 2;
+      
+      // Reset the game
+      const resetState = resetGame(gameState, 501);
+      
+      expect(resetState.players[0].score).toBe(40); // Should be 40 for High-Low
+      expect(resetState.players[1].score).toBe(40); // Should be 40 for High-Low
+      expect(resetState.players[0].lives).toBe(3); // Lives reset to starting lives
+      expect(resetState.players[1].lives).toBe(3);
+      expect(resetState.currentPlayerIndex).toBe(0);
+      expect(resetState.gameFinished).toBe(false);
+    });
   });
 
   describe('getCurrentPlayer', () => {
@@ -296,6 +338,155 @@ describe('gameLogic', () => {
       
       const currentPlayer = getCurrentPlayer(gameState);
       expect(currentPlayer?.name).toBe('Bob');
+    });
+  });
+
+  describe('High-Low Game Mode', () => {
+    describe('setHighLowChallenge', () => {
+      it('should set challenge for current player', () => {
+        const players = [createPlayer('Alice', 501, 'high-low', 5), createPlayer('Bob', 501, 'high-low', 5)];
+        const gameState = createGameState(players, 'high-low', undefined, 5);
+        
+        const updatedState = setHighLowChallenge(gameState, 'higher', 40);
+        
+        expect(updatedState.highLowChallenge).toEqual({
+          playerId: players[0].id,
+          direction: 'higher',
+          targetScore: 40
+        });
+      });
+
+      it('should throw error if not in high-low mode', () => {
+        const players = [createPlayer('Alice', 501), createPlayer('Bob', 501)];
+        const gameState = createGameState(players, 'countdown');
+        
+        expect(() => {
+          setHighLowChallenge(gameState, 'higher', 40);
+        }).toThrow('High-Low challenge can only be set in high-low game mode');
+      });
+    });
+
+    describe('processHighLowTurn', () => {
+      let gameState: ReturnType<typeof createGameState>;
+      
+      beforeEach(() => {
+        const players = [createPlayer('Alice', 501, 'high-low', 5), createPlayer('Bob', 501, 'high-low', 5)];
+        gameState = createGameState(players, 'high-low', undefined, 5);
+        gameState = setHighLowChallenge(gameState, 'higher', 40);
+      });
+
+      it('should process successful higher challenge', () => {
+        const updatedState = processHighLowTurn(gameState, gameState.players[0].id, 60);
+        
+        expect(updatedState.players[0].score).toBe(60);
+        expect(updatedState.players[0].lives).toBe(5); // Lives unchanged on success
+        expect(updatedState.currentPlayerIndex).toBe(1); // Advanced to next player
+        expect(updatedState.highLowChallenge).toBeUndefined(); // Challenge cleared
+      });
+
+      it('should process failed higher challenge', () => {
+        const updatedState = processHighLowTurn(gameState, gameState.players[0].id, 30);
+        
+        expect(updatedState.players[0].score).toBe(30);
+        expect(updatedState.players[0].lives).toBe(4); // Lost a life
+        expect(updatedState.currentPlayerIndex).toBe(1); // Advanced to next player
+        expect(updatedState.highLowChallenge).toBeUndefined(); // Challenge cleared
+      });
+
+      it('should process successful lower challenge', () => {
+        gameState = setHighLowChallenge(gameState, 'lower', 40);
+        const updatedState = processHighLowTurn(gameState, gameState.players[0].id, 25);
+        
+        expect(updatedState.players[0].score).toBe(25);
+        expect(updatedState.players[0].lives).toBe(5); // Lives unchanged on success
+      });
+
+      it('should process failed lower challenge', () => {
+        gameState = setHighLowChallenge(gameState, 'lower', 40);
+        const updatedState = processHighLowTurn(gameState, gameState.players[0].id, 50);
+        
+        expect(updatedState.players[0].score).toBe(50);
+        expect(updatedState.players[0].lives).toBe(4); // Lost a life
+      });
+
+      it('should eliminate player when lives reach 0', () => {
+        // Set player to 1 life
+        gameState.players[0].lives = 1;
+        
+        const updatedState = processHighLowTurn(gameState, gameState.players[0].id, 30); // Failed challenge
+        
+        expect(updatedState.players[0].lives).toBe(0);
+        expect(updatedState.players[0].score).toBe(30);
+      });
+
+      it('should throw error if no challenge is set', () => {
+        const gameStateNoChallenge = { ...gameState, highLowChallenge: undefined };
+        
+        expect(() => {
+          processHighLowTurn(gameStateNoChallenge, gameState.players[0].id, 60);
+        }).toThrow('No high-low challenge set');
+      });
+
+      it('should throw error if wrong player attempts turn', () => {
+        expect(() => {
+          processHighLowTurn(gameState, gameState.players[1].id, 60); // Bob trying Alice's challenge
+        }).toThrow('Challenge is not for this player');
+      });
+
+      it('should throw error if not in high-low mode', () => {
+        const players = [createPlayer('Alice', 501), createPlayer('Bob', 501)];
+        const countdownState = createGameState(players, 'countdown');
+        
+        expect(() => {
+          processHighLowTurn(countdownState, players[0].id, 60);
+        }).toThrow('High-Low turn can only be processed in high-low game mode');
+      });
+    });
+
+    describe('nextPlayer in High-Low mode', () => {
+      it('should skip eliminated players (0 lives)', () => {
+        const players = [
+          createPlayer('Alice', 501, 'high-low', 5),
+          createPlayer('Bob', 501, 'high-low', 0), // Eliminated
+          createPlayer('Charlie', 501, 'high-low', 3)
+        ];
+        const gameState = createGameState(players, 'high-low', undefined, 5);
+        gameState.players[1].lives = 0; // Bob eliminated
+        
+        const nextState = nextPlayer(gameState);
+        
+        expect(nextState.currentPlayerIndex).toBe(2); // Skipped Bob, went to Charlie
+      });
+
+      it('should cycle back to first non-eliminated player', () => {
+        const players = [
+          createPlayer('Alice', 501, 'high-low', 3),
+          createPlayer('Bob', 501, 'high-low', 0), // Eliminated
+          createPlayer('Charlie', 501, 'high-low', 5)
+        ];
+        const gameState = createGameState(players, 'high-low', undefined, 5);
+        gameState.players[1].lives = 0; // Bob eliminated
+        gameState.currentPlayerIndex = 2; // Charlie's turn
+        
+        const nextState = nextPlayer(gameState);
+        
+        expect(nextState.currentPlayerIndex).toBe(0); // Back to Alice, skipping Bob
+      });
+
+      it('should handle all players eliminated except one', () => {
+        const players = [
+          createPlayer('Alice', 501, 'high-low', 1),
+          createPlayer('Bob', 501, 'high-low', 0), // Eliminated
+          createPlayer('Charlie', 501, 'high-low', 0) // Eliminated
+        ];
+        const gameState = createGameState(players, 'high-low', undefined, 5);
+        gameState.players[1].lives = 0;
+        gameState.players[2].lives = 0;
+        
+        const nextState = nextPlayer(gameState);
+        
+        expect(nextState.currentPlayerIndex).toBe(0); // Only Alice left
+      });
     });
   });
 });

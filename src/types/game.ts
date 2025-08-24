@@ -1,3 +1,5 @@
+export type GameMode = 'countdown' | 'high-low';
+
 export interface ScoreHistoryEntry {
   score: number;
   previousScore: number;
@@ -12,6 +14,13 @@ export interface Player {
   isWinner: boolean;
   turnStartScore: number; // Score at the beginning of current turn
   scoreHistory: ScoreHistoryEntry[];
+  lives?: number; // For high-low mode
+}
+
+export interface HighLowChallenge {
+  playerId: string; // Player who must complete the challenge
+  targetScore: number;
+  direction: 'higher' | 'lower';
 }
 
 export interface GameState {
@@ -20,6 +29,10 @@ export interface GameState {
   gameFinished: boolean;
   winner: Player | null;
   lastThrowWasBust: boolean;
+  gameMode: GameMode;
+  startingScore?: number; // For countdown mode
+  startingLives?: number; // For high-low mode
+  highLowChallenge?: HighLowChallenge; // For high-low mode
 }
 
 export interface ScoreEntry {

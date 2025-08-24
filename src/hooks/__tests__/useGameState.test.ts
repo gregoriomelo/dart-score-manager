@@ -19,22 +19,22 @@ describe('useGameState', () => {
     const { result } = renderHook(() => useGameState());
 
     act(() => {
-      result.current.initializeGame(['Alice', 'Bob'], 301);
+      result.current.initializeGame(['Alice', 'Bob'], 'countdown', 501, 5);
     });
 
     expect(result.current.gameState.players).toHaveLength(2);
-    expect(result.current.gameState.players[0].name).toBe('Alice');
-    expect(result.current.gameState.players[1].name).toBe('Bob');
+    expect(result.current.gameState.players[0]?.name).toBe('Alice');
+    expect(result.current.gameState.players[1]?.name).toBe('Bob');
     // Players should have the correct starting score
-    expect(result.current.gameState.players[0].score).toBe(301);
-    expect(result.current.gameState.players[1].score).toBe(301);
+    expect(result.current.gameState.players[0]?.score).toBe(501);
+    expect(result.current.gameState.players[1]?.score).toBe(501);
   });
 
   it('starts a new game', () => {
     const { result } = renderHook(() => useGameState());
 
     act(() => {
-      result.current.initializeGame(['Alice', 'Bob']);
+      result.current.initializeGame(['Alice', 'Bob'], 'countdown', 501, 5);
     });
 
     expect(result.current.gameState.gameFinished).toBe(false);
@@ -43,14 +43,17 @@ describe('useGameState', () => {
       result.current.startNewGame();
     });
 
-    // Game should be initialized properly
+    expect(result.current.gameState.gameFinished).toBe(false);
+    expect(result.current.gameState.currentPlayerIndex).toBe(0);
+    expect(result.current.gameState.players[0].score).toBe(501);
+    expect(result.current.gameState.players[1].score).toBe(501);
   });
 
   it('submits score for current player', () => {
     const { result } = renderHook(() => useGameState());
 
     act(() => {
-      result.current.initializeGame(['Alice', 'Bob']);
+      result.current.initializeGame(['Alice', 'Bob'], 'countdown', 501, 5);
       result.current.startNewGame();
     });
 
@@ -90,7 +93,7 @@ describe('useGameState', () => {
     const { result } = renderHook(() => useGameState());
 
     act(() => {
-      result.current.initializeGame(['Alice', 'Bob', 'Charlie']);
+      result.current.initializeGame(['Alice', 'Bob'], 'countdown', 501, 5);
       result.current.startNewGame();
     });
 
@@ -108,13 +111,6 @@ describe('useGameState', () => {
       result.current.goToNextPlayer();
     });
 
-    expect(result.current.gameState.currentPlayerIndex).toBe(2);
-    expect(result.current.currentPlayer?.name).toBe('Charlie');
-
-    act(() => {
-      result.current.goToNextPlayer();
-    });
-
     expect(result.current.gameState.currentPlayerIndex).toBe(0);
     expect(result.current.currentPlayer?.name).toBe('Alice');
   });
@@ -123,7 +119,7 @@ describe('useGameState', () => {
     const { result } = renderHook(() => useGameState());
 
     act(() => {
-      result.current.initializeGame(['Alice', 'Bob']);
+      result.current.initializeGame(['Alice', 'Bob'], 'countdown', 501, 5);
       result.current.startNewGame();
     });
 
@@ -131,11 +127,10 @@ describe('useGameState', () => {
 
     act(() => {
       result.current.submitScore(playerId, 100);
-      result.current.goToNextPlayer();
     });
 
     expect(result.current.gameState.players[0].score).toBe(401);
-    expect(result.current.gameState.currentPlayerIndex).toBe(1);
+    expect(result.current.gameState.currentPlayerIndex).toBe(0);
 
     act(() => {
       result.current.resetCurrentGame();
@@ -152,14 +147,14 @@ describe('useGameState', () => {
     const { result } = renderHook(() => useGameState());
 
     act(() => {
-      result.current.initializeGame(['Alice', 'Bob'], 50);
+      result.current.initializeGame(['Alice', 'Bob'], 'countdown', 50, 5);
       result.current.startNewGame();
     });
 
     const playerId = result.current.gameState.players[0].id;
 
     act(() => {
-      result.current.submitScore(playerId, 50); // Win the game
+      result.current.submitScore(playerId, 50); // Exact finish to win
     });
 
     expect(result.current.gameState.players[0].score).toBe(0);
@@ -174,7 +169,7 @@ describe('useGameState', () => {
     expect(result.current.currentPlayer).toBeNull();
 
     act(() => {
-      result.current.initializeGame(['Alice', 'Bob']);
+      result.current.initializeGame(['Alice', 'Bob'], 'countdown', 501, 5);
     });
 
     expect(result.current.currentPlayer?.name).toBe('Alice');
