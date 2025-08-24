@@ -42,6 +42,28 @@ npm start
 
 Open [http://localhost:3000](http://localhost:3000) to view the app in your browser.
 
+### Running with Docker
+
+If you prefer to use Docker, you can run the application in a containerized environment:
+
+1. Make sure you have Docker and Docker Compose installed
+2. Build and start the container:
+```bash
+docker-compose up --build
+```
+
+3. The app will be available at [http://localhost:3000](http://localhost:3000)
+
+The Docker setup includes:
+- Live code reloading during development
+- Automatic dependency installation
+- Isolated environment that works consistently across different systems
+
+To stop the container:
+```bash
+docker-compose down
+```
+
 ## Available Scripts
 
 ### `npm start`
