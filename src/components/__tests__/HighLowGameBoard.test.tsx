@@ -63,8 +63,9 @@ describe('HighLowGameBoard', () => {
 
     expect(screen.getByText('Bob')).toBeInTheDocument();
     expect(screen.getByText('Lives: 0')).toBeInTheDocument();
-    // Check for eliminated CSS class
-    expect(screen.getByText('Bob')).toHaveClass('eliminated');
+    // Check for eliminated CSS class on the player card
+    const bobCard = screen.getByText('Bob').closest('.player-card');
+    expect(bobCard).toHaveClass('eliminated');
   });
 
   it('should display winner when game is finished', () => {

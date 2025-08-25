@@ -14,10 +14,11 @@ module.exports = {
       }
     },
     {
-      // Unit tests should allow screen usage
+      // Unit tests should allow screen usage and DOM access
       files: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
       rules: {
-        'no-restricted-globals': 'off'
+        'no-restricted-globals': 'off',
+        'testing-library/no-node-access': 'off'
       }
     }
   ]
