@@ -1,5 +1,4 @@
-import { Player, GameState } from '../../types/game';
-import { isValidScore, nextPlayer } from './common';
+import { GameState } from '../../types/game';
 
 export const updatePlayerScore = (gameState: GameState, playerId: string, scoreToSubtract: number): GameState => {
   const playerIndex = gameState.players.findIndex(p => p.id === playerId);

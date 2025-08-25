@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { HighLowChallenge as ChallengeType } from '../types/game';
 import './HighLowChallenge.css';
 

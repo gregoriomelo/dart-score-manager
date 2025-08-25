@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import GameBoard from '../GameBoard';
 import { GameState, Player } from '../../types/game';
@@ -25,6 +25,8 @@ describe('GameBoard', () => {
     gameFinished,
     winner: gameFinished ? players.find(p => p.isWinner) || null : null,
     lastThrowWasBust: false,
+    gameMode: 'countdown' as const,
+    startingScore: 501,
   });
 
   beforeEach(() => {

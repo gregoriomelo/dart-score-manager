@@ -1,5 +1,4 @@
-import { Player, GameState, HighLowChallenge } from '../../types/game';
-import { nextPlayer } from './common';
+import { GameState, HighLowChallenge } from '../../types/game';
 
 export const setHighLowChallenge = (
   gameState: GameState,

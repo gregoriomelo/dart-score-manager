@@ -1,17 +1,15 @@
 import { useState, useCallback, useEffect } from 'react';
 import { GameState, GameMode } from '../types/game';
 import { 
-  createPlayer,
-  createGameState,
   updatePlayerScore, 
   nextPlayer, 
-  resetGame, 
   getCurrentPlayer, 
   startGame,
-  setHighLowChallenge,
   processHighLowTurn,
   isHighLowGameMode
-} from '../utils/gameLogic/index';
+} from '../utils/gameLogic';
+import { createGameState, resetGame } from '../utils/gameLogic/common';
+import { setHighLowChallenge } from '../utils/gameLogic/highLow';
 import { saveGameState, loadGameState, clearGameState } from '../utils/localStorage';
 
 export const useGameState = () => {

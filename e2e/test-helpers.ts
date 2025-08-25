@@ -1,4 +1,4 @@
-import { Page, expect } from '@playwright/test';
+import { Page } from '@playwright/test';
 
 /**
  * Browser-specific waiting strategies for flaky tests

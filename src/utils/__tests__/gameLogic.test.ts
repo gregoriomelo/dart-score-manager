@@ -4,12 +4,10 @@ import {
   isValidScore,
   updatePlayerScore,
   nextPlayer,
-  startGame,
   resetGame,
   getCurrentPlayer,
   setHighLowChallenge,
-  processHighLowTurn,
-  isHighLowGameMode
+  processHighLowTurn
 } from '../gameLogic';
 
 describe('gameLogic', () => {

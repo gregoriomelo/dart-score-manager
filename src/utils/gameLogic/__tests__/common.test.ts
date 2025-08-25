@@ -1,12 +1,9 @@
 import {
   createPlayer,
   createGameState,
-  isValidScore,
-  getCurrentPlayer,
-  nextPlayer,
-  startGame,
   resetGame
 } from '../common';
+import { isValidScore, getCurrentPlayer, nextPlayer } from '../../gameLogic';
 
 describe('gameLogic/common', () => {
   describe('createPlayer', () => {
