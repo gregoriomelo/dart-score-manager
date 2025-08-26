@@ -54,7 +54,9 @@ export const startNewTurn = (gameState: GameState): GameState => {
   return {
     ...gameState,
     players: updatedPlayers,
-    lastThrowWasBust: false,
+    // Preserve bust visibility into the next player's turn; it will be
+    // reset on the next score update in updatePlayerScore()
+    lastThrowWasBust: gameState.lastThrowWasBust,
   };
 };
 
@@ -243,11 +245,14 @@ export const processHighLowTurn = (gameState: GameState, playerId: string, score
   const updatedPlayers = [...gameState.players];
   const turnNumber = currentPlayer.scoreHistory.length + 1;
 
-  const historyEntry = {
+  const baseHistoryEntry = {
     score,
     previousScore: currentPlayer.score,
     timestamp: new Date(),
     turnNumber,
+    // High-Low specific context for UI
+    challengeDirection: challenge.direction,
+    challengeTarget: challenge.targetScore,
   };
 
   if (isSuccessful) {
@@ -255,7 +260,15 @@ export const processHighLowTurn = (gameState: GameState, playerId: string, score
     updatedPlayers[playerIndex] = {
       ...currentPlayer,
       score,
-      scoreHistory: [...currentPlayer.scoreHistory, historyEntry],
+      scoreHistory: [
+        ...currentPlayer.scoreHistory,
+        {
+          ...baseHistoryEntry,
+          passedChallenge: true,
+          livesBefore: currentPlayer.lives,
+          livesAfter: currentPlayer.lives,
+        },
+      ],
     };
 
     return nextPlayer({
@@ -272,7 +285,15 @@ export const processHighLowTurn = (gameState: GameState, playerId: string, score
       score,
       lives: newLives,
       isWinner: false,
-      scoreHistory: [...currentPlayer.scoreHistory, historyEntry],
+      scoreHistory: [
+        ...currentPlayer.scoreHistory,
+        {
+          ...baseHistoryEntry,
+          passedChallenge: false,
+          livesBefore: currentPlayer.lives,
+          livesAfter: newLives,
+        },
+      ],
     };
 
     // Check if game is over (only one player left with lives)

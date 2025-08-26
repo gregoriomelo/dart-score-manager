@@ -42,11 +42,7 @@ const HighLowGameBoard: React.FC<HighLowGameBoardProps> = ({
       onSubmitHighLowScore(currentPlayer.id, score);
       setScoreInput('');
       setError('');
-      
-      // Auto advance to next player after score submission
-      if (!gameState.gameFinished) {
-        setTimeout(() => onNextPlayer(), 500);
-      }
+      // Note: processHighLowTurn already handles player advancement internally
     } catch (err) {
       setError('Invalid score entry');
     }
@@ -62,11 +58,25 @@ const HighLowGameBoard: React.FC<HighLowGameBoardProps> = ({
     }
   };
 
-  // Get the last score for reference
-  const hasAnyPlayerPlayed = gameState.players.some(p => p.scoreHistory.length > 0);
-  const lastPlayerScore = hasAnyPlayerPlayed ? 
-    gameState.players[(gameState.currentPlayerIndex - 1 + gameState.players.length) % gameState.players.length]?.score : 
-    undefined;
+  // Get the last score for reference - find the most recent score from any player's history
+  const getLastSubmittedScore = (): number | undefined => {
+    let latestScore: number | undefined = undefined;
+    let latestTimestamp = new Date(0);
+    
+    gameState.players.forEach(player => {
+      if (player.scoreHistory.length > 0) {
+        const lastEntry = player.scoreHistory[player.scoreHistory.length - 1];
+        if (lastEntry.timestamp > latestTimestamp) {
+          latestTimestamp = lastEntry.timestamp;
+          latestScore = lastEntry.score;
+        }
+      }
+    });
+    
+    return latestScore;
+  };
+  
+  const lastPlayerScore = getLastSubmittedScore();
   
   const needsChallengeSet = !gameState.highLowChallenge;
 

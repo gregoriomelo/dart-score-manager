@@ -198,6 +198,18 @@
   font-weight: 600;
 }
 
+/* Smooth show/hide for the bust banner */
+.bust-banner {
+  animation: bust-fade 2s ease-in-out forwards;
+}
+
+@keyframes bust-fade {
+  0% { opacity: 0; transform: translateY(-4px); }
+  10% { opacity: 1; transform: translateY(0); }
+  80% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-4px); }
+}
+
 .winner-announcement {
   background: #f0fdf4;
   color: #166534;

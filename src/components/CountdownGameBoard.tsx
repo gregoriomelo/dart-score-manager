@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { GameState, Player } from '../types/game';
 import ScoreHistory from './ScoreHistory';
 import ConsolidatedHistory from './ConsolidatedHistory';
@@ -25,6 +25,31 @@ const CountdownGameBoard: React.FC<CountdownGameBoardProps> = ({
   const [error, setError] = useState<string>('');
   const [historyPlayer, setHistoryPlayer] = useState<Player | null>(null);
   const [showConsolidatedHistory, setShowConsolidatedHistory] = useState(false);
+  const [showBustBanner, setShowBustBanner] = useState(false);
+  const [bustAnimKey, setBustAnimKey] = useState(0);
+
+  // Incrementing counter that changes whenever any score entry is added.
+  // This lets us re-trigger the bust banner even if the bust flag remains true.
+  const historyVersion = useMemo(
+    () => gameState.players.reduce((acc, p) => acc + p.scoreHistory.length, 0),
+    [gameState.players]
+  );
+
+  // When a bust occurs, show the banner and auto-dismiss after a short delay,
+  // but allow it to be visible at the start of the next player's turn.
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    if (gameState.lastThrowWasBust) {
+      setShowBustBanner(true);
+      setBustAnimKey((k) => k + 1);
+      timer = setTimeout(() => setShowBustBanner(false), 2000);
+    } else {
+      setShowBustBanner(false);
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [gameState.lastThrowWasBust, currentPlayer?.id, historyVersion]);
 
   const handleSubmitScore = () => {
     if (!currentPlayer) return;
@@ -39,10 +64,9 @@ const CountdownGameBoard: React.FC<CountdownGameBoardProps> = ({
       onSubmitScore(currentPlayer.id, score);
       setScoreInput('');
       setError('');
-      
-      // Auto advance to next player if game isn't finished
+      // Auto advance to next player immediately if game isn't finished
       if (!gameState.gameFinished) {
-        setTimeout(() => onNextPlayer(), 500);
+        onNextPlayer();
       }
     } catch (err) {
       setError('Invalid score entry');
@@ -137,8 +161,15 @@ const CountdownGameBoard: React.FC<CountdownGameBoardProps> = ({
       {currentPlayer && (
         <div className="score-input-section">
           <h3>{currentPlayer.name}'s Turn</h3>
-          {gameState.lastThrowWasBust && (
-            <div className="bust-message">BUST! Score reverted to turn start.</div>
+          {showBustBanner && (
+            <div
+              key={bustAnimKey}
+              className="bust-message bust-banner"
+              role="status"
+              aria-live="polite"
+            >
+              BUST! Score reverted to turn start.
+            </div>
           )}
           <div className="score-input">
             <input

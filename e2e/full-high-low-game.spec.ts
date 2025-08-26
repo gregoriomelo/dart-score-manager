@@ -108,14 +108,11 @@ test.describe('Full High-Low Game', () => {
       await scoreInput.fill(turn.score.toString());
       await page.getByRole('button', { name: 'Submit' }).click();
       
-      // Wait for turn processing: either next player highlighted or action buttons hidden
+      // Wait for turn processing: prefer buttons hidden; fallback to current player visible
       try {
-        await Promise.race([
-          page.locator('.player-card.current-player').waitFor({ timeout: 1000 }),
-          page.locator('.higher-btn').waitFor({ state: 'hidden', timeout: 1000 })
-        ]);
+        await page.locator('.higher-btn').waitFor({ state: 'hidden', timeout: 1000 });
       } catch {
-        await page.waitForTimeout(200);
+        await expect(page.locator('.player-card.current-player')).toBeVisible({ timeout: 1000 });
       }
     }
 

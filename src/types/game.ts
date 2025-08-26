@@ -5,6 +5,16 @@ export interface ScoreHistoryEntry {
   previousScore: number;
   timestamp: Date;
   turnNumber: number;
+  
+  // High-Low specific (optional)
+  challengeDirection?: 'higher' | 'lower';
+  challengeTarget?: number;
+  challengerId?: string; // Who set the challenge
+  passedChallenge?: boolean; // Whether the thrown score passed the challenge
+  livesBefore?: number;
+  livesAfter?: number;
+  roundNumber?: number; // Optional grouping/round info
+  note?: string; // Optional extra context
 }
 
 export interface Player {

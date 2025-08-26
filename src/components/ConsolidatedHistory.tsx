@@ -38,6 +38,12 @@ const ConsolidatedHistory: React.FC<ConsolidatedHistoryProps> = ({ players, isOp
     });
   });
 
+  const isHighLowMode = allEntries.some(({ entry }) =>
+    entry.challengeDirection !== undefined ||
+    entry.passedChallenge !== undefined ||
+    entry.livesAfter !== undefined
+  );
+
   // Sort entries based on selected criteria
   const sortedEntries = [...allEntries].sort((a, b) => {
     switch (sortBy) {
@@ -74,38 +80,96 @@ const ConsolidatedHistory: React.FC<ConsolidatedHistoryProps> = ({ players, isOp
             <p className="no-history">No scores recorded yet</p>
           ) : (
             <div className="consolidated-table">
-              <div className="consolidated-header">
-                <span>Player</span>
-                <span>Turn</span>
-                <span>Time</span>
-                <span>Score</span>
-                <span>From</span>
-                <span>To</span>
-              </div>
-              {sortedEntries.map((item, index) => {
-                const newScore = calculateNewScore(item.entry);
-                const isBust = newScore < 0 || newScore === 1;
-                
-                return (
-                  <div key={`${item.player.id}-${item.entry.turnNumber}-${index}`} 
-                       className={`consolidated-row ${isBust ? 'bust' : ''}`}>
-                    <span className="player-name-cell" style={{color: getPlayerColor(item.player.id)}}>
-                      {item.player.name}
-                    </span>
-                    <span className="turn-number">{item.entry.turnNumber}</span>
-                    <span className="time">{formatTime(item.entry.timestamp)}</span>
-                    <span className="score-thrown">{item.entry.score}</span>
-                    <span className="previous-score">{item.entry.previousScore}</span>
-                    <span className="new-score">
-                      {isBust ? (
-                        <span className="bust-indicator">BUST</span>
-                      ) : (
-                        newScore
-                      )}
-                    </span>
+              {isHighLowMode ? (
+                <>
+                  <div className="consolidated-header">
+                    <span>Player</span>
+                    <span>Turn</span>
+                    <span>Time</span>
+                    <span>Challenge</span>
+                    <span>Thrown</span>
+                    <span>Result</span>
+                    <span>Lives</span>
                   </div>
-                );
-              })}
+                  {sortedEntries.map((item, index) => {
+                    const { entry, player } = item;
+                    const challengeLabel = entry.challengeDirection && entry.challengeTarget !== undefined
+                      ? `${entry.challengeDirection === 'higher' ? 'Higher' : 'Lower'} ${entry.challengeTarget}`
+                      : '—';
+                    const resultPass = entry.passedChallenge === true;
+                    const resultFail = entry.passedChallenge === false;
+                    const livesBefore = entry.livesBefore ?? player.lives;
+                    const livesAfter = entry.livesAfter ?? player.lives;
+                    const eliminated = livesAfter !== undefined && livesAfter <= 0;
+
+                    return (
+                      <div key={`${player.id}-${entry.turnNumber}-${index}`} 
+                           className={`consolidated-row ${resultFail ? 'bust' : ''}`}>
+                        <span className="player-name-cell" style={{color: getPlayerColor(player.id)}}>
+                          {player.name}
+                        </span>
+                        <span className="turn-number">{entry.turnNumber}</span>
+                        <span className="time">{formatTime(entry.timestamp)}</span>
+                        <span className="challenge">{challengeLabel}</span>
+                        <span className="score-thrown">{entry.score}</span>
+                        <span className="result">
+                          {resultPass && <span className="pass-badge">PASS ✅</span>}
+                          {resultFail && <span className="fail-badge">FAIL ❌</span>}
+                          {!resultPass && !resultFail && <span>—</span>}
+                        </span>
+                        <span className="lives">
+                          {livesBefore !== undefined && livesAfter !== undefined ? (
+                            <>
+                              {livesBefore} → {livesAfter}{' '}
+                              {resultFail && (livesBefore || 0) > (livesAfter || 0) && (
+                                <span className="lives-delta">-1 💔</span>
+                              )}
+                              {eliminated && <span className="eliminated-badge">Eliminated ☠️</span>}
+                            </>
+                          ) : (
+                            '—'
+                          )}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </>
+              ) : (
+                <>
+                  <div className="consolidated-header">
+                    <span>Player</span>
+                    <span>Turn</span>
+                    <span>Time</span>
+                    <span>Score</span>
+                    <span>From</span>
+                    <span>To</span>
+                  </div>
+                  {sortedEntries.map((item, index) => {
+                    const newScore = calculateNewScore(item.entry);
+                    const isBust = newScore < 0 || newScore === 1;
+                    
+                    return (
+                      <div key={`${item.player.id}-${item.entry.turnNumber}-${index}`} 
+                           className={`consolidated-row ${isBust ? 'bust' : ''}`}>
+                        <span className="player-name-cell" style={{color: getPlayerColor(item.player.id)}}>
+                          {item.player.name}
+                        </span>
+                        <span className="turn-number">{item.entry.turnNumber}</span>
+                        <span className="time">{formatTime(item.entry.timestamp)}</span>
+                        <span className="score-thrown">{item.entry.score}</span>
+                        <span className="previous-score">{item.entry.previousScore}</span>
+                        <span className="new-score">
+                          {isBust ? (
+                            <span className="bust-indicator">BUST</span>
+                          ) : (
+                            newScore
+                          )}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </>
+              )}
             </div>
           )}
         </div>
@@ -116,7 +180,12 @@ const ConsolidatedHistory: React.FC<ConsolidatedHistoryProps> = ({ players, isOp
             <div className="current-scores-list">
               {players.map(player => (
                 <span key={player.id} className="current-score-item" style={{color: getPlayerColor(player.id)}}>
-                  <strong>{player.name}:</strong> {player.score}
+                  <strong>{player.name}:</strong>{' '}
+                  {isHighLowMode ? (
+                    <>Lives {player.lives ?? '—'}</>
+                  ) : (
+                    <>{player.score}</>
+                  )}
                   {player.isWinner && <span className="winner-badge">🏆</span>}
                 </span>
               ))}

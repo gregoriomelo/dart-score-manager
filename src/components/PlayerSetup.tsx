@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { GameMode } from '../types/game';
 import './PlayerSetup.css';
 
@@ -11,6 +11,8 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onStartGame }) => {
   const [gameMode, setGameMode] = useState<GameMode>('countdown');
   const [startingScore, setStartingScore] = useState<number>(501);
   const [startingLives, setStartingLives] = useState<number>(5);
+  const [lastAddedPlayerIndex, setLastAddedPlayerIndex] = useState<number | null>(null);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const handlePlayerNameChange = (index: number, name: string) => {
     const updatedNames = [...playerNames];
@@ -20,7 +22,9 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onStartGame }) => {
 
   const addPlayer = () => {
     if (playerNames.length < 8) {
+      const newIndex = playerNames.length;
       setPlayerNames([...playerNames, '']);
+      setLastAddedPlayerIndex(newIndex);
     }
   };
 
@@ -37,6 +41,14 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onStartGame }) => {
       onStartGame(validNames, gameMode, startingScore, startingLives);
     }
   };
+
+  // Focus on the newly added player input field
+  useEffect(() => {
+    if (lastAddedPlayerIndex !== null && inputRefs.current[lastAddedPlayerIndex]) {
+      inputRefs.current[lastAddedPlayerIndex]?.focus();
+      setLastAddedPlayerIndex(null);
+    }
+  }, [lastAddedPlayerIndex]);
 
   const isValidToStart = playerNames.filter(name => name.trim() !== '').length >= 2;
 
@@ -70,15 +82,18 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onStartGame }) => {
 
         {gameMode === 'high-low' && (
           <div>
-            <label>Starting Lives:</label>
-            <input
-              type="number"
-              value={startingLives}
-              onChange={(e) => setStartingLives(parseInt(e.target.value) || 5)}
-              placeholder="5"
-              min="1"
-              max="10"
-            />
+            <label>
+              Starting Lives:
+              <br />
+              <input
+                type="number"
+                value={startingLives}
+                onChange={(e) => setStartingLives(parseInt(e.target.value) || 5)}
+                placeholder="5"
+                min="1"
+                max="10"
+              />
+            </label>
           </div>
         )}
 
@@ -93,6 +108,7 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onStartGame }) => {
                 value={name}
                 onChange={(e) => handlePlayerNameChange(index, e.target.value)}
                 maxLength={20}
+                ref={(el) => { inputRefs.current[index] = el; }}
               />
               {playerNames.length > 2 && (
                 <button
