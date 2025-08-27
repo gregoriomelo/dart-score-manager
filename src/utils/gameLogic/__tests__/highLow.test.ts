@@ -43,7 +43,7 @@ describe('gameLogic/highLow', () => {
       const updatedState = processHighLowTurn(gameState, playerId, 60); // 60 > 40
       
       expect(updatedState.players[0].score).toBe(60);
-      expect(updatedState.currentPlayerIndex).toBe(0); // Should not auto-advance player
+      expect(updatedState.currentPlayerIndex).toBe(1); // Should auto-advance player
       expect(updatedState.highLowChallenge).toBeUndefined(); // Challenge cleared
     });
 
@@ -60,7 +60,7 @@ describe('gameLogic/highLow', () => {
       
       expect(updatedState.players[0].score).toBe(30);
       expect(updatedState.players[0].lives).toBe(4); // Lost a life
-      expect(updatedState.currentPlayerIndex).toBe(0); // Should not auto-advance player
+      expect(updatedState.currentPlayerIndex).toBe(1); // Should auto-advance player
     });
 
     it('should process successful lower challenge', () => {
@@ -75,7 +75,7 @@ describe('gameLogic/highLow', () => {
       const updatedState = processHighLowTurn(gameState, playerId, 30); // 30 < 40
       
       expect(updatedState.players[0].score).toBe(30);
-      expect(updatedState.currentPlayerIndex).toBe(0); // Should not auto-advance player
+      expect(updatedState.currentPlayerIndex).toBe(1); // Should auto-advance player
       expect(updatedState.highLowChallenge).toBeUndefined(); // Challenge cleared
     });
 

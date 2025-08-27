@@ -1,4 +1,5 @@
 import { GameState, HighLowChallenge } from '../../types/game';
+import { nextPlayer } from './common';
 
 export const setHighLowChallenge = (
   gameState: GameState,
@@ -63,11 +64,13 @@ export const processHighLowTurn = (gameState: GameState, playerId: string, score
       scoreHistory: [...currentPlayer.scoreHistory, historyEntry],
     };
 
-    return {
+    const nextState: GameState = {
       ...gameState,
       players: updatedPlayers,
       highLowChallenge: undefined, // Clear challenge, successful player will set new one
     };
+
+    return nextPlayer(nextState);
   } else {
     // Player failed - lose a life
     const newLives = (currentPlayer.lives || 0) - 1;
@@ -89,13 +92,15 @@ export const processHighLowTurn = (gameState: GameState, playerId: string, score
       updatedPlayers[updatedPlayers.findIndex(p => p.id === winner.id)].isWinner = true;
     }
 
-    return {
+    const nextState: GameState = {
       ...gameState,
       players: updatedPlayers,
       gameFinished,
       winner,
-      highLowChallenge: undefined, // Next player will decide challenge based on this score
+      highLowChallenge: undefined,
     };
+
+    return nextPlayer(nextState);
   }
 };
 

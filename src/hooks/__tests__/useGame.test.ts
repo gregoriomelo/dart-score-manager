@@ -1,14 +1,14 @@
 import { renderHook, act } from '@testing-library/react';
-import { useGameState } from '../useGameState';
+import { useGame } from '../useGame';
 
-describe('useGameState', () => {
+describe('useGame', () => {
   beforeEach(() => {
     // Clear localStorage before each test
     localStorage.clear();
   });
 
   it('initializes with empty game state', () => {
-    const { result } = renderHook(() => useGameState());
+    const { result } = renderHook(() => useGame());
 
     expect(result.current.gameState.players).toHaveLength(0);
     expect(result.current.gameState.gameFinished).toBe(false);
@@ -16,7 +16,7 @@ describe('useGameState', () => {
   });
 
   it('initializes game with players', () => {
-    const { result } = renderHook(() => useGameState());
+    const { result } = renderHook(() => useGame());
 
     act(() => {
       result.current.initializeGame(['Alice', 'Bob'], 'countdown', 501, 5);
@@ -31,7 +31,7 @@ describe('useGameState', () => {
   });
 
   it('starts a new game', () => {
-    const { result } = renderHook(() => useGameState());
+    const { result } = renderHook(() => useGame());
 
     act(() => {
       result.current.initializeGame(['Alice', 'Bob'], 'countdown', 501, 5);
@@ -50,7 +50,7 @@ describe('useGameState', () => {
   });
 
   it('submits score for current player', () => {
-    const { result } = renderHook(() => useGameState());
+    const { result } = renderHook(() => useGame());
 
     act(() => {
       result.current.initializeGame(['Alice', 'Bob'], 'countdown', 501, 5);
@@ -68,7 +68,7 @@ describe('useGameState', () => {
   });
 
   it('handles invalid score submission gracefully', () => {
-    const { result } = renderHook(() => useGameState());
+    const { result } = renderHook(() => useGame());
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
     act(() => {
@@ -90,7 +90,7 @@ describe('useGameState', () => {
   });
 
   it('advances to next player', () => {
-    const { result } = renderHook(() => useGameState());
+    const { result } = renderHook(() => useGame());
 
     act(() => {
       result.current.initializeGame(['Alice', 'Bob'], 'countdown', 501, 5);
@@ -116,7 +116,7 @@ describe('useGameState', () => {
   });
 
   it('resets current game', () => {
-    const { result } = renderHook(() => useGameState());
+    const { result } = renderHook(() => useGame());
 
     act(() => {
       result.current.initializeGame(['Alice', 'Bob'], 'countdown', 501, 5);
@@ -144,7 +144,7 @@ describe('useGameState', () => {
   });
 
   it('handles winning scenario', () => {
-    const { result } = renderHook(() => useGameState());
+    const { result } = renderHook(() => useGame());
 
     act(() => {
       result.current.initializeGame(['Alice', 'Bob'], 'countdown', 50, 5);
@@ -164,7 +164,7 @@ describe('useGameState', () => {
   });
 
   it('returns correct current player', () => {
-    const { result } = renderHook(() => useGameState());
+    const { result } = renderHook(() => useGame());
     
     expect(result.current.currentPlayer).toBeNull();
 

@@ -1,0 +1,214 @@
+/* History Modal General Styles */
+.history-view-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.history-view-modal {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.history-view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+}
+
+.history-view-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #111827;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 0;
+  line-height: 1;
+}
+
+.close-button:hover {
+  color: #111827;
+}
+
+.sort-controls {
+  padding: 12px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #f9fafb;
+}
+
+.sort-controls label {
+  font-weight: 600;
+  color: #374151;
+}
+
+.sort-controls select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background-color: #fff;
+  font-size: 1rem;
+}
+
+.history-view-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 8px 24px 24px;
+}
+
+.no-history {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.1rem;
+  color: #6b7280;
+}
+
+.history-table {
+  display: flex;
+  flex-direction: column;
+}
+
+.history-header,
+.history-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr); /* Default for Countdown */
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e5e7eb;
+  align-items: center;
+  text-align: center;
+}
+
+.history-header {
+  font-weight: 700;
+  color: #374151;
+  background-color: #f9fafb;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.history-row {
+  font-size: 1rem;
+}
+
+.history-row.bust {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.history-row .player-name-cell {
+  font-weight: 600;
+}
+
+.history-row .turn-number {
+  color: #6b7280;
+}
+
+.history-row .time {
+  font-family: monospace;
+  color: #4b5563;
+}
+
+.history-row .score-thrown {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.history-row .previous-score {
+  color: #6b7280;
+}
+
+.history-row .new-score {
+  font-weight: 700;
+}
+
+.bust-indicator {
+  font-weight: 700;
+  color: #ef4444;
+}
+
+/* High-Low Specific Grid Layout */
+.history-table.high-low .history-header,
+.history-table.high-low .history-row {
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.pass-badge, .fail-badge, .eliminated-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.pass-badge {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.fail-badge {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.lives-delta {
+  font-weight: 600;
+}
+
+.eliminated-badge {
+  background-color: #111827;
+  color: #f9fafb;
+  margin-left: 8px;
+}
+
+.history-view-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+}
+
+.current-scores h4 {
+  margin: 0 0 12px;
+  font-size: 1.2rem;
+}
+
+.current-scores-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.current-score-item {
+  font-size: 1.1rem;
+}
+
+.winner-badge {
+  margin-left: 8px;
+  font-size: 1.2rem;
+}

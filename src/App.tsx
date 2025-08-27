@@ -1,6 +1,6 @@
 import React from 'react';
 import { GameMode } from './types/game';
-import { useGameState } from './hooks/useGameState';
+import { useGame } from './hooks/useGame';
 import PlayerSetup from './components/PlayerSetup';
 import GameBoard from './components/GameBoard';
 import './App.css';
@@ -17,7 +17,7 @@ function App() {
     clearStoredGame,
     setChallengeForHighLow,
     submitHighLowScore,
-  } = useGameState();
+  } = useGame();
 
   const handleStartGame = (playerNames: string[], gameMode: GameMode, startingScore: number, startingLives: number) => {
     initializeGame(playerNames, gameMode, startingScore, startingLives);
