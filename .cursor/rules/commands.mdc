@@ -1,0 +1,7 @@
+---
+description: Always kill commands that take too long
+globs:
+alwaysApply: true
+---
+
+- Kill any command that takes longer than 2 minutes to run.

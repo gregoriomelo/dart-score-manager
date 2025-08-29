@@ -1,37 +1,14 @@
 import { test, expect } from '@playwright/test';
+import { setupTest, createTestHelper } from './test-helpers';
 
 test.describe('Full High-Low Game', () => {
   test.setTimeout(120000); // 2 minutes for the full game test
   test.beforeEach(async ({ page }) => {
-    await page.goto('/', { waitUntil: 'networkidle' });
-    
-    // Set up a high-low game with 5 players using real names
-    await page.getByPlaceholder('Player 1 name').fill('Alice');
-    await page.getByPlaceholder('Player 2 name').fill('Bob');
-    
-    // Add more players by clicking add button if needed
-    const addPlayerButton = page.getByRole('button', { name: /Add Player/i });
-    if (await addPlayerButton.isVisible()) {
-      await addPlayerButton.click();
-      await page.getByPlaceholder('Player 3 name').focus();
-      await page.getByPlaceholder('Player 3 name').fill('Charlie');
-      
-      await addPlayerButton.click();
-      await page.getByPlaceholder('Player 4 name').focus();
-      await page.getByPlaceholder('Player 4 name').fill('Diana');
-      
-      await addPlayerButton.click();
-      await page.getByPlaceholder('Player 5 name').focus();
-      await page.getByPlaceholder('Player 5 name').fill('Eve');
-    }
-    
-    // Select High-Low mode
-    await page.locator('.game-mode-select').selectOption('high-low');
-    
-    // Set 3 lives for elimination - target the lives input field specifically
-    await page.getByLabel('Starting Lives:').fill('3');
-    
-    await page.getByRole('button', { name: 'Start Game' }).click();
+    await setupTest(page, {
+      players: ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve'],
+      gameMode: 'high-low',
+      startingLives: 3
+    });
   });
 
   test('should complete a high-low game with player elimination and winner validation', async ({ page }) => {
@@ -107,13 +84,6 @@ test.describe('Full High-Low Game', () => {
       const scoreInput = page.getByPlaceholder('Enter score (0-180)');
       await scoreInput.fill(turn.score.toString());
       await page.getByRole('button', { name: 'Submit' }).click();
-      
-      // Wait for turn processing: prefer buttons hidden; fallback to current player visible
-      try {
-        await page.locator('.higher-btn').waitFor({ state: 'hidden', timeout: 1000 });
-      } catch {
-        await expect(page.locator('.player-card.current-player')).toBeVisible({ timeout: 1000 });
-      }
     }
 
     // Verify game completion deterministically via lives display
@@ -133,11 +103,13 @@ test.describe('Full High-Low Game', () => {
     // Test history functionality works even after game completion
     const historyBtn = page.getByRole('button', { name: /All History/ });
     if (await historyBtn.isVisible()) {
-      await historyBtn.click();
+      // Use the helper to safely click the history button
+      const helper = createTestHelper(page);
+      await helper.clickButtonSafely(/All History/);
       await expect(page.getByText('Game History - All Players')).toBeVisible({ timeout: 800 });
       
       // Close history and wait for it to actually close
-      await page.getByRole('button', { name: /Close|×/ }).click();
+      await page.locator('.close-button').click();
       await expect(page.getByText('Game History - All Players')).toBeHidden({ timeout: 500 });
     }
   });

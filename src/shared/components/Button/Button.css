@@ -1,0 +1,137 @@
+/* Base button styles */
+.shared-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.shared-button:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+/* Size variants */
+.shared-button--small {
+  padding: 6px 12px;
+  font-size: 14px;
+  min-height: 32px;
+}
+
+.shared-button--medium {
+  padding: 8px 16px;
+  font-size: 16px;
+  min-height: 40px;
+}
+
+.shared-button--large {
+  padding: 12px 24px;
+  font-size: 18px;
+  min-height: 48px;
+}
+
+/* Color variants */
+.shared-button--primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.shared-button--primary:hover:not(.shared-button--disabled) {
+  background-color: #0056b3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+.shared-button--secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.shared-button--secondary:hover:not(.shared-button--disabled) {
+  background-color: #545b62;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+}
+
+.shared-button--danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.shared-button--danger:hover:not(.shared-button--disabled) {
+  background-color: #c82333;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+.shared-button--ghost {
+  background-color: transparent;
+  color: #007bff;
+  border: 1px solid #007bff;
+}
+
+.shared-button--ghost:hover:not(.shared-button--disabled) {
+  background-color: #007bff;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+/* Disabled state */
+.shared-button--disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Loading state */
+.shared-button--loading {
+  cursor: wait;
+}
+
+.shared-button--loading .shared-button__content {
+  opacity: 0.7;
+}
+
+.shared-button__loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .shared-button--large {
+    padding: 10px 20px;
+    font-size: 16px;
+    min-height: 44px;
+  }
+  
+  .shared-button--medium {
+    padding: 6px 12px;
+    font-size: 14px;
+    min-height: 36px;
+  }
+}
+

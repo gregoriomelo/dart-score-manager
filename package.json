@@ -2,7 +2,7 @@
   "name": "dart-score-manager",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://gregoriomelo.github.io/dart-score-manager",
+  "homepage": ".",
   "dependencies": {
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.7.0",
@@ -18,10 +18,13 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
-    "test": "craco test",
+    "test": "craco test --watchAll=false",
+    "test:watch": "craco test",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright test --reporter=html",
+    "test:e2e:show-report": "playwright show-report",
     "eject": "react-scripts eject",
     "postinstall": "patch-package",
     "lint": "eslint src/ e2e/ --ext .ts,.tsx,.js,.jsx",

@@ -43,7 +43,7 @@ module.exports = {
   devServer: {
     // Suppress webpack dev server deprecation warnings
     client: {
-      overlay: {
+      overlay: process.env.NODE_ENV === 'test' ? false : {
         warnings: false,
         errors: true
       }

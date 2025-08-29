@@ -1,25 +1,18 @@
 import { test, expect } from '@playwright/test';
+import { setupTest, removeWebpackOverlay, createTestHelper } from './test-helpers';
 
 test.describe('Full Countdown Game - 5 Players', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await setupTest(page, {
+      players: ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve'],
+      gameMode: 'countdown',
+      startingScore: 501
+    });
   });
 
   test('should complete a full countdown game with busts in final rounds', async ({ page }) => {
-    // Set up game with 5 players
-    await page.getByPlaceholder('Player 1 name').fill('Alice');
-    await page.getByPlaceholder('Player 2 name').fill('Bob');
-    
-    // Add 3 more players
-    await page.getByRole('button', { name: 'Add Player' }).click();
-    await page.getByPlaceholder('Player 3 name').fill('Charlie');
-    await page.getByRole('button', { name: 'Add Player' }).click();
-    await page.getByPlaceholder('Player 4 name').fill('Diana');
-    await page.getByRole('button', { name: 'Add Player' }).click();
-    await page.getByPlaceholder('Player 5 name').fill('Eve');
-    
-    // Start the game
-    await page.getByRole('button', { name: 'Start Game' }).click();
+    // Remove webpack overlay before interactions
+    await removeWebpackOverlay(page);
     
     // Verify initial setup
     await expect(page.locator('.player-card').first().getByText('Alice')).toBeVisible();
@@ -53,23 +46,31 @@ test.describe('Full Countdown Game - 5 Players', () => {
     
     // Execute the predefined sequence
     for (const turn of scoreSequence) {
-      // Assert it's this player's turn
-      await expect(
-        page.locator('.player-card.current-player').filter({ hasText: turn.player })
-      ).toBeVisible();
-
+      // Wait for current player to be visible and ready
+      await page.waitForSelector(`.player-card.current-player:has-text("${turn.player}")`, { timeout: 5000 });
+      
       // Reference the current player's card (used after submission)
       const playerCard = page.locator('.player-card').filter({ hasText: turn.player });
       
-      // Submit the score
-      const scoreInput = page.getByPlaceholder('Enter score (0-180)');
-      await scoreInput.fill(turn.score.toString());
-      await page.getByRole('button', { name: 'Submit' }).click();
+      // Remove webpack overlay before interactions
+      await removeWebpackOverlay(page);
       
-      // Check if it was a bust (score stayed the same)
+      // Wait for score input to be ready and submit the score
+      const scoreInput = page.getByPlaceholder('Enter score (0-180)');
+      await scoreInput.waitFor({ state: 'visible', timeout: 5000 });
+      await scoreInput.fill(turn.score.toString());
+      
+      const submitButton = page.getByRole('button', { name: 'Submit' });
+      await submitButton.waitFor({ state: 'visible', timeout: 5000 });
+      
+      // Remove overlay before clicking
+      await removeWebpackOverlay(page);
+      await submitButton.click();
+      
+      // Wait for score update and check if it was a bust
+      await page.waitForSelector(`.player-card:has-text("${turn.player}") .player-score, .player-card:has-text("${turn.player}") .score`, { timeout: 5000 });
       const scoreAfter = await playerCard.getByText(/^\d+$/).first().textContent();
       const scoreAfterNum = parseInt(scoreAfter || '0');
-      // Note: We no longer count busts dynamically; we assert a fixed count later.
       
       // Check if someone won (reached 0)
       if (scoreAfterNum === 0) {
@@ -90,7 +91,9 @@ test.describe('Full Countdown Game - 5 Players', () => {
     
     // Open and validate history window
     try {
-      await page.getByRole('button', { name: /All History/i }).click();
+      // Use the helper to safely click the history button
+      const helper = createTestHelper(page);
+      await helper.clickButtonSafely(/All History/i);
       await expect(page.getByText('Game History - All Players')).toBeVisible({ timeout: 5000 });
       
       // Validate busts are visible in history (scroll into view to avoid off-screen false negatives)

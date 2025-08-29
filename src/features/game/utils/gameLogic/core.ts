@@ -1,0 +1,380 @@
+import { Player, GameState, GameMode, CountdownPlayer, HighLowPlayer, CountdownGameState, HighLowGameState, isHighLowPlayer } from '../../../../shared/types/game';
+
+export const createPlayer = (
+  name: string, 
+  startingScore: number = 501, 
+  gameMode: GameMode = 'countdown',
+  lives: number = 5
+): Player => {
+  const trimmedName = name.trim();
+  
+  if (gameMode === 'high-low') {
+    const player: HighLowPlayer = {
+      id: (Date.now() + Math.random()).toString(),
+      name: trimmedName,
+      score: 40, // Always start with 40 for High-Low mode
+      lives: lives, // Use configurable lives parameter
+      scoreHistory: [],
+      isWinner: false,
+      turnStartScore: 40,
+    };
+    return player;
+  }
+  
+  const player: CountdownPlayer = {
+    id: (Date.now() + Math.random()).toString(),
+    name: trimmedName,
+    score: startingScore,
+    scoreHistory: [],
+    isWinner: false,
+    turnStartScore: startingScore,
+  };
+  return player;
+};
+
+export const createGameState = (
+  playerNames: string[], 
+  startingScore: number = 501,
+  gameMode: GameMode = 'countdown',
+  lives: number = 5
+): GameState => {
+  if (gameMode === 'countdown') {
+    const players: CountdownPlayer[] = playerNames.map(name => {
+      const player = createPlayer(name, startingScore, gameMode, lives);
+      return player as CountdownPlayer;
+    });
+    return {
+      players,
+      currentPlayerIndex: 0,
+      gameFinished: false,
+      winner: null,
+      lastThrowWasBust: false,
+      gameMode: 'countdown',
+      startingScore,
+    };
+  } else {
+    const players: HighLowPlayer[] = playerNames.map(name => {
+      const player = createPlayer(name, startingScore, gameMode, lives);
+      return player as HighLowPlayer;
+    });
+    return {
+      players,
+      currentPlayerIndex: 0,
+      gameFinished: false,
+      winner: null,
+      lastThrowWasBust: false,
+      gameMode: 'high-low',
+      startingLives: lives,
+      highLowChallenge: undefined,
+    };
+  }
+};
+
+export const isValidScore = (currentScore: number, scoreToSubtract: number): boolean => {
+  if (scoreToSubtract < 0 || scoreToSubtract > 180) {
+    return false;
+  }
+  
+  const newScore = currentScore - scoreToSubtract;
+  return newScore >= 0;
+};
+
+export const isBust = (currentScore: number, scoreToSubtract: number): boolean => {
+  // Bust if score exceeds remaining points
+  if (scoreToSubtract > currentScore) return true;
+  
+  const newScore = currentScore - scoreToSubtract;
+  
+  // Bust if would go below zero
+  if (newScore < 0) return true;
+  
+  // Bust if remaining score would be 1
+  if (newScore === 1) return true;
+  
+  return false;
+};
+
+export const getCurrentPlayer = (gameState: GameState): Player | null => {
+  if (gameState.players.length === 0) {
+    return null;
+  }
+  return gameState.players[gameState.currentPlayerIndex] || null;
+};
+
+export const nextPlayer = (gameState: GameState): GameState => {
+  if (gameState.gameFinished) {
+    return gameState;
+  }
+
+  const totalPlayers = gameState.players.length;
+  let nextIndex = gameState.currentPlayerIndex;
+
+  if (gameState.gameMode === 'high-low') {
+    // In High-Low mode, skip players with no lives
+    let attempts = 0;
+    do {
+      nextIndex = (nextIndex + 1) % totalPlayers;
+      attempts++;
+      
+      // Prevent infinite loop if all players are eliminated
+      if (attempts >= totalPlayers) {
+        break;
+      }
+    } while (isHighLowPlayer(gameState.players[nextIndex]) && gameState.players[nextIndex].lives <= 0);
+  } else {
+    nextIndex = (nextIndex + 1) % totalPlayers;
+  }
+
+  // Update turnStartScore for the new current player (only for countdown mode)
+  // For High-Low mode, preserve the existing players array (which may have updated lives)
+  if (gameState.gameMode === 'countdown') {
+    const updatedPlayers = gameState.players.map((player, index) => {
+      if (index === nextIndex) {
+        return {
+          ...player,
+          turnStartScore: player.score, // Set turn start score to current score
+        };
+      }
+      return player;
+    });
+
+    return {
+      ...gameState,
+      currentPlayerIndex: nextIndex,
+      players: updatedPlayers,
+    };
+  } else {
+    // For High-Low mode, preserve existing players array
+    return {
+      ...gameState,
+      currentPlayerIndex: nextIndex,
+    };
+  }
+};
+
+export const startGame = (gameState: GameState): GameState => {
+  // Initialize turnStartScore for the first player
+  if (gameState.gameMode === 'countdown') {
+    const updatedPlayers = gameState.players.map((player, index) => {
+      if (index === gameState.currentPlayerIndex) {
+        return {
+          ...player,
+          turnStartScore: player.score,
+        };
+      }
+      return player;
+    });
+
+    return {
+      ...gameState,
+      players: updatedPlayers,
+    };
+  } else {
+    // For High-Low mode, just return the state as is
+    return gameState;
+  }
+};
+
+
+
+export const updatePlayerScore = (
+  gameState: GameState,
+  playerId: string,
+  scoreToSubtract: number
+): GameState => {
+  if (gameState.gameMode === 'countdown') {
+    return updateCountdownPlayerScore(gameState as CountdownGameState, playerId, scoreToSubtract);
+  } else {
+    return updateHighLowPlayerScore(gameState as HighLowGameState, playerId, scoreToSubtract);
+  }
+};
+
+const updateCountdownPlayerScore = (
+  gameState: CountdownGameState,
+  playerId: string,
+  scoreToSubtract: number
+): CountdownGameState => {
+  const playerIndex = gameState.players.findIndex(p => p.id === playerId);
+  
+  if (playerIndex === -1) {
+    throw new Error('Player not found');
+  }
+
+  const currentPlayer = gameState.players[playerIndex];
+  
+  if (scoreToSubtract < 0 || scoreToSubtract > 180) {
+    throw new Error('Invalid score: exceeds maximum possible score');
+  }
+
+  // Check for bust
+  const bustOccurred = isBust(currentPlayer.score, scoreToSubtract);
+  const updatedPlayers = [...gameState.players];
+  
+  // Calculate turn number based on existing history
+  const turnNumber = currentPlayer.scoreHistory.length + 1;
+  
+  if (bustOccurred) {
+    // Add bust entry to history
+    const historyEntry = {
+      score: scoreToSubtract,
+      previousScore: currentPlayer.score,
+      timestamp: new Date(),
+      turnNumber,
+    };
+    
+    // Revert to turn start score on bust
+    updatedPlayers[playerIndex] = {
+      ...currentPlayer,
+      score: currentPlayer.turnStartScore,
+      scoreHistory: [...currentPlayer.scoreHistory, historyEntry],
+    };
+    
+    return {
+      ...gameState,
+      players: updatedPlayers as HighLowPlayer[],
+      lastThrowWasBust: true,
+    };
+  }
+
+  // Normal score update
+  const newScore = currentPlayer.score - scoreToSubtract;
+  const historyEntry = {
+    score: scoreToSubtract,
+    previousScore: currentPlayer.score,
+    timestamp: new Date(),
+    turnNumber,
+  };
+  
+  updatedPlayers[playerIndex] = {
+    ...currentPlayer,
+    score: newScore,
+    isWinner: newScore === 0,
+    scoreHistory: [...currentPlayer.scoreHistory, historyEntry],
+  };
+
+  const winner = updatedPlayers.find(p => p.isWinner) || null;
+  const gameFinished = winner !== null;
+
+  return {
+    ...gameState,
+    players: updatedPlayers,
+    gameFinished,
+    winner,
+    lastThrowWasBust: false,
+  };
+};
+
+const updateHighLowPlayerScore = (
+  gameState: HighLowGameState,
+  playerId: string,
+  scoreToSubtract: number
+): HighLowGameState => {
+  const playerIndex = gameState.players.findIndex(p => p.id === playerId);
+  
+  if (playerIndex === -1) {
+    throw new Error('Player not found');
+  }
+
+  const currentPlayer = gameState.players[playerIndex];
+  
+  if (scoreToSubtract < 0 || scoreToSubtract > 180) {
+    throw new Error('Invalid score: exceeds maximum possible score');
+  }
+
+  // Check for bust
+  const bustOccurred = isBust(currentPlayer.score, scoreToSubtract);
+  const updatedPlayers = [...gameState.players];
+  
+  // Calculate turn number based on existing history
+  const turnNumber = currentPlayer.scoreHistory.length + 1;
+  
+  if (bustOccurred) {
+    // Add bust entry to history
+    const historyEntry = {
+      score: scoreToSubtract,
+      previousScore: currentPlayer.score,
+      timestamp: new Date(),
+      turnNumber,
+    };
+    
+    // Revert to turn start score on bust
+    updatedPlayers[playerIndex] = {
+      ...currentPlayer,
+      score: currentPlayer.turnStartScore,
+      scoreHistory: [...currentPlayer.scoreHistory, historyEntry],
+    };
+    
+    return {
+      ...gameState,
+      players: updatedPlayers as HighLowPlayer[],
+      lastThrowWasBust: true,
+    };
+  }
+
+  // Normal score update
+  const newScore = currentPlayer.score - scoreToSubtract;
+  const historyEntry = {
+    score: scoreToSubtract,
+    previousScore: currentPlayer.score,
+    timestamp: new Date(),
+    turnNumber,
+  };
+  
+  updatedPlayers[playerIndex] = {
+    ...currentPlayer,
+    score: newScore,
+    isWinner: newScore === 0,
+    scoreHistory: [...currentPlayer.scoreHistory, historyEntry],
+  };
+
+  const winner = updatedPlayers.find(p => p.isWinner) || null;
+  const gameFinished = winner !== null;
+
+  return {
+    ...gameState,
+    players: updatedPlayers,
+    gameFinished,
+    winner,
+    lastThrowWasBust: false,
+  };
+};
+
+export const resetGame = (gameState: GameState, startingLives?: number, startingScore?: number): GameState => {
+  if (gameState.gameMode === 'high-low') {
+    const resetPlayers = gameState.players.map(player => ({
+      ...player,
+      score: 40, // Reset to 40 for High-Low mode
+      lives: startingLives || 5, // Use configurable lives parameter
+      scoreHistory: [],
+      isWinner: false,
+      turnStartScore: 40,
+    })) as HighLowPlayer[];
+
+    return {
+      ...gameState,
+      players: resetPlayers,
+      currentPlayerIndex: 0,
+      gameFinished: false,
+      winner: null,
+      lastThrowWasBust: false,
+      highLowChallenge: undefined,
+    };
+  } else {
+    const resetPlayers = gameState.players.map(player => ({
+      ...player,
+      score: startingScore || gameState.startingScore || 501, // Reset to original starting score
+      scoreHistory: [],
+      isWinner: false,
+      turnStartScore: startingScore || gameState.startingScore || 501,
+    })) as CountdownPlayer[];
+
+    return {
+      ...gameState,
+      players: resetPlayers,
+      currentPlayerIndex: 0,
+      gameFinished: false,
+      winner: null,
+      lastThrowWasBust: false,
+    };
+  }
+};

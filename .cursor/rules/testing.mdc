@@ -1,0 +1,11 @@
+---
+description: headless testing
+globs: 
+alwaysApply: true
+---
+
+- When running unit tests, run them without watching for file changes.
+- When running e2e tests, prefer headless mode.
+- Before finishing a task, always do builds, lint and run the tests.
+- Before finishing a task, check if the tests can be improved in terms of human readability as well as functional coverage
+- Run e2e tests when you're refactoring.

@@ -1,0 +1,136 @@
+/* Input container */
+.shared-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+/* Input label */
+.shared-input-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+}
+
+.shared-input-required {
+  color: #dc3545;
+  margin-left: 2px;
+}
+
+/* Input field */
+.shared-input {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 16px;
+  font-family: inherit;
+  background-color: white;
+  color: #111827;
+  transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.shared-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.shared-input:hover:not(:focus):not(.shared-input--disabled) {
+  border-color: #9ca3af;
+}
+
+/* Input states */
+.shared-input--error {
+  border-color: #dc3545;
+}
+
+.shared-input--error:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+.shared-input--disabled {
+  background-color: #f9fafb;
+  color: #6b7280;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.shared-input--disabled:hover {
+  border-color: #d1d5db;
+}
+
+/* Error message */
+.shared-input-error {
+  font-size: 12px;
+  color: #dc3545;
+  margin-top: 2px;
+}
+
+/* Number input specific styles */
+.shared-input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.shared-input[type="number"]::-webkit-outer-spin-button,
+.shared-input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Placeholder styles */
+.shared-input::placeholder {
+  color: #9ca3af;
+  opacity: 1;
+}
+
+.shared-input--disabled::placeholder {
+  color: #6b7280;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .shared-input {
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 12px 16px;
+  }
+
+  .shared-input-label {
+    font-size: 16px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .shared-input {
+    border-width: 2px;
+  }
+
+  .shared-input:focus {
+    border-width: 3px;
+  }
+
+  .shared-input--error {
+    border-width: 3px;
+  }
+}
+
+/* Focus visible for keyboard navigation */
+.shared-input:focus-visible {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+/* Autofill styles */
+.shared-input:-webkit-autofill,
+.shared-input:-webkit-autofill:hover,
+.shared-input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px white inset;
+  -webkit-text-fill-color: #111827;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
