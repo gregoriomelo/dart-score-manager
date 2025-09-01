@@ -40,7 +40,7 @@ export const useScoreSubmission = ({
       if (!gameFinished && onNextPlayer) {
         onNextPlayer();
       }
-    } catch (err) {
+    } catch {
       const errorMessage = UI_TEXT.INVALID_SCORE_ENTRY_ERROR;
       setError(errorMessage);
       showNotification('error', errorMessage);

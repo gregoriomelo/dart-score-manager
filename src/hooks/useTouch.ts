@@ -106,7 +106,7 @@ export function useSwipe(
     }));
   }, [touchState.startPoint]);
 
-  const handleTouchEnd = useCallback((event: TouchEvent) => {
+  const handleTouchEnd = useCallback(() => {
     if (!touchState.startPoint || !touchState.currentPoint) return;
 
     const endTime = Date.now();

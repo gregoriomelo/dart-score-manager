@@ -8,13 +8,23 @@ export interface ServiceWorkerConfig {
   onError?: (error: Error) => void;
 }
 
+interface ServiceWorkerMessage {
+  type: string;
+  data?: unknown;
+  [key: string]: unknown;
+}
+
+interface GameData {
+  [key: string]: unknown;
+}
+
 /**
  * Register service worker
  */
 export function registerServiceWorker(config: ServiceWorkerConfig = {}) {
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
+      const swUrl = `/service-worker.js`;
 
       registerValidSW(swUrl, config);
     });
@@ -106,13 +116,13 @@ export async function getServiceWorkerRegistration(): Promise<ServiceWorkerRegis
 /**
  * Send message to service worker
  */
-export async function sendMessageToServiceWorker(message: any): Promise<any> {
+export async function sendMessageToServiceWorker(message: ServiceWorkerMessage): Promise<unknown> {
   const registration = await getServiceWorkerRegistration();
   if (!registration) {
     throw new Error('Service worker not available');
   }
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const messageChannel = new MessageChannel();
     messageChannel.port1.onmessage = (event) => {
       resolve(event.data);
@@ -125,7 +135,7 @@ export async function sendMessageToServiceWorker(message: any): Promise<any> {
 /**
  * Cache game data in service worker
  */
-export async function cacheGameData(gameData: any): Promise<void> {
+export async function cacheGameData(gameData: GameData): Promise<void> {
   try {
     await sendMessageToServiceWorker({
       type: 'CACHE_GAME_DATA',
@@ -139,11 +149,12 @@ export async function cacheGameData(gameData: any): Promise<void> {
 /**
  * Get cached game data from service worker
  */
-export async function getCachedGameData(): Promise<any> {
+export async function getCachedGameData(): Promise<GameData | null> {
   try {
-    return await sendMessageToServiceWorker({
+    const result = await sendMessageToServiceWorker({
       type: 'GET_CACHED_GAME_DATA',
     });
+    return result as GameData | null;
   } catch (error) {
     console.error('Failed to get cached game data:', error);
     return null;
@@ -204,7 +215,7 @@ export async function subscribeToPushNotifications(): Promise<PushSubscription |
 
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(process.env.REACT_APP_VAPID_PUBLIC_KEY || ''),
+              applicationServerKey: urlBase64ToUint8Array(''),
     });
 
     return subscription;
@@ -242,7 +253,7 @@ export async function unsubscribeFromPushNotifications(): Promise<boolean> {
  */
 export function isAppInstalled(): boolean {
   return window.matchMedia('(display-mode: standalone)').matches ||
-         (window.navigator as any).standalone === true;
+         (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
 }
 
 /**

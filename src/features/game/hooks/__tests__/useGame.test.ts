@@ -1,4 +1,5 @@
 import { renderHook, act } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useGameManager } from '../useGameManager';
 
 describe('useGameManager', () => {
@@ -69,7 +70,7 @@ describe('useGameManager', () => {
 
   it('handles invalid score submission gracefully', () => {
     const { result } = renderHook(() => useGameManager());
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     act(() => {
       result.current.initializeGame(['Alice', 'Bob']);

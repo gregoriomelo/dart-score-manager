@@ -48,4 +48,6 @@ const PlayerList: React.FC<PlayerListProps> = React.memo(({
   );
 });
 
+PlayerList.displayName = 'PlayerList';
+
 export default PlayerList;

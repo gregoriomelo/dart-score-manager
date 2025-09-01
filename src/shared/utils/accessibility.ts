@@ -75,17 +75,19 @@ export const handleListNavigation = (
 ): void => {
   switch (event.key) {
     case ACCESSIBILITY.KEYBOARD.ARROW_DOWN:
-    case ACCESSIBILITY.KEYBOARD.ARROW_RIGHT:
+    case ACCESSIBILITY.KEYBOARD.ARROW_RIGHT: {
       event.preventDefault();
       const nextIndex = (currentIndex + 1) % totalItems;
       onIndexChange(nextIndex);
       break;
+    }
     case ACCESSIBILITY.KEYBOARD.ARROW_UP:
-    case ACCESSIBILITY.KEYBOARD.ARROW_LEFT:
+    case ACCESSIBILITY.KEYBOARD.ARROW_LEFT: {
       event.preventDefault();
       const prevIndex = currentIndex === 0 ? totalItems - 1 : currentIndex - 1;
       onIndexChange(prevIndex);
       break;
+    }
     case ACCESSIBILITY.KEYBOARD.ENTER:
     case ACCESSIBILITY.KEYBOARD.SPACE:
       event.preventDefault();

@@ -25,9 +25,9 @@ describe('Security Validation', () => {
     });
 
     it('should handle non-string input', () => {
-      expect(sanitizeInput(null as any)).toBe('');
-      expect(sanitizeInput(undefined as any)).toBe('');
-      expect(sanitizeInput(123 as any)).toBe('');
+      expect(sanitizeInput(null as unknown)).toBe('');
+      expect(sanitizeInput(undefined as unknown)).toBe('');
+      expect(sanitizeInput(123 as unknown)).toBe('');
     });
 
     it('should trim whitespace', () => {

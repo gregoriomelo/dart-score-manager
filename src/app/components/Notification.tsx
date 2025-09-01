@@ -67,4 +67,6 @@ const Notification: React.FC<NotificationProps> = React.memo(({
   );
 });
 
+Notification.displayName = 'Notification';
+
 export default Notification;

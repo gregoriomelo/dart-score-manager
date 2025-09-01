@@ -26,7 +26,7 @@ const HighLowGameBoard: React.FC<HighLowGameBoardProps> = React.memo(({
   currentPlayer,
   onSubmitHighLowScore,
   onSetChallenge,
-  onNextPlayer,
+  // onNextPlayer, // Unused parameter
   onResetGame,
   onNewGame,
 }) => {
@@ -156,5 +156,7 @@ const HighLowGameBoard: React.FC<HighLowGameBoardProps> = React.memo(({
     </>
   );
 });
+
+HighLowGameBoard.displayName = 'HighLowGameBoard';
 
 export default HighLowGameBoard;

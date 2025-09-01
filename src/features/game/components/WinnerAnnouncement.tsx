@@ -53,4 +53,6 @@ const WinnerAnnouncement: React.FC<WinnerAnnouncementProps> = React.memo(({
   );
 });
 
+WinnerAnnouncement.displayName = 'WinnerAnnouncement';
+
 export default WinnerAnnouncement;

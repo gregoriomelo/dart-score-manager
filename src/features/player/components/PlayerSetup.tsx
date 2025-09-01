@@ -215,4 +215,6 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
   );
 });
 
+PlayerSetup.displayName = 'PlayerSetup';
+
 export default PlayerSetup;

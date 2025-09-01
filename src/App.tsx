@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { GameMode } from './shared/types/game';
 import { useGameManager } from './features/game/hooks/useGameManager';
 import { NotificationProvider } from './app/contexts/NotificationContext';
-import { LazyComponent, LazyPlayerSetup } from './app/components/LazyComponents';
-import GameModeRouter from './features/game/components/GameModeRouter';
+import { LazyComponent, LazyPlayerSetup, LazyGameModeRouter } from './app/components/LazyComponents';
 import NotificationContainer from './app/components/NotificationContainer';
 import PerformanceDashboard from './features/performance/components/PerformanceDashboard';
 import { announceToScreenReader } from './shared/utils/accessibility';
@@ -33,10 +32,10 @@ function AppContent() {
   // Service worker registration
   useEffect(() => {
     registerServiceWorker({
-      onSuccess: (registration) => {
+      onSuccess: () => {
         console.log('Service Worker registered successfully');
       },
-      onUpdate: (registration) => {
+      onUpdate: () => {
         console.log('Service Worker update available');
         // You could show a notification here to prompt user to update
       },
@@ -135,16 +134,18 @@ function AppContent() {
         📊
       </button>
               <main id="main-content" role="main">
-          <GameModeRouter
-            gameState={gameState}
-            currentPlayer={currentPlayer}
-            onSubmitScore={submitScore}
-            onNextPlayer={goToNextPlayer}
-            onResetGame={resetCurrentGame}
-            onNewGame={handleNewGame}
-            onSetChallenge={setChallengeForHighLow}
-            onSubmitHighLowScore={submitHighLowScore}
-          />
+          <LazyComponent>
+            <LazyGameModeRouter
+              gameState={gameState}
+              currentPlayer={currentPlayer}
+              onSubmitScore={submitScore}
+              onNextPlayer={goToNextPlayer}
+              onResetGame={resetCurrentGame}
+              onNewGame={handleNewGame}
+              onSetChallenge={setChallengeForHighLow}
+              onSubmitHighLowScore={submitHighLowScore}
+            />
+          </LazyComponent>
         </main>
       <NotificationContainer />
       <PerformanceDashboard

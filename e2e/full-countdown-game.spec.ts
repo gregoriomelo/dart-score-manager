@@ -103,7 +103,7 @@ test.describe('Full Countdown Game - 5 Players', () => {
       
       // Validate winner badge in history
       await expect(page.getByText('🏆')).toBeVisible({ timeout: 5000 });
-    } catch (error) {
+    } catch {
       // Test continues - core validations (winner + busts) already passed
     }
   });

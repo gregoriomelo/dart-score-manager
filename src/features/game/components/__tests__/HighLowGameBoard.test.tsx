@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '../../../../test-utils';
-import '@testing-library/jest-dom';
+
+import { vi } from 'vitest';
 import HighLowGameBoard from '../HighLowGameBoard';
 import { GameState, Player } from '../../../../shared/types/game';
 
@@ -27,11 +28,11 @@ const createMockGameState = (players: Player[], currentPlayerIndex: number = 0):
 const createMockProps = (gameState: GameState, currentPlayer: Player | null = null) => ({
   gameState,
   currentPlayer: currentPlayer || gameState.players[gameState.currentPlayerIndex] || null,
-  onSubmitHighLowScore: jest.fn(),
-  onSetChallenge: jest.fn(),
-  onNextPlayer: jest.fn(),
-  onResetGame: jest.fn(),
-  onNewGame: jest.fn(),
+  onSubmitHighLowScore: vi.fn(),
+  onSetChallenge: vi.fn(),
+  onNextPlayer: vi.fn(),
+  onResetGame: vi.fn(),
+  onNewGame: vi.fn(),
 });
 
 describe('HighLowGameBoard', () => {

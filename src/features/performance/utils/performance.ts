@@ -18,6 +18,18 @@ export interface BundleAnalysis {
   duplicateModules: Array<{ name: string; count: number }>;
 }
 
+interface PerformanceMemory {
+  usedJSHeapSize: number;
+  totalJSHeapSize: number;
+  jsHeapSizeLimit: number;
+}
+
+interface PerformanceWithMemory extends Performance {
+  memory: PerformanceMemory;
+}
+
+type GenericFunction = (...args: unknown[]) => unknown;
+
 class PerformanceMonitor {
   private metrics: PerformanceMetrics = {
     loadTime: 0,
@@ -44,7 +56,7 @@ class PerformanceMonitor {
       // Monitor memory usage if available
       if ('memory' in performance) {
         setInterval(() => {
-          this.metrics.memoryUsage = (performance as any).memory.usedJSHeapSize;
+          this.metrics.memoryUsage = (performance as PerformanceWithMemory).memory.usedJSHeapSize;
           this.notifyObservers();
         }, 5000);
       }
@@ -124,7 +136,7 @@ export const analyzeBundleSize = async (): Promise<BundleAnalysis> => {
 };
 
 // Performance optimization utilities
-export const debounce = <T extends (...args: any[]) => any>(
+export const debounce = <T extends GenericFunction>(
   func: T,
   wait: number
 ): ((...args: Parameters<T>) => void) => {
@@ -135,7 +147,7 @@ export const debounce = <T extends (...args: any[]) => any>(
   };
 };
 
-export const throttle = <T extends (...args: any[]) => any>(
+export const throttle = <T extends GenericFunction>(
   func: T,
   limit: number
 ): ((...args: Parameters<T>) => void) => {
@@ -152,7 +164,7 @@ export const throttle = <T extends (...args: any[]) => any>(
 // Memory usage monitoring
 export const getMemoryUsage = (): number | null => {
   if (typeof window !== 'undefined' && 'memory' in performance) {
-    return (performance as any).memory.usedJSHeapSize;
+    return (performance as PerformanceWithMemory).memory.usedJSHeapSize;
   }
   return null;
 };
@@ -206,7 +218,8 @@ export const trackWebVitals = () => {
         const entries = list.getEntries();
         entries.forEach((entry) => {
           if ('processingStart' in entry) {
-            console.log('FID:', (entry as any).processingStart - entry.startTime);
+            const processingEntry = entry as PerformanceEntry & { processingStart: number };
+            console.log('FID:', processingEntry.processingStart - entry.startTime);
           }
         });
       });

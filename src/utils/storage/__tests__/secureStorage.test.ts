@@ -1,13 +1,14 @@
 import { legacyStorage } from '../secureStorage';
+import { vi } from 'vitest';
 
 // Mock localStorage
 const mockLocalStorage = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn(),
+  getItem: vi.fn(),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn(),
   length: 0,
-  key: jest.fn(),
+  key: vi.fn(),
 };
 
 Object.defineProperty(window, 'localStorage', {
@@ -17,7 +18,7 @@ Object.defineProperty(window, 'localStorage', {
 
 describe('LegacyStorage', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('setItem', () => {

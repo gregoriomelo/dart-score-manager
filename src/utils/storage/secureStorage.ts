@@ -11,7 +11,7 @@ export interface SecureStorageOptions {
 }
 
 export interface StorageItem {
-  data: any;
+  data: unknown;
   version: string;
   hash?: string;
   timestamp: number;
@@ -42,7 +42,7 @@ export class SecureStorage {
   /**
    * Set item in secure storage
    */
-  async setItem(key: string, value: any): Promise<void> {
+  async setItem(key: string, value: unknown): Promise<void> {
     try {
       const item: StorageItem = {
         data: value,
@@ -73,7 +73,7 @@ export class SecureStorage {
   /**
    * Get item from secure storage
    */
-  async getItem<T = any>(key: string): Promise<T | null> {
+  async getItem<T = unknown>(key: string): Promise<T | null> {
     try {
       const encryptedData = localStorage.getItem(key);
       
@@ -112,7 +112,7 @@ export class SecureStorage {
         // Could implement migration logic here
       }
 
-      return item.data;
+      return item.data as T;
     } catch (error) {
       console.error('Failed to get secure storage item:', error);
       // Remove corrupted data
@@ -215,7 +215,7 @@ export class SecureStorage {
    */
   async backup(): Promise<string> {
     try {
-      const backup: Record<string, any> = {};
+      const backup: Record<string, unknown> = {};
       
       for (const key of this.keys()) {
         const value = await this.getItem(key);
@@ -261,7 +261,7 @@ export const secureStorage = new SecureStorage();
  * Legacy storage for backward compatibility
  */
 export const legacyStorage = {
-  setItem: (key: string, value: any): void => {
+  setItem: (key: string, value: unknown): void => {
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
@@ -269,7 +269,7 @@ export const legacyStorage = {
     }
   },
 
-  getItem: <T = any>(key: string): T | null => {
+  getItem: <T = unknown>(key: string): T | null => {
     try {
       const data = localStorage.getItem(key);
       return data ? JSON.parse(data) : null;

@@ -15,6 +15,36 @@ export interface SecurityMiddlewareConfig {
   isProduction?: boolean;
 }
 
+interface ValidationRule {
+  test: (value: string) => boolean;
+  message: string;
+}
+
+interface ValidationResult {
+  isValid: boolean;
+  data: unknown;
+  errors: string[];
+}
+
+interface GameState {
+  players: Array<{
+    score: number;
+    lives?: number;
+    [key: string]: unknown;
+  }>;
+  currentPlayerIndex: number;
+  gameMode: string;
+  [key: string]: unknown;
+}
+
+interface SecurityEvent {
+  timestamp: string;
+  event: string;
+  details: Record<string, unknown>;
+  userAgent: string;
+  url: string;
+}
+
 /**
  * Security middleware class
  */
@@ -46,10 +76,10 @@ export class SecurityMiddleware {
    * Validate and sanitize input data
    */
   validateInput(
-    data: any,
-    validationRules: any[],
+    data: unknown,
+    validationRules: ValidationRule[],
     context: string = 'input'
-  ): { isValid: boolean; data: any; errors: string[] } {
+  ): ValidationResult {
     if (!this.config.enableValidation) {
       return { isValid: true, data, errors: [] };
     }
@@ -66,7 +96,7 @@ export class SecurityMiddleware {
 
       // For objects, validate each string property
       if (typeof data === 'object' && data !== null) {
-        const sanitizedData = { ...data };
+        const sanitizedData: Record<string, unknown> = { ...data };
         const errors: string[] = [];
 
         for (const [key, value] of Object.entries(data)) {
@@ -108,7 +138,7 @@ export class SecurityMiddleware {
   /**
    * Validate game state
    */
-  validateGameState(gameState: any): { isValid: boolean; data: any; errors: string[] } {
+  validateGameState(gameState: unknown): ValidationResult {
     if (!this.config.enableValidation) {
       return { isValid: true, data: gameState, errors: [] };
     }
@@ -125,30 +155,33 @@ export class SecurityMiddleware {
 
       const errors: string[] = [];
 
+      // Type guard to check if gameState has the expected structure
+      const typedGameState = gameState as GameState;
+      
       // Validate players array
-      if (!Array.isArray(gameState.players)) {
+      if (!Array.isArray(typedGameState.players)) {
         errors.push('Game state must have a players array');
-      } else if (gameState.players.length < 2) {
+      } else if (typedGameState.players.length < 2) {
         errors.push('Game must have at least 2 players');
-      } else if (gameState.players.length > 20) {
+      } else if (typedGameState.players.length > 20) {
         errors.push('Game cannot have more than 20 players');
       }
 
       // Validate current player index
-      if (typeof gameState.currentPlayerIndex !== 'number') {
+      if (typeof typedGameState.currentPlayerIndex !== 'number') {
         errors.push('Current player index must be a number');
-      } else if (gameState.currentPlayerIndex < 0 || gameState.currentPlayerIndex >= gameState.players.length) {
+      } else if (typedGameState.currentPlayerIndex < 0 || typedGameState.currentPlayerIndex >= typedGameState.players.length) {
         errors.push('Current player index is out of bounds');
       }
 
       // Validate game mode
-      if (gameState.gameMode !== 'countdown' && gameState.gameMode !== 'highlow') {
+      if (typedGameState.gameMode !== 'countdown' && typedGameState.gameMode !== 'highlow') {
         errors.push('Game mode must be either "countdown" or "highlow"');
       }
 
       // Validate scores and other numeric values
-      if (gameState.players) {
-        gameState.players.forEach((player: any, index: number) => {
+      if (typedGameState.players) {
+        typedGameState.players.forEach((player, index: number) => {
           if (typeof player.score !== 'number' || player.score < 0 || player.score > 180) {
             errors.push(`Player ${index + 1} has invalid score`);
           }
@@ -176,8 +209,8 @@ export class SecurityMiddleware {
   /**
    * Create a secure input handler
    */
-  createSecureInputHandler(validationRules: any[]) {
-    return (input: any, context: string = 'input') => {
+  createSecureInputHandler(validationRules: ValidationRule[]) {
+    return (input: unknown, context: string = 'input') => {
       return this.validateInput(input, validationRules, context);
     };
   }
@@ -185,8 +218,8 @@ export class SecurityMiddleware {
   /**
    * Log security events
    */
-  logSecurityEvent(event: string, details: any = {}): void {
-    const securityEvent = {
+  logSecurityEvent(event: string, details: Record<string, unknown> = {}): void {
+    const securityEvent: SecurityEvent = {
       timestamp: new Date().toISOString(),
       event,
       details,
@@ -249,8 +282,8 @@ export const securityUtils = {
   /**
    * Secure input validation hook
    */
-  useSecureInput: (validationRules: any[]) => {
-    return (input: any) => securityMiddleware.validateInput(input, validationRules);
+  useSecureInput: (validationRules: ValidationRule[]) => {
+    return (input: unknown) => securityMiddleware.validateInput(input, validationRules);
   },
 
   /**
@@ -261,5 +294,5 @@ export const securityUtils = {
   /**
    * Validate game state
    */
-  validateGameState: (gameState: any) => securityMiddleware.validateGameState(gameState),
+  validateGameState: (gameState: unknown) => securityMiddleware.validateGameState(gameState),
 };

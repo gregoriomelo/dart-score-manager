@@ -42,13 +42,13 @@ export interface GameHistoryEntry {
   challenge?: string;
 }
 
+
+
 /**
  * Validation functions for game data structures
  */
 export const gameValidators = {
-  /**
-   * Validate player name
-   */
+  // String-based validators (for input validation)
   validatePlayerName: (name: string): boolean => {
     return (
       typeof name === 'string' &&
@@ -58,9 +58,6 @@ export const gameValidators = {
     );
   },
 
-  /**
-   * Validate player ID
-   */
   validatePlayerId: (id: string): boolean => {
     return (
       typeof id === 'string' &&
@@ -69,9 +66,7 @@ export const gameValidators = {
     );
   },
 
-  /**
-   * Validate score
-   */
+  // Number-based validators (for data validation)
   validateScore: (score: number): boolean => {
     return (
       typeof score === 'number' &&
@@ -82,9 +77,6 @@ export const gameValidators = {
     );
   },
 
-  /**
-   * Validate lives
-   */
   validateLives: (lives: number): boolean => {
     return (
       typeof lives === 'number' &&
@@ -95,21 +87,15 @@ export const gameValidators = {
     );
   },
 
-  /**
-   * Validate timestamp
-   */
   validateTimestamp: (timestamp: number): boolean => {
     return (
       typeof timestamp === 'number' &&
       !isNaN(timestamp) &&
       timestamp > 0 &&
-      timestamp <= Date.now() + 60000 // Allow 1 minute future tolerance
+      timestamp <= Date.now() + 60000
     );
   },
 
-  /**
-   * Validate round number
-   */
   validateRound: (round: number): boolean => {
     return (
       typeof round === 'number' &&
@@ -120,16 +106,19 @@ export const gameValidators = {
     );
   },
 
-  /**
-   * Validate game mode
-   */
   validateGameMode: (mode: string): boolean => {
     return mode === 'countdown' || mode === 'highlow';
   },
 
-  /**
-   * Validate target score
-   */
+  validateChallenge: (challenge: string): boolean => {
+    return (
+      typeof challenge === 'string' &&
+      challenge.trim().length > 0 &&
+      challenge.trim().length <= 200 &&
+      !/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi.test(challenge)
+    );
+  },
+
   validateTargetScore: (score: number): boolean => {
     return (
       typeof score === 'number' &&
@@ -141,89 +130,81 @@ export const gameValidators = {
   },
 
   /**
-   * Validate challenge text
-   */
-  validateChallenge: (challenge: string): boolean => {
-    return (
-      typeof challenge === 'string' &&
-      challenge.trim().length > 0 &&
-      challenge.trim().length <= 200 &&
-      !/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi.test(challenge)
-    );
-  },
-
-  /**
    * Validate score history entry
    */
-  validateScoreHistoryEntry: (entry: any): entry is ScoreHistoryEntry => {
+  validateScoreHistoryEntry: (entry: unknown): entry is ScoreHistoryEntry => {
+    if (!entry || typeof entry !== 'object') return false;
+    
+    const typedEntry = entry as Record<string, unknown>;
     return (
-      entry &&
-      typeof entry === 'object' &&
-      gameValidators.validateScore(entry.score) &&
-      gameValidators.validateTimestamp(entry.timestamp) &&
-      gameValidators.validateRound(entry.round) &&
-      (entry.isBust === undefined || typeof entry.isBust === 'boolean') &&
-      (entry.challenge === undefined || gameValidators.validateChallenge(entry.challenge))
+      gameValidators.validateScore(typedEntry.score as number) &&
+      gameValidators.validateTimestamp(typedEntry.timestamp as number) &&
+      gameValidators.validateRound(typedEntry.round as number) &&
+      (typedEntry.isBust === undefined || typeof typedEntry.isBust === 'boolean') &&
+      (typedEntry.challenge === undefined || gameValidators.validateChallenge(typedEntry.challenge as string))
     );
   },
 
   /**
    * Validate player object
    */
-  validatePlayer: (player: any): player is Player => {
+  validatePlayer: (player: unknown): player is Player => {
+    if (!player || typeof player !== 'object') return false;
+    
+    const typedPlayer = player as Record<string, unknown>;
     return (
-      player &&
-      typeof player === 'object' &&
-      gameValidators.validatePlayerId(player.id) &&
-      gameValidators.validatePlayerName(player.name) &&
-      gameValidators.validateScore(player.score) &&
-      (player.lives === undefined || gameValidators.validateLives(player.lives)) &&
-      (player.isEliminated === undefined || typeof player.isEliminated === 'boolean') &&
-      Array.isArray(player.history) &&
-      player.history.every((entry: any) => gameValidators.validateScoreHistoryEntry(entry))
+      gameValidators.validatePlayerId(typedPlayer.id as string) &&
+      gameValidators.validatePlayerName(typedPlayer.name as string) &&
+      gameValidators.validateScore(typedPlayer.score as number) &&
+      (typedPlayer.lives === undefined || gameValidators.validateLives(typedPlayer.lives as number)) &&
+      (typedPlayer.isEliminated === undefined || typeof typedPlayer.isEliminated === 'boolean') &&
+      Array.isArray(typedPlayer.history) &&
+      (typedPlayer.history as unknown[]).every((entry: unknown) => gameValidators.validateScoreHistoryEntry(entry))
     );
   },
 
   /**
    * Validate game history entry
    */
-  validateGameHistoryEntry: (entry: any): entry is GameHistoryEntry => {
+  validateGameHistoryEntry: (entry: unknown): entry is GameHistoryEntry => {
+    if (!entry || typeof entry !== 'object') return false;
+    
+    const typedEntry = entry as Record<string, unknown>;
     return (
-      entry &&
-      typeof entry === 'object' &&
-      gameValidators.validatePlayerId(entry.playerId) &&
-      gameValidators.validatePlayerName(entry.playerName) &&
-      gameValidators.validateScore(entry.score) &&
-      gameValidators.validateTimestamp(entry.timestamp) &&
-      gameValidators.validateRound(entry.round) &&
-      gameValidators.validateGameMode(entry.gameMode) &&
-      (entry.isBust === undefined || typeof entry.isBust === 'boolean') &&
-      (entry.challenge === undefined || gameValidators.validateChallenge(entry.challenge))
+      gameValidators.validatePlayerId(typedEntry.playerId as string) &&
+      gameValidators.validatePlayerName(typedEntry.playerName as string) &&
+      gameValidators.validateScore(typedEntry.score as number) &&
+      gameValidators.validateTimestamp(typedEntry.timestamp as number) &&
+      gameValidators.validateRound(typedEntry.round as number) &&
+      gameValidators.validateGameMode(typedEntry.gameMode as string) &&
+      (typedEntry.isBust === undefined || typeof typedEntry.isBust === 'boolean') &&
+      (typedEntry.challenge === undefined || gameValidators.validateChallenge(typedEntry.challenge as string))
     );
   },
 
   /**
    * Validate game state
    */
-  validateGameState: (state: any): state is GameState => {
+  validateGameState: (state: unknown): state is GameState => {
+    if (!state || typeof state !== 'object') return false;
+    
+    const typedState = state as Record<string, unknown>;
     return (
-      state &&
-      typeof state === 'object' &&
-      Array.isArray(state.players) &&
-      state.players.length >= 2 &&
-      state.players.length <= 20 &&
-      state.players.every((player: any) => gameValidators.validatePlayer(player)) &&
-      typeof state.currentPlayerIndex === 'number' &&
-      state.currentPlayerIndex >= 0 &&
-      state.currentPlayerIndex < state.players.length &&
-      gameValidators.validateGameMode(state.gameMode) &&
-      (state.targetScore === undefined || gameValidators.validateTargetScore(state.targetScore)) &&
-      (state.startingLives === undefined || gameValidators.validateLives(state.startingLives)) &&
-      gameValidators.validateRound(state.currentRound) &&
-      typeof state.isGameOver === 'boolean' &&
-      (state.winner === undefined || gameValidators.validatePlayer(state.winner)) &&
-      Array.isArray(state.gameHistory) &&
-      state.gameHistory.every((entry: any) => gameValidators.validateGameHistoryEntry(entry))
+      Array.isArray(typedState.players) &&
+      (typedState.players as unknown[]).length >= 2 &&
+      (typedState.players as unknown[]).length <= 20 &&
+      (typedState.players as unknown[]).every((player: unknown) => gameValidators.validatePlayer(player)) &&
+      typeof typedState.currentPlayerIndex === 'number' &&
+      (typedState.currentPlayerIndex as number) >= 0 &&
+      (typedState.currentPlayerIndex as number) < (typedState.players as unknown[]).length &&
+      gameValidators.validateGameMode(typedState.gameMode as string) &&
+      (typedState.targetScore === undefined || gameValidators.validateTargetScore(typedState.targetScore as number)) &&
+      (typedState.startingLives === undefined || gameValidators.validateLives(typedState.startingLives as number)) &&
+      gameValidators.validateRound(typedState.currentRound as number) &&
+      typeof typedState.isGameOver === 'boolean' &&
+      (typedState.winner === undefined || gameValidators.validatePlayer(typedState.winner)) &&
+      Array.isArray(typedState.gameHistory) &&
+      (typedState.gameHistory as unknown[]).every((entry: unknown) => gameValidators.validateGameHistoryEntry(entry))
     );
   },
 };
@@ -264,8 +245,9 @@ export const gameSanitizers = {
   /**
    * Sanitize score
    */
-  sanitizeScore: (score: any): number => {
-    const num = parseInt(score, 10);
+  sanitizeScore: (score: unknown): number => {
+    const scoreStr = String(score);
+    const num = parseInt(scoreStr, 10);
     if (isNaN(num) || num < 0) return 0;
     if (num > 180) return 180;
     return num;
@@ -274,8 +256,9 @@ export const gameSanitizers = {
   /**
    * Sanitize lives
    */
-  sanitizeLives: (lives: any): number => {
-    const num = parseInt(lives, 10);
+  sanitizeLives: (lives: unknown): number => {
+    const livesStr = String(lives);
+    const num = parseInt(livesStr, 10);
     if (isNaN(num) || num < 0) return 0;
     if (num > 10) return 10;
     return num;
@@ -284,8 +267,9 @@ export const gameSanitizers = {
   /**
    * Sanitize timestamp
    */
-  sanitizeTimestamp: (timestamp: any): number => {
-    const num = parseInt(timestamp, 10);
+  sanitizeTimestamp: (timestamp: unknown): number => {
+    const timestampStr = String(timestamp);
+    const num = parseInt(timestampStr, 10);
     if (isNaN(num) || num <= 0) return Date.now();
     if (num > Date.now() + 60000) return Date.now();
     return num;
@@ -294,8 +278,9 @@ export const gameSanitizers = {
   /**
    * Sanitize round number
    */
-  sanitizeRound: (round: any): number => {
-    const num = parseInt(round, 10);
+  sanitizeRound: (round: unknown): number => {
+    const roundStr = String(round);
+    const num = parseInt(roundStr, 10);
     if (isNaN(num) || num < 1) return 1;
     if (num > 1000) return 1000;
     return num;
@@ -305,7 +290,7 @@ export const gameSanitizers = {
 /**
  * Validate and sanitize game state
  */
-export function validateAndSanitizeGameState(state: any): GameState | null {
+export function validateAndSanitizeGameState(state: unknown): GameState | null {
   try {
     if (!state || typeof state !== 'object') {
       return null;
@@ -322,27 +307,34 @@ export function validateAndSanitizeGameState(state: any): GameState | null {
     };
 
     // Sanitize players
-    if (Array.isArray(state.players)) {
-      sanitizedState.players = state.players
-        .filter((player: any) => player && typeof player === 'object')
-        .map((player: any) => ({
-          id: player.id || `player-${Date.now()}-${Math.random()}`,
-          name: gameSanitizers.sanitizePlayerName(player.name),
-          score: gameSanitizers.sanitizeScore(player.score),
-          lives: player.lives !== undefined ? gameSanitizers.sanitizeLives(player.lives) : undefined,
-          isEliminated: Boolean(player.isEliminated),
-          history: Array.isArray(player.history)
-            ? player.history
-                .filter((entry: any) => gameValidators.validateScoreHistoryEntry(entry))
-                .map((entry: any) => ({
-                  score: gameSanitizers.sanitizeScore(entry.score),
-                  timestamp: gameSanitizers.sanitizeTimestamp(entry.timestamp),
-                  round: gameSanitizers.sanitizeRound(entry.round),
-                  isBust: Boolean(entry.isBust),
-                  challenge: entry.challenge ? gameSanitizers.sanitizeChallenge(entry.challenge) : undefined,
-                }))
-            : [],
-        }))
+    const typedState = state as Record<string, unknown>;
+    if (Array.isArray(typedState.players)) {
+      sanitizedState.players = (typedState.players as unknown[])
+        .filter((player: unknown) => player && typeof player === 'object')
+        .map((player: unknown) => {
+          const typedPlayer = player as Record<string, unknown>;
+          return {
+            id: String(typedPlayer.id || `player-${Date.now()}-${Math.random()}`),
+            name: gameSanitizers.sanitizePlayerName(String(typedPlayer.name)),
+            score: gameSanitizers.sanitizeScore(typedPlayer.score),
+            lives: typedPlayer.lives !== undefined ? gameSanitizers.sanitizeLives(typedPlayer.lives) : undefined,
+            isEliminated: Boolean(typedPlayer.isEliminated),
+            history: Array.isArray(typedPlayer.history)
+              ? (typedPlayer.history as unknown[])
+                  .filter((entry: unknown) => gameValidators.validateScoreHistoryEntry(entry))
+                  .map((entry: unknown) => {
+                    const typedEntry = entry as Record<string, unknown>;
+                    return {
+                      score: gameSanitizers.sanitizeScore(typedEntry.score),
+                      timestamp: gameSanitizers.sanitizeTimestamp(typedEntry.timestamp),
+                      round: gameSanitizers.sanitizeRound(typedEntry.round),
+                      isBust: Boolean(typedEntry.isBust),
+                      challenge: typedEntry.challenge ? gameSanitizers.sanitizeChallenge(String(typedEntry.challenge)) : undefined,
+                    };
+                  })
+              : [],
+          };
+        })
         .filter((player: Player) => gameValidators.validatePlayer(player));
     }
 
@@ -353,30 +345,34 @@ export function validateAndSanitizeGameState(state: any): GameState | null {
 
     // Sanitize other fields
     sanitizedState.currentPlayerIndex = Math.max(0, Math.min(
-      parseInt(state.currentPlayerIndex, 10) || 0,
+      parseInt(String(typedState.currentPlayerIndex), 10) || 0,
       sanitizedState.players.length - 1
     ));
 
-    sanitizedState.gameMode = gameValidators.validateGameMode(state.gameMode) ? state.gameMode : 'countdown';
-    sanitizedState.targetScore = state.targetScore ? gameSanitizers.sanitizeScore(state.targetScore) : undefined;
-    sanitizedState.startingLives = state.startingLives ? gameSanitizers.sanitizeLives(state.startingLives) : undefined;
-    sanitizedState.currentRound = gameSanitizers.sanitizeRound(state.currentRound);
-    sanitizedState.isGameOver = Boolean(state.isGameOver);
+    const gameModeStr = String(typedState.gameMode);
+    sanitizedState.gameMode = gameValidators.validateGameMode(gameModeStr) ? (gameModeStr as 'countdown' | 'highlow') : 'countdown';
+    sanitizedState.targetScore = typedState.targetScore ? gameSanitizers.sanitizeScore(typedState.targetScore) : undefined;
+    sanitizedState.startingLives = typedState.startingLives ? gameSanitizers.sanitizeLives(typedState.startingLives) : undefined;
+    sanitizedState.currentRound = gameSanitizers.sanitizeRound(typedState.currentRound);
+    sanitizedState.isGameOver = Boolean(typedState.isGameOver);
 
     // Sanitize game history
-    if (Array.isArray(state.gameHistory)) {
-      sanitizedState.gameHistory = state.gameHistory
-        .filter((entry: any) => gameValidators.validateGameHistoryEntry(entry))
-        .map((entry: any) => ({
-          playerId: entry.playerId,
-          playerName: gameSanitizers.sanitizePlayerName(entry.playerName),
-          score: gameSanitizers.sanitizeScore(entry.score),
-          timestamp: gameSanitizers.sanitizeTimestamp(entry.timestamp),
-          round: gameSanitizers.sanitizeRound(entry.round),
-          gameMode: entry.gameMode,
-          isBust: Boolean(entry.isBust),
-          challenge: entry.challenge ? gameSanitizers.sanitizeChallenge(entry.challenge) : undefined,
-        }));
+    if (Array.isArray(typedState.gameHistory)) {
+      sanitizedState.gameHistory = (typedState.gameHistory as unknown[])
+        .filter((entry: unknown) => gameValidators.validateGameHistoryEntry(entry))
+        .map((entry: unknown) => {
+          const typedEntry = entry as Record<string, unknown>;
+          return {
+            playerId: String(typedEntry.playerId),
+            playerName: gameSanitizers.sanitizePlayerName(String(typedEntry.playerName)),
+            score: gameSanitizers.sanitizeScore(typedEntry.score),
+            timestamp: gameSanitizers.sanitizeTimestamp(typedEntry.timestamp),
+            round: gameSanitizers.sanitizeRound(typedEntry.round),
+            gameMode: String(typedEntry.gameMode) as 'countdown' | 'highlow',
+            isBust: Boolean(typedEntry.isBust),
+            challenge: typedEntry.challenge ? gameSanitizers.sanitizeChallenge(String(typedEntry.challenge)) : undefined,
+          };
+        });
     }
 
     // Validate final state

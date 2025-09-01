@@ -1,10 +1,11 @@
 import React from 'react';
 import { render, screen } from '../../../../test-utils';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import PlayerSetup from '../PlayerSetup';
 
 describe('PlayerSetup', () => {
-  const mockOnStartGame = jest.fn();
+  const mockOnStartGame = vi.fn();
 
   beforeEach(() => {
     mockOnStartGame.mockClear();

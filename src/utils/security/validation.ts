@@ -171,30 +171,37 @@ export function validateChallenge(challenge: string): ValidationResult {
 /**
  * Validate game state data integrity
  */
-export function validateGameState(gameState: any): ValidationResult {
+export function validateGameState(gameState: unknown): ValidationResult {
   const errors: string[] = [];
 
   if (!gameState || typeof gameState !== 'object') {
     errors.push('Game state must be an object');
+    return {
+      isValid: false,
+      value: JSON.stringify(gameState),
+      errors,
+    };
   }
 
-  if (!Array.isArray(gameState.players)) {
+  const typedGameState = gameState as Record<string, unknown>;
+
+  if (!Array.isArray(typedGameState.players)) {
     errors.push('Game state must have a players array');
   }
 
-  if (typeof gameState.currentPlayerIndex !== 'number') {
+  if (typeof typedGameState.currentPlayerIndex !== 'number') {
     errors.push('Game state must have a valid currentPlayerIndex');
   }
 
-  if (typeof gameState.gameMode !== 'string') {
+  if (typeof typedGameState.gameMode !== 'string') {
     errors.push('Game state must have a valid gameMode');
   }
 
-  if (gameState.players && gameState.players.length < 2) {
+  if (typedGameState.players && Array.isArray(typedGameState.players) && typedGameState.players.length < 2) {
     errors.push('Game must have at least 2 players');
   }
 
-  if (gameState.players && gameState.players.length > 20) {
+  if (typedGameState.players && Array.isArray(typedGameState.players) && typedGameState.players.length > 20) {
     errors.push('Game cannot have more than 20 players');
   }
 

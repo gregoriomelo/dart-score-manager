@@ -30,4 +30,6 @@ const GameActions: React.FC<GameActionsProps> = React.memo(({
   );
 });
 
+GameActions.displayName = 'GameActions';
+
 export default GameActions;

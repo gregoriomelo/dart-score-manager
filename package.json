@@ -2,52 +2,47 @@
   "name": "dart-score-manager",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "homepage": ".",
   "dependencies": {
-    "@testing-library/dom": "^10.4.1",
-    "@testing-library/jest-dom": "^6.7.0",
+    "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
-    "@types/node": "^16.18.126",
+    "@testing-library/user-event": "^14.6.1",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-scripts": "^5.0.1",
     "typescript": "^4.9.5"
   },
   "scripts": {
-    "start": "craco start",
-    "build": "craco build",
-    "test": "craco test --watchAll=false",
-    "test:watch": "craco test",
+    "start": "vite",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "playwright test --reporter=html",
     "test:e2e:show-report": "playwright show-report",
-    "eject": "react-scripts eject",
-    "postinstall": "patch-package",
     "lint": "eslint src/ e2e/ --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint src/ e2e/ --ext .ts,.tsx,.js,.jsx --fix",
-    "ci": "CI=true npm run lint && CI=true npm test -- --coverage --watchAll=false && CI=true npm run build && CI=true npm run test:e2e"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "ci": "CI=true npm run lint && CI=true npm test && CI=true npm run build && CI=true npm run test:e2e"
   },
   "devDependencies": {
-    "@craco/craco": "^7.1.0",
     "@playwright/test": "^1.55.0",
-    "@testing-library/user-event": "^14.6.1",
-    "@types/jest": "^30.0.0",
-    "patch-package": "^8.0.0"
+    "@types/node": "^24.3.0",
+    "@typescript-eslint/eslint-plugin": "^8.41.0",
+    "@typescript-eslint/parser": "^8.41.0",
+    "@vitejs/plugin-react": "^5.0.2",
+    "@vitest/coverage-v8": "^3.2.4",
+    "eslint": "^9.34.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "jsdom": "^26.1.0",
+    "vite": "^7.1.4",
+    "vitest": "^3.2.4"
   }
 }

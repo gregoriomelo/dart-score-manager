@@ -1,13 +1,14 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom';
+
+import { vi } from 'vitest';
 import HighLowChallenge from '../HighLowChallenge';
 
 describe('HighLowChallenge', () => {
-  const mockOnSetChallenge = jest.fn();
+  const mockOnSetChallenge = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should render challenge buttons with reference score', () => {

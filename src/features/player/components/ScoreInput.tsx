@@ -39,7 +39,7 @@ const ScoreInput: React.FC<ScoreInputProps> = React.memo(({
 
   return (
     <div className={CSS_CLASSES.SCORE_INPUT_SECTION} role="region" aria-labelledby="turn-title">
-      <h3 id="turn-title">{currentPlayer.name}'s Turn</h3>
+      <h3 id="turn-title">{currentPlayer.name}&apos;s Turn</h3>
       {showBustBanner && (
         <div
           key={bustAnimKey}
@@ -94,5 +94,7 @@ const ScoreInput: React.FC<ScoreInputProps> = React.memo(({
     </div>
   );
 });
+
+ScoreInput.displayName = 'ScoreInput';
 
 export default ScoreInput;

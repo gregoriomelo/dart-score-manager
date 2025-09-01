@@ -151,4 +151,6 @@ const CountdownGameBoard: React.FC<CountdownGameBoardProps> = React.memo(({
   );
 });
 
+CountdownGameBoard.displayName = 'CountdownGameBoard';
+
 export default CountdownGameBoard;

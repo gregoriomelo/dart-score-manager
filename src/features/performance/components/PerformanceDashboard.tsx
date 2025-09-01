@@ -8,10 +8,22 @@ interface PerformanceDashboardProps {
   onClose: () => void;
 }
 
+interface BundleAnalysis {
+  totalSize: number;
+  gzippedSize: number;
+  chunkCount: number;
+  largestChunks: Array<{ name: string; size: number }>;
+}
+
+interface ChunkInfo {
+  name: string;
+  size: number;
+}
+
 const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({ isVisible, onClose }) => {
   const [metrics, setMetrics] = useState(performanceMonitor.getMetrics());
   const [cacheSizes, setCacheSizes] = useState<Array<{ name: string; size: number }>>([]);
-  const [bundleAnalysis, setBundleAnalysis] = useState<any>(null);
+  const [bundleAnalysis, setBundleAnalysis] = useState<BundleAnalysis | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -197,7 +209,7 @@ const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({ isVisible, 
                 {bundleAnalysis.largestChunks.length > 0 && (
                   <div className="chunks-list">
                     <label>Largest Chunks:</label>
-                    {bundleAnalysis.largestChunks.map((chunk: any) => (
+                    {bundleAnalysis.largestChunks.map((chunk: ChunkInfo) => (
                       <div key={chunk.name} className="chunk-item">
                         <span>{chunk.name}</span>
                         <span>{formatBytes(chunk.size)}</span>

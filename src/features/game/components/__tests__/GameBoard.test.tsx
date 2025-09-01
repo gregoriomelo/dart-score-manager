@@ -1,14 +1,15 @@
 import React from 'react';
 import { render, screen } from '../../../../test-utils';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import GameModeRouter from '../GameModeRouter';
 import { GameState, Player } from '../../../../shared/types/game';
 
 describe('GameModeRouter', () => {
-  const mockOnSubmitScore = jest.fn();
-  const mockOnNextPlayer = jest.fn();
-  const mockOnResetGame = jest.fn();
-  const mockOnNewGame = jest.fn();
+  const mockOnSubmitScore = vi.fn();
+  const mockOnNextPlayer = vi.fn();
+  const mockOnResetGame = vi.fn();
+  const mockOnNewGame = vi.fn();
 
   const createMockPlayer = (name: string, score: number, isWinner = false): Player => ({
     id: `player-${name.toLowerCase()}`,
@@ -30,7 +31,7 @@ describe('GameModeRouter', () => {
   });
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('Active Game', () => {
