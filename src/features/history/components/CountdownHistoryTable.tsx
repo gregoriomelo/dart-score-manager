@@ -1,7 +1,6 @@
 import React from 'react';
 import { Player, ScoreHistoryEntry } from '../../../shared/types/game';
 import { getPlayerColor } from '../../../shared/utils/playerColors';
-import { formatTime } from '../../../shared/utils/timeUtils';
 import './HistoryView.css';
 
 interface CountdownHistoryTableProps {
@@ -9,13 +8,14 @@ interface CountdownHistoryTableProps {
   showPlayerColumn: boolean;
 }
 
-
-
-
-
 const CountdownHistoryTable: React.FC<CountdownHistoryTableProps> = ({ entries, showPlayerColumn }) => {
   const calculateNewScore = (entry: ScoreHistoryEntry) => {
-    return entry.previousScore - entry.score;
+    const newScore = entry.previousScore - entry.score;
+    // If it would be a bust (negative or 1), the new score is the same as previous (reverts to turn start)
+    if (newScore < 0 || newScore === 1) {
+      return entry.previousScore;
+    }
+    return newScore;
   };
 
   if (entries.length === 0) {
@@ -27,7 +27,6 @@ const CountdownHistoryTable: React.FC<CountdownHistoryTableProps> = ({ entries, 
       <div className="history-header">
         {showPlayerColumn && <span>Player</span>}
         <span>Turn</span>
-        <span>Time</span>
         <span>Thrown</span>
         <span>Previous</span>
         <span>New Score</span>
@@ -36,7 +35,7 @@ const CountdownHistoryTable: React.FC<CountdownHistoryTableProps> = ({ entries, 
       {entries.map((item, index) => {
         const { entry, player } = item;
         const newScore = calculateNewScore(entry);
-        const isBust = newScore < 0 || newScore === 1; // Bust if negative or would be 1
+        const isBust = (entry.previousScore - entry.score) < 0 || (entry.previousScore - entry.score) === 1;
         const isWin = newScore === 0;
 
         return (
@@ -48,7 +47,6 @@ const CountdownHistoryTable: React.FC<CountdownHistoryTableProps> = ({ entries, 
               </span>
             )}
             <span className="turn-number">{entry.turnNumber}</span>
-            <span className="time">{formatTime(entry.timestamp)}</span>
             <span className="score-thrown">{entry.score}</span>
             <span className="previous-score">{entry.previousScore}</span>
             <span className="new-score">{newScore}</span>

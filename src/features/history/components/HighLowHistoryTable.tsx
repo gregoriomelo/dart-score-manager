@@ -1,17 +1,12 @@
 import React from 'react';
-import { Player, ScoreHistoryEntry, isHighLowPlayer } from '../../../shared/types/game';
+import { Player, ScoreHistoryEntry } from '../../../shared/types/game';
 import { getPlayerColor } from '../../../shared/utils/playerColors';
-import { formatTime } from '../../../shared/utils/timeUtils';
 import './HistoryView.css';
 
 interface HighLowHistoryTableProps {
   entries: { player?: Player; entry: ScoreHistoryEntry }[];
   showPlayerColumn: boolean;
 }
-
-
-
-
 
 const HighLowHistoryTable: React.FC<HighLowHistoryTableProps> = ({ entries, showPlayerColumn }) => {
   if (entries.length === 0) {
@@ -23,7 +18,6 @@ const HighLowHistoryTable: React.FC<HighLowHistoryTableProps> = ({ entries, show
       <div className="history-header">
         {showPlayerColumn && <span>Player</span>}
         <span>Turn</span>
-        <span>Time</span>
         <span>Challenge</span>
         <span>Thrown</span>
         <span>Result</span>
@@ -36,8 +30,8 @@ const HighLowHistoryTable: React.FC<HighLowHistoryTableProps> = ({ entries, show
           : '—';
         const resultPass = entry.passedChallenge === true;
         const resultFail = entry.passedChallenge === false;
-        const livesBefore = entry.livesBefore ?? (player && isHighLowPlayer(player) ? player.lives : undefined);
-        const livesAfter = entry.livesAfter ?? (player && isHighLowPlayer(player) ? player.lives : undefined);
+        const livesBefore = entry.livesBefore;
+        const livesAfter = entry.livesAfter;
         const eliminated = livesAfter !== undefined && livesAfter <= 0;
 
         return (
@@ -49,12 +43,11 @@ const HighLowHistoryTable: React.FC<HighLowHistoryTableProps> = ({ entries, show
               </span>
             )}
             <span className="turn-number">{entry.turnNumber}</span>
-            <span className="time">{formatTime(entry.timestamp)}</span>
             <span className="challenge">{challengeLabel}</span>
             <span className="score-thrown">{entry.score}</span>
             <span className="result">
-              {resultPass && <span className="pass-badge">PASS ✅</span>}
-              {resultFail && <span className="fail-badge">FAIL ❌</span>}
+              {resultPass && <span className="pass-badge">✅</span>}
+              {resultFail && <span className="fail-badge">❌</span>}
               {!resultPass && !resultFail && <span>—</span>}
             </span>
             <span className="lives">
@@ -64,7 +57,7 @@ const HighLowHistoryTable: React.FC<HighLowHistoryTableProps> = ({ entries, show
                   {resultFail && (livesBefore || 0) > (livesAfter || 0) && (
                     <span className="lives-delta">-1 💔</span>
                   )}
-                  {eliminated && <span className="eliminated-badge">Eliminated ☠️</span>}
+                  {eliminated && <span className="eliminated-badge">☠️</span>}
                 </>
               ) : (
                 '—'

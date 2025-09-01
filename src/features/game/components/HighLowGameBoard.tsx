@@ -53,8 +53,6 @@ const HighLowGameBoard: React.FC<HighLowGameBoardProps> = React.memo(({
     onSetChallenge(direction, targetScore);
   }, [onSetChallenge]);
 
-
-
   // Get the last score for reference - find the most recent score from any player's history
   const lastPlayerScore = useMemo((): number | undefined => {
     let latestScore: number | undefined = undefined;
@@ -104,45 +102,58 @@ const HighLowGameBoard: React.FC<HighLowGameBoardProps> = React.memo(({
   }
 
   return (
-    <div className={CSS_CLASSES.GAME_BOARD}>
-      <h1>{UI_TEXT.APP_TITLE}</h1>
-      <div className={CSS_CLASSES.GAME_MODE_INDICATOR}>
-        {UI_TEXT.HIGH_LOW_MODE_INDICATOR}
-      </div>
-      
-      <PlayerList
-        players={gameState.players}
-        currentPlayer={currentPlayer}
-        gameMode="highLow"
-        onHistoryClick={setHistoryPlayer}
-      />
-
-      <HighLowChallenge
-        currentChallenge={gameState.highLowChallenge}
-        currentPlayerName={currentPlayer?.name || ''}
-        lastScore={lastPlayerScore}
-        onSetChallenge={handleSetChallenge}
-        showChallengeForm={needsChallengeSet}
-      />
-
-      {currentPlayer && gameState.highLowChallenge && (
-        <ScoreInput
+    <>
+      <div className={CSS_CLASSES.GAME_BOARD}>
+        <h1>{UI_TEXT.APP_TITLE}</h1>
+        <div className={CSS_CLASSES.GAME_MODE_INDICATOR}>
+          {UI_TEXT.HIGH_LOW_MODE_INDICATOR}
+        </div>
+        
+        <PlayerList
+          players={gameState.players}
           currentPlayer={currentPlayer}
-          scoreInput={scoreInput}
-          onScoreInputChange={handleScoreInputChange}
-          onSubmitScore={handleScoreSubmit}
-          error={error}
+          gameMode="highLow"
+          onHistoryClick={setHistoryPlayer}
         />
-      )}
-      
-      <GameActions
-        onShowAllHistory={() => setShowConsolidatedHistory(true)}
-        onResetGame={onResetGame}
-        onNewGame={onNewGame}
+
+        <HighLowChallenge
+          currentChallenge={gameState.highLowChallenge}
+          currentPlayerName={currentPlayer?.name || ''}
+          lastScore={lastPlayerScore}
+          onSetChallenge={handleSetChallenge}
+          showChallengeForm={needsChallengeSet}
+        />
+
+        {currentPlayer && gameState.highLowChallenge && (
+          <ScoreInput
+            currentPlayer={currentPlayer}
+            scoreInput={scoreInput}
+            onScoreInputChange={handleScoreInputChange}
+            onSubmitScore={handleScoreSubmit}
+            error={error}
+          />
+        )}
+        
+        <GameActions
+          onShowAllHistory={() => setShowConsolidatedHistory(true)}
+          onResetGame={onResetGame}
+          onNewGame={onNewGame}
+        />
+      </div>
+
+      {/* History modals - always rendered so they're available during the game */}
+      <HighLowPlayerHistoryModal 
+        player={historyPlayer! as HighLowPlayer}
+        isOpen={historyPlayer !== null}
+        onClose={() => setHistoryPlayer(null)}
       />
-
-
-    </div>
+      
+      <HighLowAllPlayersHistoryModal 
+        players={gameState.players as HighLowPlayer[]}
+        isOpen={showConsolidatedHistory}
+        onClose={() => setShowConsolidatedHistory(false)}
+      />
+    </>
   );
 });
 

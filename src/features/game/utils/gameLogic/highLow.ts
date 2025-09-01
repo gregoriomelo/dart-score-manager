@@ -54,6 +54,13 @@ export const processHighLowTurn = (gameState: GameState, playerId: string, score
     previousScore: currentPlayer.score,
     timestamp: new Date(),
     turnNumber: currentPlayer.scoreHistory.length + 1,
+    // Add challenge and result data
+    challengeDirection: challenge.direction,
+    challengeTarget: challenge.targetScore,
+    challengerId: challenge.playerId,
+    passedChallenge: challengeSuccessful,
+    livesBefore: currentPlayer.lives,
+    livesAfter: challengeSuccessful ? currentPlayer.lives : (currentPlayer.lives || 0) - 1,
   };
 
   if (challengeSuccessful) {

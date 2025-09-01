@@ -73,8 +73,6 @@ const CountdownGameBoard: React.FC<CountdownGameBoardProps> = React.memo(({
     }
   }, [currentPlayer, handleSubmitScore]);
 
-
-
   if (gameState.gameFinished && gameState.winner) {
     return (
       <>
@@ -104,13 +102,14 @@ const CountdownGameBoard: React.FC<CountdownGameBoardProps> = React.memo(({
   }
 
   return (
-    <div className={CSS_CLASSES.GAME_BOARD}>
-      <h1>{UI_TEXT.APP_TITLE}</h1>
-      <div className={CSS_CLASSES.GAME_MODE_INDICATOR}>
-        {formatCountdownModeIndicator(gameState.players[0]?.turnStartScore || 501)}
-      </div>
-      
-              <PlayerList
+    <>
+      <div className={CSS_CLASSES.GAME_BOARD}>
+        <h1>{UI_TEXT.APP_TITLE}</h1>
+        <div className={CSS_CLASSES.GAME_MODE_INDICATOR}>
+          {formatCountdownModeIndicator(gameState.players[0]?.turnStartScore || 501)}
+        </div>
+        
+        <PlayerList
           players={gameState.players}
           currentPlayer={currentPlayer}
           gameMode="countdown"
@@ -134,9 +133,21 @@ const CountdownGameBoard: React.FC<CountdownGameBoardProps> = React.memo(({
           onResetGame={onResetGame}
           onNewGame={onNewGame}
         />
+      </div>
 
-
-    </div>
+      {/* History modals - always rendered so they're available during the game */}
+      <CountdownPlayerHistoryModal 
+        player={historyPlayer! as CountdownPlayer}
+        isOpen={historyPlayer !== null}
+        onClose={() => setHistoryPlayer(null)}
+      />
+      
+      <CountdownAllPlayersHistoryModal 
+        players={gameState.players as CountdownPlayer[]}
+        isOpen={showConsolidatedHistory}
+        onClose={() => setShowConsolidatedHistory(false)}
+      />
+    </>
   );
 });
 
