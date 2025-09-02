@@ -21,14 +21,9 @@ export const useGameManager = () => {
   // Load saved game state on mount
   useEffect(() => {
     const loadSavedState = async () => {
-      try {
-        const savedState = await loadGameState();
-        if (savedState) {
-          setGameState(savedState);
-        }
-      } catch (error) {
-        console.error('Error loading saved game state:', error);
-        clearGameState();
+      const savedState = await loadGameState();
+      if (savedState) {
+        setGameState(savedState);
       }
     };
     loadSavedState();
