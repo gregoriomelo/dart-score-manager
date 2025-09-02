@@ -2,8 +2,13 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 
+// Detect if we're building for GitHub Pages
+const isGitHubPages = process.env.GITHUB_PAGES === 'true';
+const base = isGitHubPages ? '/dart-score-manager/' : '/';
+
 export default defineConfig({
   plugins: [react()],
+  base,
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
