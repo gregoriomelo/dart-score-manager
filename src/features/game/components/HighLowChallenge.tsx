@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { HighLowChallenge as ChallengeType } from '../../../shared/types/game';
 import './HighLowChallenge.css';
 
@@ -17,6 +18,8 @@ const HighLowChallenge: React.FC<HighLowChallengeProps> = ({
   onSetChallenge,
   showChallengeForm
 }) => {
+  const { t } = useTranslation();
+  
   const handleSetChallenge = (direction: 'higher' | 'lower') => {
     const fixedTarget = lastScore !== undefined ? lastScore : 40;
     onSetChallenge(direction, fixedTarget);
@@ -25,11 +28,11 @@ const HighLowChallenge: React.FC<HighLowChallengeProps> = ({
   if (currentChallenge) {
     return (
       <div className="high-low-challenge active-challenge">
-        <h3>Current Challenge</h3>
+        <h3>{t('game.challenge.currentChallenge')}</h3>
         <div className="challenge-display">
           <p>
-            <strong>{currentPlayerName}</strong> must score{' '}
-            <span className="direction">{currentChallenge.direction}</span> than{' '}
+            <strong>{currentPlayerName}</strong> {t('game.challenge.mustScore')}{' '}
+            <span className="direction">{t(`game.challenge.${currentChallenge.direction}`)}</span> {t('game.challenge.than')}{' '}
             <span className="target-score">{currentChallenge.targetScore}</span>
           </p>
         </div>
@@ -48,14 +51,14 @@ const HighLowChallenge: React.FC<HighLowChallengeProps> = ({
             onClick={() => handleSetChallenge('higher')}
             className="challenge-btn higher-btn"
           >
-            ↑ Higher than {fixedTarget}
+            ↑ {t('game.challenge.higherThan', { score: fixedTarget })}
           </button>
           <button
             type="button"
             onClick={() => handleSetChallenge('lower')}
             className="challenge-btn lower-btn"
           >
-            ↓ Lower than {fixedTarget}
+            ↓ {t('game.challenge.lowerThan', { score: fixedTarget })}
           </button>
         </div>
       </div>
@@ -64,7 +67,7 @@ const HighLowChallenge: React.FC<HighLowChallengeProps> = ({
 
   return (
     <div className="high-low-challenge waiting">
-      <p>Waiting for challenge to be set...</p>
+      <p>{t('game.challenge.waitingForChallenge')}</p>
     </div>
   );
 };

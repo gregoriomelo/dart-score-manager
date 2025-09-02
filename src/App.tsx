@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { GameMode } from './shared/types/game';
 import { useGameManager } from './features/game/hooks/useGameManager';
 import { NotificationProvider } from './app/contexts/NotificationContext';
@@ -12,12 +13,15 @@ import { registerServiceWorker } from './utils/serviceWorker';
 import { useResponsive } from './hooks/useResponsive';
 import { useDeviceCapabilities } from './hooks/useTouch';
 import PWAInstall from './components/PWAInstall';
+import LanguageSwitcher from './components/LanguageSwitcher';
 import { onOnlineStatusChange } from './utils/serviceWorker';
+import './i18n';
 import './App.css';
 
 function AppContent() {
   // Performance tracking
   usePerformanceTracking('App');
+  const { t } = useTranslation();
   const [showPerformanceDashboard, setShowPerformanceDashboard] = useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
@@ -79,21 +83,22 @@ function AppContent() {
   if (gameState.players.length === 0) {
     return (
       <div className="App">
+        <LanguageSwitcher />
         {/* Offline indicator */}
         {!isOnline && (
           <div className="offline-indicator show">
-            You are currently offline. Some features may be limited.
+            {t('app.offlineMessage')}
           </div>
         )}
         
         <a href="#main-content" className="skip-link">
-          Skip to main content
+          {t('app.skipToMainContent')}
         </a>
         <button
           onClick={() => setShowPerformanceDashboard(true)}
           className="performance-toggle"
-          aria-label="Open performance dashboard"
-          title="Performance Dashboard"
+          aria-label={t('app.openPerformanceDashboard')}
+          title={t('app.performanceDashboard')}
         >
           📊
         </button>
@@ -114,38 +119,39 @@ function AppContent() {
 
   return (
     <div className="App">
+      <LanguageSwitcher />
       {/* Offline indicator */}
       {!isOnline && (
         <div className="offline-indicator show">
-          You are currently offline. Some features may be limited.
+          {t('app.offlineMessage')}
         </div>
       )}
       
       <a href="#main-content" className="skip-link">
-        Skip to main content
+        {t('app.skipToMainContent')}
       </a>
       <button
         onClick={() => setShowPerformanceDashboard(true)}
         className="performance-toggle"
-        aria-label="Open performance dashboard"
-        title="Performance Dashboard"
+        aria-label={t('app.openPerformanceDashboard')}
+        title={t('app.performanceDashboard')}
       >
         📊
       </button>
-              <main id="main-content" role="main">
-          <LazyComponent>
-            <LazyGameModeRouter
-              gameState={gameState}
-              currentPlayer={currentPlayer}
-              onSubmitScore={submitScore}
-              onNextPlayer={goToNextPlayer}
-              onResetGame={resetCurrentGame}
-              onNewGame={handleNewGame}
-              onSetChallenge={setChallengeForHighLow}
-              onSubmitHighLowScore={submitHighLowScore}
-            />
-          </LazyComponent>
-        </main>
+      <main id="main-content" role="main">
+        <LazyComponent>
+          <LazyGameModeRouter
+            gameState={gameState}
+            currentPlayer={currentPlayer}
+            onSubmitScore={submitScore}
+            onNextPlayer={goToNextPlayer}
+            onResetGame={resetCurrentGame}
+            onNewGame={handleNewGame}
+            onSetChallenge={setChallengeForHighLow}
+            onSubmitHighLowScore={submitHighLowScore}
+          />
+        </LazyComponent>
+      </main>
       <NotificationContainer />
       <PerformanceDashboard
         isVisible={showPerformanceDashboard}

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { GameMode } from '../../../shared/types/game';
-import { GAME_CONSTANTS, UI_TEXT, CSS_CLASSES } from '../../../shared/utils/constants';
+import { GAME_CONSTANTS, UI_TEXT_KEYS, CSS_CLASSES } from '../../../shared/utils/i18nConstants';
 import { validatePlayerName } from '../../../shared/utils/validation';
 import { sanitizePlayerNames } from '../../../shared/utils/textUtils';
 import { useNotifications } from '../../../app/contexts/NotificationContext';
@@ -12,6 +13,7 @@ interface PlayerSetupProps {
 }
 
 const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => {
+  const { t } = useTranslation();
   const [playerNames, setPlayerNames] = useState<string[]>(['', '']);
   const [gameMode, setGameMode] = useState<GameMode>(GAME_CONSTANTS.GAME_MODES.COUNTDOWN);
   const [startingScore, setStartingScore] = useState<number>(GAME_CONSTANTS.DEFAULT_STARTING_SCORE);
@@ -38,18 +40,18 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
              setPlayerNames([...playerNames, '']);
              setLastAddedPlayerIndex(newIndex);
            } else {
-             showNotification('warning', UI_TEXT.TOO_MANY_PLAYERS_ERROR);
+             showNotification('warning', t(UI_TEXT_KEYS.TOO_MANY_PLAYERS_ERROR));
            }
-         }, [playerNames, showNotification]);
+         }, [playerNames, showNotification, t]);
 
            const removePlayer = useCallback((index: number) => {
            if (playerNames.length > GAME_CONSTANTS.MIN_PLAYERS) {
              const updatedNames = playerNames.filter((_, i) => i !== index);
              setPlayerNames(updatedNames);
            } else {
-             showNotification('warning', UI_TEXT.TOO_FEW_PLAYERS_ERROR);
+             showNotification('warning', t(UI_TEXT_KEYS.TOO_FEW_PLAYERS_ERROR));
            }
-         }, [playerNames, showNotification]);
+         }, [playerNames, showNotification, t]);
 
            const handleStartGame = useCallback(() => {
            const validNames = sanitizePlayerNames(playerNames);
@@ -57,16 +59,16 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
            // Validate all player names
            const invalidNames = validNames.filter(name => !validatePlayerName(name).isValid);
            if (invalidNames.length > 0) {
-             showNotification('error', UI_TEXT.INVALID_PLAYER_NAME_ERROR);
+             showNotification('error', t(UI_TEXT_KEYS.INVALID_PLAYER_NAME_ERROR));
              return;
            }
 
            if (validNames.length >= GAME_CONSTANTS.MIN_PLAYERS) {
              onStartGame(validNames, gameMode, startingScore, startingLives);
            } else {
-             showNotification('error', UI_TEXT.TOO_FEW_PLAYERS_ERROR);
+             showNotification('error', t(UI_TEXT_KEYS.TOO_FEW_PLAYERS_ERROR));
            }
-         }, [playerNames, gameMode, startingScore, startingLives, onStartGame, showNotification]);
+         }, [playerNames, gameMode, startingScore, startingLives, onStartGame, showNotification, t]);
 
   // Focus on the newly added player input field
   useEffect(() => {
@@ -83,10 +85,10 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
 
   return (
     <div className={CSS_CLASSES.PLAYER_SETUP} role="region" aria-labelledby="setup-title">
-      <h1 id="setup-title">{UI_TEXT.APP_HEADER}</h1>
+      <h1 id="setup-title">{t(UI_TEXT_KEYS.APP_HEADER)}</h1>
       <div className={CSS_CLASSES.SETUP_FORM} role="form" aria-labelledby="setup-title">
         <div className={CSS_CLASSES.GAME_MODE_SECTION}>
-          <label className={CSS_CLASSES.GAME_MODE_LABEL}>{UI_TEXT.GAME_MODE_LABEL}</label>
+          <label className={CSS_CLASSES.GAME_MODE_LABEL}>{t(UI_TEXT_KEYS.GAME_MODE_LABEL)}</label>
           <div className={CSS_CLASSES.GAME_MODE_BUTTONS} role="group" aria-labelledby={gameModeId}>
             <button
               type="button"
@@ -95,7 +97,7 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
               aria-pressed={gameMode === GAME_CONSTANTS.GAME_MODES.COUNTDOWN}
               aria-describedby={`${gameModeId}-description`}
             >
-              {GAME_CONSTANTS.GAME_MODE_NAMES.COUNTDOWN}
+              {t(GAME_CONSTANTS.GAME_MODE_NAMES.COUNTDOWN)}
             </button>
             <button
               type="button"
@@ -104,7 +106,7 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
               aria-pressed={gameMode === GAME_CONSTANTS.GAME_MODES.HIGH_LOW}
               aria-describedby={`${gameModeId}-description`}
             >
-              {GAME_CONSTANTS.GAME_MODE_NAMES.HIGH_LOW}
+              {t(GAME_CONSTANTS.GAME_MODE_NAMES.HIGH_LOW)}
             </button>
           </div>
           <div id={`${gameModeId}-description`} className="sr-only">
@@ -116,13 +118,13 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
 
         {gameMode === GAME_CONSTANTS.GAME_MODES.COUNTDOWN && (
           <div>
-            <label htmlFor={startingScoreId}>{UI_TEXT.STARTING_SCORE_LABEL}</label>
+            <label htmlFor={startingScoreId}>{t(UI_TEXT_KEYS.STARTING_SCORE_LABEL)}</label>
             <input
               id={startingScoreId}
               type="number"
               value={startingScore}
               onChange={(e) => setStartingScore(parseInt(e.target.value) || GAME_CONSTANTS.DEFAULT_STARTING_SCORE)}
-              placeholder={UI_TEXT.STARTING_SCORE_PLACEHOLDER}
+              placeholder={t(UI_TEXT_KEYS.STARTING_SCORE_PLACEHOLDER)}
               aria-label={ACCESSIBILITY.LABELS.STARTING_SCORE_INPUT}
               aria-describedby={`${startingScoreId}-description`}
               min="1"
@@ -137,14 +139,14 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
         {gameMode === GAME_CONSTANTS.GAME_MODES.HIGH_LOW && (
           <div>
             <label htmlFor={startingLivesId}>
-              {UI_TEXT.STARTING_LIVES_LABEL}
+              {t(UI_TEXT_KEYS.STARTING_LIVES_LABEL)}
             </label>
             <input
               id={startingLivesId}
               type="number"
               value={startingLives}
               onChange={(e) => setStartingLives(parseInt(e.target.value) || GAME_CONSTANTS.DEFAULT_STARTING_LIVES)}
-              placeholder={UI_TEXT.STARTING_LIVES_PLACEHOLDER}
+              placeholder={t(UI_TEXT_KEYS.STARTING_LIVES_PLACEHOLDER)}
               aria-label={ACCESSIBILITY.LABELS.STARTING_LIVES_INPUT}
               aria-describedby={`${startingLivesId}-description`}
               min="1"
@@ -158,19 +160,19 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
 
 
         <div className={CSS_CLASSES.PLAYERS_SECTION} id={playersSectionId} role="group" aria-labelledby="players-title">
-          <h3 id="players-title">{UI_TEXT.PLAYERS_SECTION_TITLE}</h3>
+          <h3 id="players-title">{t(UI_TEXT_KEYS.PLAYERS_SECTION_TITLE)}</h3>
           <div className="sr-only" id={`${playersSectionId}-description`}>
             {ACCESSIBILITY.DESCRIPTIONS.PLAYER_LIMITS}
           </div>
           {playerNames.map((name, index) => (
             <div key={index} className={CSS_CLASSES.PLAYER_INPUT}>
               <label htmlFor={`player-${index}`} className="sr-only">
-                {`${UI_TEXT.PLAYER_NAME_PLACEHOLDER.replace('{index}', (index + 1).toString())}`}
+                {t(UI_TEXT_KEYS.PLAYER_NAME_PLACEHOLDER, { index: index + 1 })}
               </label>
               <input
                 id={`player-${index}`}
                 type="text"
-                placeholder={`Player ${index + 1} name`}
+                placeholder={t(UI_TEXT_KEYS.PLAYER_NAME_PLACEHOLDER, { index: index + 1 })}
                 value={name}
                 onChange={(e) => handlePlayerNameChange(index, e.target.value)}
                 maxLength={GAME_CONSTANTS.MAX_PLAYER_NAME_LENGTH}
@@ -200,7 +202,7 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
               className={CSS_CLASSES.ADD_PLAYER_BTN}
               aria-label={ACCESSIBILITY.LABELS.ADD_PLAYER_BUTTON}
             >
-              {UI_TEXT.ADD_PLAYER_BUTTON}
+              {t(UI_TEXT_KEYS.ADD_PLAYER_BUTTON)}
             </button>
           )}
         </div>
@@ -212,11 +214,11 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
           aria-label={ACCESSIBILITY.LABELS.START_GAME_BUTTON}
           aria-describedby={!isValidToStart ? 'start-game-error' : undefined}
         >
-          {UI_TEXT.START_GAME_BUTTON}
+          {t(UI_TEXT_KEYS.START_GAME_BUTTON)}
         </button>
         {!isValidToStart && (
           <div id="start-game-error" className="sr-only" role="alert">
-            At least 2 players with valid names are required to start a game
+            {t('errors.tooFewPlayers')}
           </div>
         )}
       </div>

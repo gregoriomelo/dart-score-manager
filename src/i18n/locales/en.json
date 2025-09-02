@@ -1,0 +1,82 @@
+{
+  "app": {
+    "title": "Dart Score Manager",
+    "header": "Dart Score",
+    "offlineMessage": "You are currently offline. Some features may be limited.",
+    "skipToMainContent": "Skip to main content",
+    "performanceDashboard": "Performance Dashboard",
+    "openPerformanceDashboard": "Open performance dashboard"
+  },
+  "game": {
+    "modes": {
+      "label": "Game Mode:",
+      "countdown": "Countdown (501/301)",
+      "highLow": "High-Low Challenge"
+    },
+    "setup": {
+      "startingScore": "Starting Score:",
+      "startingLives": "Starting Lives:",
+      "playersSection": "Players (minimum 2):",
+      "addPlayer": "Add Player",
+      "startGame": "Start Game"
+    },
+    "actions": {
+      "submit": "Submit",
+      "resetGame": "Reset Game",
+      "playAgain": "Play Again",
+      "backToSetup": "Back to Setup",
+      "allHistory": "📊 All History"
+    },
+    "placeholders": {
+      "scoreInput": "Enter score (0-180)",
+      "playerName": "Player {index} name",
+      "startingScore": "501",
+      "startingLives": "5"
+    },
+    "messages": {
+      "gameStarted": "Game started successfully!",
+      "scoreSubmitted": "Score submitted successfully!",
+      "playerAdded": "Player added successfully!",
+      "playerRemoved": "Player removed successfully!",
+      "gameReset": "Game reset successfully!",
+      "challengeSet": "Challenge set successfully!",
+      "bust": "BUST! Score reverted to turn start.",
+      "winnerCongratulations": "🎉 Congratulations!",
+      "winnerWins": "{name} wins!",
+      "finalScoresCountdown": "Final Scores & History",
+      "finalResultsHighLow": "Final Results"
+    },
+    "display": {
+      "playerLives": "Lives: {lives}",
+      "playerScore": "{name}: Lives {lives}",
+      "historyButtonTitle": "View {name}'s score history",
+      "countdownModeIndicator": "Countdown ({score})",
+      "highLowModeIndicator": "High-Low Challenge",
+      "playerTurn": "{name}'s Turn"
+    },
+    "challenge": {
+      "currentChallenge": "Current Challenge",
+      "mustScore": "must score",
+      "higher": "higher",
+      "lower": "lower",
+      "than": "than",
+      "higherThan": "Higher than {score}",
+      "lowerThan": "Lower than {score}",
+      "waitingForChallenge": "Waiting for challenge to be set..."
+    }
+  },
+  "errors": {
+    "invalidScore": "Please enter a valid score (0-180)",
+    "invalidScoreEntry": "Invalid score entry",
+    "scoreTooHigh": "Score cannot exceed 180",
+    "scoreTooLow": "Score cannot be negative",
+    "invalidPlayerName": "Player name must be between 1 and 20 characters",
+    "tooFewPlayers": "At least 2 players are required to start a game",
+    "tooManyPlayers": "Maximum 8 players allowed",
+    "invalidStartingScore": "Starting score must be greater than 0",
+    "invalidStartingLives": "Starting lives must be between 1 and 10"
+  },
+  "performance": {
+    "title": "Performance Dashboard"
+  }
+}

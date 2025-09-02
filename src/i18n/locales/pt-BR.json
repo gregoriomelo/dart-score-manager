@@ -1,0 +1,82 @@
+{
+  "app": {
+    "title": "Gerenciador de Pontuação de Dardos",
+    "header": "Pontuação de Dardos",
+    "offlineMessage": "Você está offline. Algumas funcionalidades podem ser limitadas.",
+    "skipToMainContent": "Pular para o conteúdo principal",
+    "performanceDashboard": "Painel de Performance",
+    "openPerformanceDashboard": "Abrir painel de performance"
+  },
+  "game": {
+    "modes": {
+      "label": "Modo de Jogo:",
+      "countdown": "Contagem Regressiva (501/301)",
+      "highLow": "Desafio Alto-Baixo"
+    },
+    "setup": {
+      "startingScore": "Pontuação Inicial:",
+      "startingLives": "Vidas Iniciais:",
+      "playersSection": "Jogadores (mínimo 2):",
+      "addPlayer": "Adicionar Jogador",
+      "startGame": "Iniciar Jogo"
+    },
+    "actions": {
+      "submit": "Enviar",
+      "resetGame": "Reiniciar Jogo",
+      "playAgain": "Jogar Novamente",
+      "backToSetup": "Voltar à Configuração",
+      "allHistory": "📊 Todo o Histórico"
+    },
+    "placeholders": {
+      "scoreInput": "Digite a pontuação (0-180)",
+      "playerName": "Nome do jogador {index}",
+      "startingScore": "501",
+      "startingLives": "5"
+    },
+    "messages": {
+      "gameStarted": "Jogo iniciado com sucesso!",
+      "scoreSubmitted": "Pontuação enviada com sucesso!",
+      "playerAdded": "Jogador adicionado com sucesso!",
+      "playerRemoved": "Jogador removido com sucesso!",
+      "gameReset": "Jogo reiniciado com sucesso!",
+      "challengeSet": "Desafio definido com sucesso!",
+      "bust": "ERROU! Pontuação revertida para o início da rodada.",
+      "winnerCongratulations": "🎉 Parabéns!",
+      "winnerWins": "{name} vence!",
+      "finalScoresCountdown": "Pontuações Finais e Histórico",
+      "finalResultsHighLow": "Resultados Finais"
+    },
+    "display": {
+      "playerLives": "Vidas: {lives}",
+      "playerScore": "{name}: Vidas {lives}",
+      "historyButtonTitle": "Ver histórico de pontuação de {name}",
+      "countdownModeIndicator": "Contagem Regressiva ({score})",
+      "highLowModeIndicator": "Desafio Alto-Baixo",
+      "playerTurn": "Vez de {name}"
+    },
+    "challenge": {
+      "currentChallenge": "Desafio Atual",
+      "mustScore": "deve pontuar",
+      "higher": "maior",
+      "lower": "menor",
+      "than": "que",
+      "higherThan": "Maior que {score}",
+      "lowerThan": "Menor que {score}",
+      "waitingForChallenge": "Aguardando desafio ser definido..."
+    }
+  },
+  "errors": {
+    "invalidScore": "Por favor, digite uma pontuação válida (0-180)",
+    "invalidScoreEntry": "Entrada de pontuação inválida",
+    "scoreTooHigh": "A pontuação não pode exceder 180",
+    "scoreTooLow": "A pontuação não pode ser negativa",
+    "invalidPlayerName": "O nome do jogador deve ter entre 1 e 20 caracteres",
+    "tooFewPlayers": "Pelo menos 2 jogadores são necessários para iniciar um jogo",
+    "tooManyPlayers": "Máximo de 8 jogadores permitidos",
+    "invalidStartingScore": "A pontuação inicial deve ser maior que 0",
+    "invalidStartingLives": "As vidas iniciais devem estar entre 1 e 10"
+  },
+  "performance": {
+    "title": "Painel de Performance"
+  }
+}

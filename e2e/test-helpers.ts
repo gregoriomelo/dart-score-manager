@@ -32,7 +32,8 @@ export class TestHelper {
     await this.removeWebpackOverlay();
     
     // Wait for lazy-loaded components to be ready
-    await this.page.waitForSelector('input[placeholder="Player 1 name"]', { timeout: 10000 });
+    // Look for any player name input placeholder that contains "Player" and "name"
+    await this.page.waitForSelector('input[placeholder*="Player"][placeholder*="name"]', { timeout: 10000 });
   }
 
   /**
@@ -49,9 +50,10 @@ export class TestHelper {
     // Fill in the first 2 player names (which are always present)
     for (let i = 0; i < Math.min(2, players.length); i++) {
       const playerName = players[i];
-      const placeholder = `Player ${i + 1} name`;
       
-      await this.page.getByPlaceholder(placeholder).fill(playerName);
+      // Find player input by index using a more flexible selector
+      const playerInput = this.page.locator('input[placeholder*="Player"][placeholder*="name"]').nth(i);
+      await playerInput.fill(playerName);
     }
 
     // Add more players if needed
@@ -61,8 +63,9 @@ export class TestHelper {
         // Remove webpack overlay before clicking
         await this.removeWebpackOverlay();
         await addPlayerButton.click();
-        await this.page.waitForSelector(`input[placeholder="Player ${i + 1} name"]`, { timeout: 5000 });
-        await this.page.getByPlaceholder(`Player ${i + 1} name`).fill(players[i]);
+        await this.page.waitForSelector('input[placeholder*="Player"][placeholder*="name"]', { timeout: 5000 });
+        const playerInput = this.page.locator('input[placeholder*="Player"][placeholder*="name"]').nth(i);
+        await playerInput.fill(players[i]);
       }
     }
 

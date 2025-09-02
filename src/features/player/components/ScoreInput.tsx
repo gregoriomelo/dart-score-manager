@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Player } from '../../../shared/types/game';
-import { UI_TEXT, CSS_CLASSES } from '../../../shared/utils/constants';
+import { UI_TEXT_KEYS, CSS_CLASSES } from '../../../shared/utils/i18nConstants';
 import { ACCESSIBILITY, generateAriaId } from '../../../shared/utils/accessibility';
 import { usePerformanceTracking } from '../../performance/utils/performance';
 import '../../game/components/GameBoard.css';
@@ -11,8 +12,6 @@ interface ScoreInputProps {
   onScoreInputChange: (value: string) => void;
   onSubmitScore: () => void;
   error?: string;
-  showBustBanner?: boolean;
-  bustAnimKey?: number;
 }
 
 const ScoreInput: React.FC<ScoreInputProps> = React.memo(({
@@ -20,16 +19,15 @@ const ScoreInput: React.FC<ScoreInputProps> = React.memo(({
   scoreInput,
   onScoreInputChange,
   onSubmitScore,
-  error,
-  showBustBanner = false,
-  bustAnimKey = 0
+  error
 }) => {
+  const { t } = useTranslation();
+  
   // Performance tracking
   usePerformanceTracking('ScoreInput');
 
   const scoreInputId = generateAriaId('score-input');
   const errorId = generateAriaId('score-error');
-  const bustId = generateAriaId('bust-message');
 
   const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
     if (e.key === ACCESSIBILITY.KEYBOARD.ENTER) {
@@ -39,19 +37,7 @@ const ScoreInput: React.FC<ScoreInputProps> = React.memo(({
 
   return (
     <div className={CSS_CLASSES.SCORE_INPUT_SECTION} role="region" aria-labelledby="turn-title">
-      <h3 id="turn-title">{currentPlayer.name}&apos;s Turn</h3>
-      {showBustBanner && (
-        <div
-          key={bustAnimKey}
-          id={bustId}
-          className={`${CSS_CLASSES.BUST_MESSAGE} ${CSS_CLASSES.BUST_BANNER}`}
-          role="status"
-          aria-live="polite"
-          aria-label="Bust notification"
-        >
-          {UI_TEXT.BUST_MESSAGE}
-        </div>
-      )}
+      <h3 id="turn-title">{t('game.display.playerTurn', { name: currentPlayer.name })}</h3>
       <div className={CSS_CLASSES.SCORE_INPUT}>
         <label htmlFor={scoreInputId} className="sr-only">
           {ACCESSIBILITY.LABELS.SCORE_INPUT}
@@ -62,7 +48,7 @@ const ScoreInput: React.FC<ScoreInputProps> = React.memo(({
           value={scoreInput}
           onChange={(e) => onScoreInputChange(e.target.value)}
           onKeyPress={handleKeyPress}
-          placeholder={UI_TEXT.SCORE_INPUT_PLACEHOLDER}
+          placeholder={t(UI_TEXT_KEYS.SCORE_INPUT_PLACEHOLDER)}
           aria-label={ACCESSIBILITY.LABELS.SCORE_INPUT}
           aria-describedby={`${scoreInputId}-help ${error ? errorId : ''}`}
           aria-invalid={!!error}
@@ -78,7 +64,7 @@ const ScoreInput: React.FC<ScoreInputProps> = React.memo(({
           onClick={onSubmitScore}
           aria-label={ACCESSIBILITY.LABELS.SUBMIT_SCORE_BUTTON}
         >
-          {UI_TEXT.SUBMIT_BUTTON}
+          {t(UI_TEXT_KEYS.SUBMIT_BUTTON)}
         </button>
       </div>
       {error && (

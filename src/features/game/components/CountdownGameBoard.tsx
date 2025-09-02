@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Player, CountdownGameState, CountdownPlayer } from '../../../shared/types/game';
-import { UI_TEXT, CSS_CLASSES } from '../../../shared/utils/constants';
+import { UI_TEXT_KEYS, CSS_CLASSES } from '../../../shared/utils/i18nConstants';
 import { useScoreSubmission } from '../../player/hooks/useScoreSubmission';
 import { formatCountdownModeIndicator } from '../../../shared/utils/textUtils';
 import CountdownPlayerHistoryModal from '../../history/components/CountdownPlayerHistoryModal';
@@ -28,6 +29,7 @@ const CountdownGameBoard: React.FC<CountdownGameBoardProps> = React.memo(({
   onResetGame,
   onNewGame,
 }) => {
+  const { t } = useTranslation();
   const [historyPlayer, setHistoryPlayer] = useState<Player | null>(null);
   const [showConsolidatedHistory, setShowConsolidatedHistory] = useState(false);
   const [showBustBanner, setShowBustBanner] = useState(false);
@@ -104,9 +106,9 @@ const CountdownGameBoard: React.FC<CountdownGameBoardProps> = React.memo(({
   return (
     <>
       <div className={CSS_CLASSES.GAME_BOARD}>
-        <h1>{UI_TEXT.APP_TITLE}</h1>
+        <h1>{t(UI_TEXT_KEYS.APP_TITLE)}</h1>
         <div className={CSS_CLASSES.GAME_MODE_INDICATOR}>
-          {formatCountdownModeIndicator(gameState.players[0]?.turnStartScore || 501)}
+          {formatCountdownModeIndicator(gameState.startingScore)}
         </div>
         
         <PlayerList
@@ -116,15 +118,19 @@ const CountdownGameBoard: React.FC<CountdownGameBoardProps> = React.memo(({
           onHistoryClick={setHistoryPlayer}
         />
 
-        {currentPlayer && (
+        {showBustBanner && (
+          <div className={CSS_CLASSES.BUST_BANNER} key={bustAnimKey}>
+            {t(UI_TEXT_KEYS.BUST_MESSAGE)}
+          </div>
+        )}
+
+        {currentPlayer && !gameState.gameFinished && (
           <ScoreInput
             currentPlayer={currentPlayer}
             scoreInput={scoreInput}
             onScoreInputChange={handleScoreInputChange}
             onSubmitScore={handleScoreSubmit}
             error={error}
-            showBustBanner={showBustBanner}
-            bustAnimKey={bustAnimKey}
           />
         )}
         

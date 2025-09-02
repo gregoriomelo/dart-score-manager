@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { performanceMonitor, analyzeBundleSize, checkPerformanceBudget } from '../utils/performance';
 import { getCacheSize, clearCache } from '../../../app/utils/serviceWorker';
 import './PerformanceDashboard.css';
@@ -21,6 +22,7 @@ interface ChunkInfo {
 }
 
 const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({ isVisible, onClose }) => {
+  const { t } = useTranslation();
   const [metrics, setMetrics] = useState(performanceMonitor.getMetrics());
   const [cacheSizes, setCacheSizes] = useState<Array<{ name: string; size: number }>>([]);
   const [bundleAnalysis, setBundleAnalysis] = useState<BundleAnalysis | null>(null);
@@ -95,7 +97,7 @@ const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({ isVisible, 
     <div className="performance-dashboard-overlay">
       <div className="performance-dashboard">
         <div className="performance-dashboard-header">
-          <h2>Performance Dashboard</h2>
+          <h2>{t('performance.title')}</h2>
           <button onClick={onClose} className="close-button" aria-label="Close dashboard">
             ×
           </button>

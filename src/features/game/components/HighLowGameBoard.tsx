@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Player, HighLowGameState, HighLowPlayer } from '../../../shared/types/game';
-import { UI_TEXT, CSS_CLASSES } from '../../../shared/utils/constants';
+import { UI_TEXT_KEYS, CSS_CLASSES } from '../../../shared/utils/i18nConstants';
 import { useScoreSubmission } from '../../player/hooks/useScoreSubmission';
 import HighLowChallenge from './HighLowChallenge';
 import HighLowPlayerHistoryModal from '../../history/components/HighLowPlayerHistoryModal';
@@ -30,6 +31,7 @@ const HighLowGameBoard: React.FC<HighLowGameBoardProps> = React.memo(({
   onResetGame,
   onNewGame,
 }) => {
+  const { t } = useTranslation();
   const [historyPlayer, setHistoryPlayer] = useState<Player | null>(null);
   const [showConsolidatedHistory, setShowConsolidatedHistory] = useState(false);
 
@@ -104,9 +106,9 @@ const HighLowGameBoard: React.FC<HighLowGameBoardProps> = React.memo(({
   return (
     <>
       <div className={CSS_CLASSES.GAME_BOARD}>
-        <h1>{UI_TEXT.APP_TITLE}</h1>
+        <h1>{t(UI_TEXT_KEYS.APP_TITLE)}</h1>
         <div className={CSS_CLASSES.GAME_MODE_INDICATOR}>
-          {UI_TEXT.HIGH_LOW_MODE_INDICATOR}
+          {t(UI_TEXT_KEYS.HIGH_LOW_MODE_INDICATOR)}
         </div>
         
         <PlayerList

@@ -1,6 +1,7 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Player } from '../../../shared/types/game';
-import { UI_TEXT, CSS_CLASSES } from '../../../shared/utils/constants';
+import { UI_TEXT_KEYS, CSS_CLASSES } from '../../../shared/utils/i18nConstants';
 import { formatWinnerAnnouncement } from '../../../shared/utils/textUtils';
 import PlayerList from '../../player/components/PlayerList';
 import GameActions from './GameActions';
@@ -25,15 +26,17 @@ const WinnerAnnouncement: React.FC<WinnerAnnouncementProps> = React.memo(({
   onResetGame,
   onNewGame
 }) => {
+  const { t } = useTranslation();
+  
   return (
     <div className={CSS_CLASSES.GAME_BOARD}>
       <div className={CSS_CLASSES.WINNER_ANNOUNCEMENT}>
-        <h2>{UI_TEXT.WINNER_CONGRATULATIONS}</h2>
+        <h2>{t(UI_TEXT_KEYS.WINNER_CONGRATULATIONS)}</h2>
         <p>{formatWinnerAnnouncement(winner.name)}</p>
       </div>
       
       <div className={CSS_CLASSES.FINAL_SCORES}>
-        <h3>{gameMode === 'countdown' ? UI_TEXT.FINAL_SCORES_COUNTDOWN : UI_TEXT.FINAL_RESULTS_HIGH_LOW}</h3>
+        <h3>{gameMode === 'countdown' ? t(UI_TEXT_KEYS.FINAL_SCORES_COUNTDOWN) : t(UI_TEXT_KEYS.FINAL_RESULTS_HIGH_LOW)}</h3>
         <PlayerList
           players={players}
           currentPlayer={null}
@@ -47,7 +50,7 @@ const WinnerAnnouncement: React.FC<WinnerAnnouncementProps> = React.memo(({
         onShowAllHistory={onShowAllHistory}
         onResetGame={onResetGame}
         onNewGame={onNewGame}
-        resetButtonText={UI_TEXT.PLAY_AGAIN_BUTTON}
+        resetButtonText={t(UI_TEXT_KEYS.PLAY_AGAIN_BUTTON)}
       />
     </div>
   );
