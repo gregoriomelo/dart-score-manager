@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { GameMode } from './shared/types/game';
 import { useGameManager } from './features/game/hooks/useGameManager';
 import { NotificationProvider } from './app/contexts/NotificationContext';
-import { LazyComponent, LazyPlayerSetup, LazyGameModeRouter } from './app/components/LazyComponents';
+import { LazyComponent, LazyMultiStepSetup } from './app/components/LazyComponents';
+import GameModeRouter from './features/game/components/GameModeRouter';
 import NotificationContainer from './app/components/NotificationContainer';
 import PerformanceDashboard from './features/performance/components/PerformanceDashboard';
 import { announceToScreenReader } from './shared/utils/accessibility';
@@ -100,7 +101,7 @@ function AppContent() {
         </button>
         <main id="main-content" role="main">
           <LazyComponent>
-            <LazyPlayerSetup onStartGame={handleStartGame} />
+            <LazyMultiStepSetup onStartGame={handleStartGame} />
           </LazyComponent>
         </main>
         <NotificationContainer />
@@ -135,7 +136,7 @@ function AppContent() {
       </button>
               <main id="main-content" role="main">
           <LazyComponent>
-            <LazyGameModeRouter
+            <GameModeRouter
               gameState={gameState}
               currentPlayer={currentPlayer}
               onSubmitScore={submitScore}

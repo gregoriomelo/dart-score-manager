@@ -32,11 +32,88 @@ export class TestHelper {
     await this.removeWebpackOverlay();
     
     // Wait for lazy-loaded components to be ready
-    await this.page.waitForSelector('input[placeholder="Player 1 name"]', { timeout: 10000 });
+    await this.page.waitForSelector('.step-players', { timeout: 10000 });
   }
 
   /**
-   * Set up a game with the specified options
+   * Step 1: Set up players (reusable helper)
+   */
+  async setupPlayers(players: string[]) {
+    // Fill in player names (inputs start empty now)
+    for (let i = 0; i < Math.min(players.length, 2); i++) {
+      const input = this.page.locator(`#player-${i}`);
+      await input.click();
+      await input.type(players[i]);
+    }
+
+    // Add more players if needed
+    for (let i = 2; i < players.length; i++) {
+      const addPlayerButton = this.page.locator('button').filter({ hasText: 'Add Player' });
+      if (await addPlayerButton.isVisible()) {
+        await addPlayerButton.click();
+        await this.page.waitForSelector(`#player-${i}`, { timeout: 5000 });
+        await this.page.locator(`#player-${i}`).type(players[i]);
+      }
+    }
+
+    // Continue to next step
+    await this.page.getByRole('button', { name: 'Continue →' }).click();
+    await this.page.waitForSelector('.step-game-mode', { timeout: 5000 });
+  }
+
+  /**
+   * Step 2: Select game mode (reusable helper)
+   */
+  async selectGameMode(gameMode: 'countdown' | 'high-low') {
+    if (gameMode === 'countdown') {
+      await this.page.locator('.game-mode-button.countdown').click();
+    } else {
+      await this.page.locator('.game-mode-button.high-low').click();
+    }
+    
+    // Continue to next step
+    await this.page.getByRole('button', { name: 'Continue →' }).click();
+    await this.page.waitForSelector('.step-configuration', { timeout: 5000 });
+  }
+
+  /**
+   * Step 3a: Configure countdown game (reusable helper)
+   */
+  async configureCountdownGame(startingScore: number) {
+    if (startingScore !== 501) {
+      const scoreInput = this.page.locator('#starting-score');
+      await scoreInput.fill(startingScore.toString());
+    }
+    
+    // Continue to next step
+    await this.page.getByRole('button', { name: 'Continue →' }).click();
+    await this.page.waitForSelector('.step-review', { timeout: 5000 });
+  }
+
+  /**
+   * Step 3b: Configure high-low game (reusable helper)
+   */
+  async configureHighLowGame(startingLives: number) {
+    if (startingLives !== 5) {
+      const livesInput = this.page.locator('#starting-lives');
+      await livesInput.fill(startingLives.toString());
+    }
+    
+    // Continue to next step
+    await this.page.getByRole('button', { name: 'Continue →' }).click();
+    await this.page.waitForSelector('.step-review', { timeout: 5000 });
+  }
+
+  /**
+   * Step 4: Review and start game (reusable helper)
+   */
+  async reviewAndStartGame() {
+    // Start the game
+    await this.page.getByRole('button', { name: 'Start Game' }).click();
+  }
+
+  /**
+   * Set up a game with the specified options using the multi-step setup
    */
   async setupGame(options: GameSetupOptions = {}) {
     const {
@@ -46,51 +123,80 @@ export class TestHelper {
       startingLives = 5
     } = options;
 
-    // Fill in the first 2 player names (which are always present)
-    for (let i = 0; i < Math.min(2, players.length); i++) {
-      const playerName = players[i];
-      const placeholder = `Player ${i + 1} name`;
-      
-      await this.page.getByPlaceholder(placeholder).fill(playerName);
-    }
-
-    // Add more players if needed
-    for (let i = 2; i < players.length; i++) {
-      const addPlayerButton = this.page.locator('button').filter({ hasText: 'Add Player' });
-      if (await addPlayerButton.isVisible()) {
-        // Remove webpack overlay before clicking
-        await this.removeWebpackOverlay();
-        await addPlayerButton.click();
-        await this.page.waitForSelector(`input[placeholder="Player ${i + 1} name"]`, { timeout: 5000 });
-        await this.page.getByPlaceholder(`Player ${i + 1} name`).fill(players[i]);
-      }
-    }
-
-    // Set game mode if high-low
-    if (gameMode === 'high-low') {
-      await this.page.locator('.game-mode-select').selectOption('high-low');
-      
-      // Set starting lives if specified
-      if (startingLives !== 5) {
-        const livesInput = this.page.locator('input[type="number"][min="1"][max="10"]');
-        await livesInput.fill(startingLives.toString());
-      }
-    } else {
-      // Set starting score if specified
-      if (startingScore !== 501) {
-        const scoreInput = this.page.getByPlaceholder('501');
-        await scoreInput.fill(startingScore.toString());
-      }
-    }
-
-    // Remove webpack overlay before clicking
-    await this.removeWebpackOverlay();
+    // Step 1: Players
+    await this.setupPlayers(players);
     
-    // Start the game
-    await this.page.getByRole('button', { name: 'Start Game' }).click();
+    // Step 2: Game Mode
+    await this.selectGameMode(gameMode);
+    
+    // Step 3: Configuration
+    if (gameMode === 'high-low') {
+      await this.configureHighLowGame(startingLives);
+    } else {
+      await this.configureCountdownGame(startingScore);
+    }
+    
+    // Step 4: Review and Start
+    await this.reviewAndStartGame();
     
     // Wait for game to load
     await this.page.waitForSelector('.player-card', { timeout: 10000 });
+  }
+
+  /**
+   * Navigate to a specific step in the setup
+   */
+  async goToStep(step: 'players' | 'gameMode' | 'configuration' | 'review') {
+    const stepSelectors = {
+      players: '.step-players',
+      gameMode: '.step-game-mode',
+      configuration: '.step-configuration',
+      review: '.step-review'
+    };
+
+    // Click on the step to navigate
+    const stepElement = this.page.locator(stepSelectors[step]);
+    await stepElement.waitFor({ state: 'visible', timeout: 5000 });
+  }
+
+  /**
+   * Verify current step is active
+   */
+  async expectCurrentStep(step: 'players' | 'gameMode' | 'configuration' | 'review') {
+    const stepSelectors = {
+      players: '.step-players',
+      gameMode: '.step-game-mode',
+      configuration: '.step-configuration',
+      review: '.step-review'
+    };
+
+    await this.page.waitForSelector(stepSelectors[step], { timeout: 5000 });
+  }
+
+  /**
+   * Verify setup data in review step
+   */
+  async expectReviewData(options: GameSetupOptions) {
+    const { players = ['Alice', 'Bob'], gameMode = 'countdown', startingScore = 501, startingLives = 5 } = options;
+    
+    // Verify players
+    for (let i = 0; i < players.length; i++) {
+      await expect(this.page.locator('.player-item').nth(i)).toContainText(players[i]);
+    }
+
+    // Verify game mode
+    if (gameMode === 'high-low') {
+      await expect(this.page.locator('.mode-name')).toContainText('High-Low Challenge');
+    } else {
+      await expect(this.page.locator('.mode-name')).toContainText('Countdown');
+    }
+
+    // Verify configuration
+    if (gameMode === 'high-low') {
+      await expect(this.page.locator('.setting-value')).toContainText(startingLives.toString());
+    } else {
+      await expect(this.page.locator('.setting-value')).toContainText(startingScore.toString());
+    }
   }
 
   /**
@@ -164,7 +270,7 @@ export class TestHelper {
    */
   async goToSetup() {
     await this.page.getByRole('button', { name: 'New Game' }).click();
-    await this.page.waitForSelector('input[placeholder="Player 1 name"]', { timeout: 10000 });
+    await this.page.waitForSelector('.step-players', { timeout: 10000 });
   }
 
   /**
