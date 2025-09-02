@@ -86,18 +86,27 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
       <h1 id="setup-title">{UI_TEXT.APP_HEADER}</h1>
       <div className={CSS_CLASSES.SETUP_FORM} role="form" aria-labelledby="setup-title">
         <div className={CSS_CLASSES.GAME_MODE_SECTION}>
-          <label htmlFor={gameModeId}>{UI_TEXT.GAME_MODE_LABEL}</label>
-          <select
-            id={gameModeId}
-            value={gameMode}
-            onChange={(e) => setGameMode(e.target.value as GameMode)}
-            className={CSS_CLASSES.GAME_MODE_SELECT}
-            aria-label={ACCESSIBILITY.LABELS.GAME_MODE_SELECT}
-            aria-describedby={`${gameModeId}-description`}
-          >
-            <option value={GAME_CONSTANTS.GAME_MODES.COUNTDOWN}>{GAME_CONSTANTS.GAME_MODE_NAMES.COUNTDOWN}</option>
-            <option value={GAME_CONSTANTS.GAME_MODES.HIGH_LOW}>{GAME_CONSTANTS.GAME_MODE_NAMES.HIGH_LOW}</option>
-          </select>
+          <label className={CSS_CLASSES.GAME_MODE_LABEL}>{UI_TEXT.GAME_MODE_LABEL}</label>
+          <div className={CSS_CLASSES.GAME_MODE_BUTTONS} role="group" aria-labelledby={gameModeId}>
+            <button
+              type="button"
+              className={`${CSS_CLASSES.GAME_MODE_BUTTON} ${gameMode === GAME_CONSTANTS.GAME_MODES.COUNTDOWN ? CSS_CLASSES.GAME_MODE_BUTTON_ACTIVE : ''}`}
+              onClick={() => setGameMode(GAME_CONSTANTS.GAME_MODES.COUNTDOWN)}
+              aria-pressed={gameMode === GAME_CONSTANTS.GAME_MODES.COUNTDOWN}
+              aria-describedby={`${gameModeId}-description`}
+            >
+              {GAME_CONSTANTS.GAME_MODE_NAMES.COUNTDOWN}
+            </button>
+            <button
+              type="button"
+              className={`${CSS_CLASSES.GAME_MODE_BUTTON} ${gameMode === GAME_CONSTANTS.GAME_MODES.HIGH_LOW ? CSS_CLASSES.GAME_MODE_BUTTON_ACTIVE : ''}`}
+              onClick={() => setGameMode(GAME_CONSTANTS.GAME_MODES.HIGH_LOW)}
+              aria-pressed={gameMode === GAME_CONSTANTS.GAME_MODES.HIGH_LOW}
+              aria-describedby={`${gameModeId}-description`}
+            >
+              {GAME_CONSTANTS.GAME_MODE_NAMES.HIGH_LOW}
+            </button>
+          </div>
           <div id={`${gameModeId}-description`} className="sr-only">
             {gameMode === GAME_CONSTANTS.GAME_MODES.COUNTDOWN 
               ? ACCESSIBILITY.DESCRIPTIONS.GAME_MODE_COUNTDOWN 

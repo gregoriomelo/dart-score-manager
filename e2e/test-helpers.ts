@@ -68,7 +68,7 @@ export class TestHelper {
 
     // Set game mode if high-low
     if (gameMode === 'high-low') {
-      await this.page.locator('.game-mode-select').selectOption('high-low');
+      await this.page.locator('button').filter({ hasText: 'High-Low Challenge' }).click();
       
       // Set starting lives if specified
       if (startingLives !== 5) {
