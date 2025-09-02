@@ -9,6 +9,9 @@ const base = isGitHubPages ? '/dart-score-manager/' : '/';
 export default defineConfig({
   plugins: [react()],
   base,
+  define: {
+    'import.meta.env.GITHUB_PAGES': JSON.stringify(process.env.GITHUB_PAGES === 'true'),
+  },
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),

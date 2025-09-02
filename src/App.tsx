@@ -18,6 +18,9 @@ import { onOnlineStatusChange } from './utils/serviceWorker';
 import './i18n';
 import './App.css';
 
+// Check if we're in development mode (not building for GitHub Pages)
+const isDevelopment = import.meta.env.DEV;
+
 function AppContent() {
   // Performance tracking
   usePerformanceTracking('App');
@@ -94,24 +97,28 @@ function AppContent() {
         <a href="#main-content" className="skip-link">
           {t('app.skipToMainContent')}
         </a>
-        <button
-          onClick={() => setShowPerformanceDashboard(true)}
-          className="performance-toggle"
-          aria-label={t('app.openPerformanceDashboard')}
-          title={t('app.performanceDashboard')}
-        >
-          📊
-        </button>
+        {isDevelopment && (
+          <button
+            onClick={() => setShowPerformanceDashboard(true)}
+            className="performance-toggle"
+            aria-label={t('app.openPerformanceDashboard')}
+            title={t('app.performanceDashboard')}
+          >
+            📊
+          </button>
+        )}
         <main id="main-content" role="main">
           <LazyComponent>
             <LazyPlayerSetup onStartGame={handleStartGame} />
           </LazyComponent>
         </main>
         <NotificationContainer />
-        <PerformanceDashboard
-          isVisible={showPerformanceDashboard}
-          onClose={() => setShowPerformanceDashboard(false)}
-        />
+        {isDevelopment && (
+          <PerformanceDashboard
+            isVisible={showPerformanceDashboard}
+            onClose={() => setShowPerformanceDashboard(false)}
+          />
+        )}
         <PWAInstall />
       </div>
     );
@@ -130,14 +137,16 @@ function AppContent() {
       <a href="#main-content" className="skip-link">
         {t('app.skipToMainContent')}
       </a>
-      <button
-        onClick={() => setShowPerformanceDashboard(true)}
-        className="performance-toggle"
-        aria-label={t('app.openPerformanceDashboard')}
-        title={t('app.performanceDashboard')}
-      >
-        📊
-      </button>
+      {isDevelopment && (
+        <button
+          onClick={() => setShowPerformanceDashboard(true)}
+          className="performance-toggle"
+          aria-label={t('app.openPerformanceDashboard')}
+          title={t('app.performanceDashboard')}
+        >
+          📊
+        </button>
+      )}
       <main id="main-content" role="main">
         <LazyComponent>
           <LazyGameModeRouter
@@ -153,10 +162,12 @@ function AppContent() {
         </LazyComponent>
       </main>
       <NotificationContainer />
-      <PerformanceDashboard
-        isVisible={showPerformanceDashboard}
-        onClose={() => setShowPerformanceDashboard(false)}
-      />
+      {isDevelopment && (
+        <PerformanceDashboard
+          isVisible={showPerformanceDashboard}
+          onClose={() => setShowPerformanceDashboard(false)}
+        />
+      )}
       <PWAInstall />
     </div>
   );
