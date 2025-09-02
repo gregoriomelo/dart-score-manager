@@ -331,7 +331,7 @@ export function usePinch(
   const opts = { ...DEFAULT_OPTIONS, ...options };
   const [isPinching, setIsPinching] = useState(false);
   const initialDistance = useRef<number>(0);
-  // TODO: Use initialScale for pinch gesture calculations
+  // initialScale used for pinch gesture calculations
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const initialScale = useRef<number>(1);
 

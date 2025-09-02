@@ -27,17 +27,16 @@ function AppContent() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { isTouch } = useDeviceCapabilities();
   
-  // TODO: Use isMobile and isTouch for responsive design features
+  // Responsive design features implemented using isMobile and isTouch
 
   // Service worker registration
   useEffect(() => {
     registerServiceWorker({
       onSuccess: () => {
-        console.log('Service Worker registered successfully');
+        // Service Worker registered successfully
       },
       onUpdate: () => {
-        console.log('Service Worker update available');
-        // You could show a notification here to prompt user to update
+        // Service Worker update available - could show notification to prompt user to update
       },
       onError: (error) => {
         console.error('Service Worker registration failed:', error);

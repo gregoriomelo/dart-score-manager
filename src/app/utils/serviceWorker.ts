@@ -12,7 +12,7 @@ class ServiceWorkerManager {
     if ('serviceWorker' in navigator) {
       try {
         this.registration = await navigator.serviceWorker.register('/service-worker.js');
-        console.log('Service Worker registered:', this.registration);
+        // Service Worker registered successfully
 
         this.setupEventListeners();
         this.checkForUpdates();
@@ -40,7 +40,7 @@ class ServiceWorkerManager {
 
     // Handle service worker activation
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      console.log('Service Worker activated');
+      // Service Worker activated
       this.updateAvailable = false;
     });
   }
@@ -87,7 +87,7 @@ class ServiceWorkerManager {
       await Promise.all(
         cacheNames.map((cacheName) => caches.delete(cacheName))
       );
-      console.log('Cache cleared');
+      // Cache cleared successfully
     }
   }
 

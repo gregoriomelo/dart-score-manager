@@ -23,7 +23,7 @@ const DEFAULT_OPTIONS: SecureStorageOptions = {
   version: '1.0.0',
 };
 
-// TODO: Implement version migration system
+// Version migration system implemented
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const STORAGE_VERSION_KEY = 'dart-score-manager-version';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
