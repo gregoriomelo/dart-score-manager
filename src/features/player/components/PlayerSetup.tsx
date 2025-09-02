@@ -123,12 +123,39 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
               id={startingScoreId}
               type="number"
               value={startingScore}
-              onChange={(e) => setStartingScore(parseInt(e.target.value) || GAME_CONSTANTS.DEFAULT_STARTING_SCORE)}
+              onChange={(e) => {
+                const value = e.target.value;
+                // Only allow positive numbers
+                if (value === '' || /^\d+$/.test(value)) {
+                  const numValue = parseInt(value, 10);
+                  if (value === '' || (numValue > 0 && numValue <= 1000)) {
+                    setStartingScore(numValue || GAME_CONSTANTS.DEFAULT_STARTING_SCORE);
+                  }
+                }
+              }}
+              onKeyDown={(e) => {
+                // Allow: backspace, delete, tab, escape, enter, and navigation keys
+                const allowedKeys = [
+                  'Backspace', 'Delete', 'Tab', 'Escape', 'Enter',
+                  'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+                  'Home', 'End'
+                ];
+                
+                // Allow numbers 0-9
+                const isNumber = /^[0-9]$/.test(e.key);
+                
+                if (!allowedKeys.includes(e.key) && !isNumber) {
+                  e.preventDefault();
+                }
+              }}
               placeholder={t(UI_TEXT_KEYS.STARTING_SCORE_PLACEHOLDER)}
               aria-label={ACCESSIBILITY.LABELS.STARTING_SCORE_INPUT}
               aria-describedby={`${startingScoreId}-description`}
               min="1"
               max="1000"
+              step="1"
+              inputMode="numeric"
+              pattern="[0-9]*"
             />
             <div id={`${startingScoreId}-description`} className="sr-only">
               {ACCESSIBILITY.DESCRIPTIONS.SCORE_LIMITS}
@@ -145,12 +172,39 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
               id={startingLivesId}
               type="number"
               value={startingLives}
-              onChange={(e) => setStartingLives(parseInt(e.target.value) || GAME_CONSTANTS.DEFAULT_STARTING_LIVES)}
+              onChange={(e) => {
+                const value = e.target.value;
+                // Only allow numbers 1-10
+                if (value === '' || /^\d+$/.test(value)) {
+                  const numValue = parseInt(value, 10);
+                  if (value === '' || (numValue >= 1 && numValue <= 10)) {
+                    setStartingLives(numValue || GAME_CONSTANTS.DEFAULT_STARTING_LIVES);
+                  }
+                }
+              }}
+              onKeyDown={(e) => {
+                // Allow: backspace, delete, tab, escape, enter, and navigation keys
+                const allowedKeys = [
+                  'Backspace', 'Delete', 'Tab', 'Escape', 'Enter',
+                  'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+                  'Home', 'End'
+                ];
+                
+                // Allow numbers 0-9
+                const isNumber = /^[0-9]$/.test(e.key);
+                
+                if (!allowedKeys.includes(e.key) && !isNumber) {
+                  e.preventDefault();
+                }
+              }}
               placeholder={t(UI_TEXT_KEYS.STARTING_LIVES_PLACEHOLDER)}
               aria-label={ACCESSIBILITY.LABELS.STARTING_LIVES_INPUT}
               aria-describedby={`${startingLivesId}-description`}
               min="1"
               max="10"
+              step="1"
+              inputMode="numeric"
+              pattern="[0-9]*"
             />
             <div id={`${startingLivesId}-description`} className="sr-only">
               {ACCESSIBILITY.DESCRIPTIONS.LIVES_LIMITS}

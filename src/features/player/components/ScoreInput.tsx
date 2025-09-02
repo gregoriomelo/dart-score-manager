@@ -35,6 +35,31 @@ const ScoreInput: React.FC<ScoreInputProps> = React.memo(({
     }
   }, [onSubmitScore]);
 
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    
+    // Allow any input but only update if it's a number or empty
+    if (value === '' || /^\d+$/.test(value)) {
+      onScoreInputChange(value);
+    }
+  }, [onScoreInputChange]);
+
+  const handleInputKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Allow: backspace, delete, tab, escape, enter, and navigation keys
+    const allowedKeys = [
+      'Backspace', 'Delete', 'Tab', 'Escape', 'Enter',
+      'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+      'Home', 'End'
+    ];
+    
+    // Allow numbers 0-9
+    const isNumber = /^[0-9]$/.test(e.key);
+    
+    if (!allowedKeys.includes(e.key) && !isNumber) {
+      e.preventDefault();
+    }
+  }, []);
+
   return (
     <div className={CSS_CLASSES.SCORE_INPUT_SECTION} role="region" aria-labelledby="turn-title">
       <h3 id="turn-title">{t('game.display.playerTurn', { name: currentPlayer.name })}</h3>
@@ -46,7 +71,8 @@ const ScoreInput: React.FC<ScoreInputProps> = React.memo(({
           id={scoreInputId}
           type="number"
           value={scoreInput}
-          onChange={(e) => onScoreInputChange(e.target.value)}
+          onChange={handleInputChange}
+          onKeyDown={handleInputKeyDown}
           onKeyPress={handleKeyPress}
           placeholder={t(UI_TEXT_KEYS.SCORE_INPUT_PLACEHOLDER)}
           aria-label={ACCESSIBILITY.LABELS.SCORE_INPUT}
@@ -55,6 +81,9 @@ const ScoreInput: React.FC<ScoreInputProps> = React.memo(({
           autoFocus
           min="0"
           max="180"
+          step="1"
+          inputMode="numeric"
+          pattern="[0-9]*"
         />
         <div id={`${scoreInputId}-help`} className="sr-only">
           {ACCESSIBILITY.DESCRIPTIONS.SCORE_INPUT_HELP}

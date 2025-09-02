@@ -9,6 +9,8 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  /* iOS Safari fix */
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .score-history-modal {
@@ -21,6 +23,8 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  /* iOS Safari fix for viewport height */
+  max-height: calc(100vh - 2rem);
 }
 
 .score-history-header {
@@ -30,6 +34,8 @@
   padding: 20px;
   border-bottom: 1px solid #e0e0e0;
   background: #f8f9fa;
+  /* Prevent header from shrinking */
+  flex-shrink: 0;
 }
 
 .score-history-header h2 {
@@ -52,6 +58,9 @@
   justify-content: center;
   border-radius: 50%;
   transition: background-color 0.2s;
+  /* iOS Safari touch target fix */
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .close-button:hover {
@@ -62,6 +71,8 @@
   flex: 1;
   overflow-y: auto;
   padding: 20px;
+  /* iOS Safari scroll fix */
+  -webkit-overflow-scrolling: touch;
 }
 
 .no-history {
@@ -142,6 +153,8 @@
   padding: 20px;
   border-top: 1px solid #e0e0e0;
   background: #f8f9fa;
+  /* Prevent footer from shrinking */
+  flex-shrink: 0;
 }
 
 .current-score {
@@ -155,10 +168,30 @@
   font-size: 1.3rem;
 }
 
-@media (max-width: 600px) {
+/* Mobile-first responsive design */
+@media (max-width: 768px) {
   .score-history-modal {
     width: 95%;
-    max-height: 90vh;
+    max-height: calc(100vh - 1rem);
+    margin: 0.5rem;
+  }
+  
+  .score-history-header {
+    padding: 16px;
+  }
+  
+  .score-history-header h2 {
+    font-size: 1.3rem;
+  }
+  
+  .close-button {
+    width: 36px;
+    height: 36px;
+    font-size: 1.8rem;
+  }
+  
+  .score-history-content {
+    padding: 16px;
   }
   
   .history-header,
@@ -169,7 +202,145 @@
     font-size: 0.85rem;
   }
   
+  .score-history-footer {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .score-history-modal {
+    width: 98%;
+    max-height: calc(100vh - 0.5rem);
+    margin: 0.25rem;
+  }
+  
+  .score-history-header {
+    padding: 12px;
+  }
+  
   .score-history-header h2 {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
+  }
+  
+  .close-button {
+    width: 32px;
+    height: 32px;
+    font-size: 1.6rem;
+  }
+  
+  .score-history-content {
+    padding: 12px;
+  }
+  
+  .history-header,
+  .history-row {
+    grid-template-columns: 45px 65px 65px 65px 65px;
+    gap: 6px;
+    padding: 8px;
+    font-size: 0.8rem;
+  }
+  
+  .score-history-footer {
+    padding: 12px;
+  }
+}
+
+/* iPhone and very small mobile devices */
+@media (max-width: 480px) {
+  .score-history-modal {
+    width: 99%;
+    max-height: calc(100vh - 0.25rem);
+    margin: 0.125rem;
+    border-radius: 8px;
+  }
+  
+  .score-history-header {
+    padding: 10px;
+  }
+  
+  .score-history-header h2 {
+    font-size: 1.1rem;
+  }
+  
+  .close-button {
+    width: 28px;
+    height: 28px;
+    font-size: 1.4rem;
+  }
+  
+  .score-history-content {
+    padding: 10px;
+  }
+  
+  .history-header,
+  .history-row {
+    grid-template-columns: 40px 60px 60px 60px 60px;
+    gap: 4px;
+    padding: 6px;
+    font-size: 0.75rem;
+  }
+  
+  .score-history-footer {
+    padding: 10px;
+  }
+  
+  /* Ensure text doesn't overflow on very small screens */
+  .history-header span,
+  .history-row span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 0 1px;
+  }
+}
+
+/* iOS Safari specific fixes */
+@supports (-webkit-touch-callout: none) {
+  .score-history-overlay {
+    /* Fix for iOS Safari viewport issues */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+  
+  .score-history-modal {
+    /* Use safe area for iOS devices */
+    max-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 1rem);
+  }
+  
+  .score-history-content {
+    /* Improve scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .score-history-overlay {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+  
+  .score-history-modal {
+    border: 2px solid #000;
+  }
+  
+  .history-header,
+  .history-row {
+    border: 2px solid #000;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .score-history-overlay,
+  .score-history-modal {
+    transition: none;
+  }
+  
+  .history-row {
+    transition: none;
   }
 }
