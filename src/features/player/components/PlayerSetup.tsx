@@ -18,6 +18,8 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
   const [gameMode, setGameMode] = useState<GameMode>(GAME_CONSTANTS.GAME_MODES.COUNTDOWN);
   const [startingScore, setStartingScore] = useState<number>(GAME_CONSTANTS.DEFAULT_STARTING_SCORE);
   const [startingLives, setStartingLives] = useState<number>(GAME_CONSTANTS.DEFAULT_STARTING_LIVES);
+  const [startingScoreInput, setStartingScoreInput] = useState<string>(GAME_CONSTANTS.DEFAULT_STARTING_SCORE.toString());
+  const [startingLivesInput, setStartingLivesInput] = useState<string>(GAME_CONSTANTS.DEFAULT_STARTING_LIVES.toString());
   const [lastAddedPlayerIndex, setLastAddedPlayerIndex] = useState<number | null>(null);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const { showNotification } = useNotifications();
@@ -122,14 +124,19 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
             <input
               id={startingScoreId}
               type="number"
-              value={startingScore}
-              onChange={(e) => {
+              value={startingScoreInput}
+              onChange={(e) => setStartingScoreInput(e.target.value)}
+              onBlur={(e) => {
                 const value = e.target.value;
-                // Only allow positive numbers
-                if (value === '' || /^\d+$/.test(value)) {
+                if (value === '') {
+                  setStartingScore(GAME_CONSTANTS.DEFAULT_STARTING_SCORE);
+                  setStartingScoreInput(GAME_CONSTANTS.DEFAULT_STARTING_SCORE.toString());
+                } else {
                   const numValue = parseInt(value, 10);
-                  if (value === '' || (numValue > 0 && numValue <= 1000)) {
-                    setStartingScore(numValue || GAME_CONSTANTS.DEFAULT_STARTING_SCORE);
+                  if (numValue > 0 && numValue <= 1000) {
+                    setStartingScore(numValue);
+                  } else {
+                    setStartingScoreInput(startingScore.toString()); // Revert to previous valid value
                   }
                 }
               }}
@@ -171,14 +178,19 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
             <input
               id={startingLivesId}
               type="number"
-              value={startingLives}
-              onChange={(e) => {
+              value={startingLivesInput}
+              onChange={(e) => setStartingLivesInput(e.target.value)}
+              onBlur={(e) => {
                 const value = e.target.value;
-                // Only allow numbers 1-10
-                if (value === '' || /^\d+$/.test(value)) {
+                if (value === '') {
+                  setStartingLives(GAME_CONSTANTS.DEFAULT_STARTING_LIVES);
+                  setStartingLivesInput(GAME_CONSTANTS.DEFAULT_STARTING_LIVES.toString());
+                } else {
                   const numValue = parseInt(value, 10);
-                  if (value === '' || (numValue >= 1 && numValue <= 10)) {
-                    setStartingLives(numValue || GAME_CONSTANTS.DEFAULT_STARTING_LIVES);
+                  if (numValue >= 1 && numValue <= 10) {
+                    setStartingLives(numValue);
+                  } else {
+                    setStartingLivesInput(startingLives.toString()); // Revert to previous valid value
                   }
                 }
               }}

@@ -114,6 +114,7 @@ export default [
     files: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
     rules: {
       'no-restricted-globals': 'off',
+      '@typescript-eslint/no-explicit-any': 'off', // Allow any types in test files for mocking
     },
   },
 ];

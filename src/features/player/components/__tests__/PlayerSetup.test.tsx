@@ -6,7 +6,7 @@ import { vi } from 'vitest';
 // Mock react-i18next
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string, options?: any) => {
+    t: (key: string, options?: Record<string, string | number>) => {
       // Return actual text for testing purposes
       const translations: Record<string, string> = {
         'app.header': 'Dart Score',
