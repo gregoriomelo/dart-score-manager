@@ -186,7 +186,13 @@
 /* High-Low Specific Grid Layout */
 .history-table.high-low .history-header,
 .history-table.high-low .history-row {
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(6, 1fr); /* 6 columns for individual player history */
+}
+
+/* When player column is shown (all players history) */
+.history-table.high-low.with-player-column .history-header,
+.history-table.high-low.with-player-column .history-row {
+  grid-template-columns: repeat(7, 1fr); /* 7 columns when showing player names */
 }
 
 .pass-badge, .fail-badge, .eliminated-badge {

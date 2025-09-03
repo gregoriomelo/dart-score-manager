@@ -14,7 +14,7 @@ const HighLowHistoryTable: React.FC<HighLowHistoryTableProps> = ({ entries, show
   }
 
   return (
-    <div className="history-table high-low">
+    <div className={`history-table high-low ${showPlayerColumn ? 'with-player-column' : ''}`}>
       <div className="history-header">
         {showPlayerColumn && <span>Player</span>}
         <span>Turn</span>
