@@ -63,6 +63,22 @@
       "higherThan": "Higher than {score}",
       "lowerThan": "Lower than {score}",
       "waitingForChallenge": "Waiting for challenge to be set..."
+    },
+    "calculator": {
+      "title": "Dart Score Calculator",
+      "dartLabel": "Dart {number}",
+      "dartInputLabel": "Dart {number} score (0-60)",
+      "resetLabel": "Reset calculator",
+      "resetButton": "Reset",
+      "cancelLabel": "Cancel calculator",
+      "cancelButton": "Cancel",
+      "submitLabel": "Submit total score",
+      "submitButton": "Submit",
+      "helpText": "Enter individual dart scores (0-60 each). The total will be calculated and submitted automatically.",
+      "showCalculator": "Show calculator",
+      "hideCalculator": "Hide calculator",
+      "showButton": "Show Calculator",
+      "hideButton": "Hide Calculator"
     }
   },
   "errors": {

@@ -130,6 +130,15 @@ const CountdownGameBoard: React.FC<CountdownGameBoardProps> = React.memo(({
             scoreInput={scoreInput}
             onScoreInputChange={handleScoreInputChange}
             onSubmitScore={handleScoreSubmit}
+            onSubmitScoreDirect={(score: number) => {
+              if (currentPlayer) {
+                onSubmitScore(currentPlayer.id, score);
+                // Auto advance to next player after direct score submission
+                if (!gameState.gameFinished) {
+                  onNextPlayer();
+                }
+              }
+            }}
             error={error}
           />
         )}

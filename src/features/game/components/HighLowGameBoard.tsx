@@ -132,6 +132,13 @@ const HighLowGameBoard: React.FC<HighLowGameBoardProps> = React.memo(({
             scoreInput={scoreInput}
             onScoreInputChange={handleScoreInputChange}
             onSubmitScore={handleScoreSubmit}
+            onSubmitScoreDirect={(score: number) => {
+              if (currentPlayer) {
+                onSubmitHighLowScore(currentPlayer.id, score);
+                // For high-low game, the game logic automatically handles player switching
+                // after processing the turn, so we don't need to call onNextPlayer here
+              }
+            }}
             error={error}
           />
         )}

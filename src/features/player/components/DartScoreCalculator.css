@@ -1,0 +1,231 @@
+.dart-score-calculator {
+  background: #ffffff;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Title removed - no styles needed */
+
+/* Dart inputs section */
+.dart-inputs {
+  margin-bottom: 1.5rem;
+}
+
+.dart-input-row {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.dart-input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+}
+
+.dart-label {
+  font-size: 0.875rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.dart-input {
+  width: 80px;
+  height: 60px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  background: #f8f9fa;
+  transition: all 0.2s ease;
+  /* Mobile-friendly touch target */
+  min-height: 44px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.dart-input:focus {
+  outline: none;
+  border-color: #007bff;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.dart-input.active {
+  border-color: #007bff;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.dart-input::placeholder {
+  color: #999;
+  font-weight: 400;
+}
+
+
+
+
+
+/* Action buttons */
+.calculator-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.calculator-btn {
+  padding: 0.875rem 1.75rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 90px;
+  min-height: 44px;
+  /* Mobile-friendly touch target */
+  touch-action: manipulation;
+}
+
+.calculator-btn.primary {
+  background: #007bff;
+  color: #ffffff;
+}
+
+.calculator-btn.primary:hover:not(:disabled) {
+  background: #0056b3;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+.calculator-btn.primary:disabled {
+  background: #ccc;
+  color: #999;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.calculator-btn.secondary {
+  background: #6c757d;
+  color: #ffffff;
+}
+
+.calculator-btn.secondary:hover {
+  background: #545b62;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+}
+
+.calculator-btn:active {
+  transform: translateY(0);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .dart-score-calculator {
+    padding: 1.25rem;
+    margin: 0.75rem;
+  }
+  
+  .dart-input-row {
+    gap: 1rem;
+  }
+  
+  .dart-input {
+    width: 75px;
+    height: 58px;
+    font-size: 1.2rem;
+  }
+  
+  .calculator-actions {
+    gap: 0.75rem;
+  }
+  
+  .calculator-btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    min-width: 80px;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dart-score-calculator {
+    padding: 1rem;
+    margin: 0.5rem;
+  }
+  
+  .dart-input-row {
+    gap: 0.75rem;
+  }
+  
+  .dart-input {
+    width: 70px;
+    height: 55px;
+    font-size: 1.125rem;
+  }
+  
+  .calculator-actions {
+    gap: 0.75rem;
+  }
+  
+  .calculator-btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    min-width: 80px;
+    min-height: 44px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .dart-score-calculator {
+    border-color: #000000;
+  }
+  
+  .dart-input {
+    border-color: #000000;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .dart-input,
+  .calculator-btn {
+    transition: none;
+  }
+  
+  .calculator-btn:hover:not(:disabled) {
+    transform: none;
+  }
+}
+
+/* Mobile-specific improvements */
+@media (hover: none) and (pointer: coarse) {
+  .dart-input:focus {
+    box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.3);
+  }
+  
+  .calculator-btn:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .calculator-btn:active {
+    transform: scale(0.98);
+  }
+}

@@ -63,6 +63,22 @@
       "higherThan": "Maior que {score}",
       "lowerThan": "Menor que {score}",
       "waitingForChallenge": "Aguardando desafio ser definido..."
+    },
+    "calculator": {
+      "title": "Calculadora de Pontuação de Dardos",
+      "dartLabel": "Dardo {number}",
+      "dartInputLabel": "Pontuação do dardo {number} (0-60)",
+      "resetLabel": "Reiniciar calculadora",
+      "resetButton": "Reiniciar",
+      "cancelLabel": "Cancelar calculadora",
+      "cancelButton": "Cancelar",
+      "submitLabel": "Enviar pontuação total",
+      "submitButton": "Enviar",
+      "helpText": "Digite as pontuações individuais dos dardos (0-60 cada). O total será calculado e enviado automaticamente.",
+      "showCalculator": "Mostrar calculadora",
+      "hideCalculator": "Ocultar calculadora",
+      "showButton": "Mostrar Calculadora",
+      "hideButton": "Ocultar Calculadora"
     }
   },
   "errors": {
