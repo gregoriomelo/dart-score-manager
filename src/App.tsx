@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { GameMode } from './shared/types/game';
 import { useGameManager } from './features/game/hooks/useGameManager';
 import { NotificationProvider } from './app/contexts/NotificationContext';
-import { LazyComponent, LazyPlayerSetup, LazyGameModeRouter } from './app/components/LazyComponents';
+import { LazyComponent, LazyPlayerSetup } from './app/components/LazyComponents';
+import GameModeRouter from './features/game/components/GameModeRouter';
 import NotificationContainer from './app/components/NotificationContainer';
 import PerformanceDashboard from './features/performance/components/PerformanceDashboard';
 import { announceToScreenReader } from './shared/utils/accessibility';
@@ -145,9 +146,8 @@ function AppContent() {
           📊
         </button>
       )}
-      <main id="main-content" role="main">
-        <LazyComponent>
-          <LazyGameModeRouter
+              <main id="main-content" role="main">
+          <GameModeRouter
             gameState={gameState}
             currentPlayer={currentPlayer}
             onSubmitScore={submitScore}
@@ -157,8 +157,7 @@ function AppContent() {
             onSetChallenge={setChallengeForHighLow}
             onSubmitHighLowScore={submitHighLowScore}
           />
-        </LazyComponent>
-      </main>
+        </main>
       <NotificationContainer />
       {isDevelopment && (
         <PerformanceDashboard

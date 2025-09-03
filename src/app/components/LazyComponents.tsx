@@ -1,7 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 
 // Lazy load components for code splitting
-export const LazyGameModeRouter = lazy(() => import('../../features/game/components/GameModeRouter'));
 export const LazyPlayerSetup = lazy(() => import('../../features/player/components/PlayerSetup'));
 
 // Loading fallback component
