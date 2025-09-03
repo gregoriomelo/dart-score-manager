@@ -12,7 +12,7 @@ import { usePerformanceTracking } from './features/performance/utils/performance
 import { registerServiceWorker } from './utils/serviceWorker';
 import { useResponsive } from './hooks/useResponsive';
 import { useDeviceCapabilities } from './hooks/useTouch';
-import PWAInstall from './components/PWAInstall';
+
 import LanguageSwitcher from './components/LanguageSwitcher';
 import { onOnlineStatusChange } from './utils/serviceWorker';
 import './i18n';
@@ -119,14 +119,12 @@ function AppContent() {
             onClose={() => setShowPerformanceDashboard(false)}
           />
         )}
-        <PWAInstall />
       </div>
     );
   }
 
   return (
     <div className="App">
-      <LanguageSwitcher />
       {/* Offline indicator */}
       {!isOnline && (
         <div className="offline-indicator show">
@@ -168,7 +166,6 @@ function AppContent() {
           onClose={() => setShowPerformanceDashboard(false)}
         />
       )}
-      <PWAInstall />
     </div>
   );
 }

@@ -170,31 +170,7 @@ export class TestHelper {
     await this.page.waitForSelector('input[placeholder="Player 1 name"]', { timeout: 10000 });
   }
 
-  /**
-   * Dismiss PWA install prompt if visible
-   */
-  async dismissPWAInstallPrompt() {
-    const pwaPrompt = this.page.locator('.pwa-install-prompt');
-    if (await pwaPrompt.isVisible()) {
-      await pwaPrompt.locator('.pwa-install-dismiss').click();
-      await expect(pwaPrompt).toBeHidden({ timeout: 1000 });
-    }
-  }
 
-  /**
-   * Click a button safely, dismissing PWA prompt if it interferes
-   */
-  async clickButtonSafely(selector: string | RegExp, options?: { timeout?: number }) {
-    // First try to dismiss any PWA prompt
-    await this.dismissPWAInstallPrompt();
-    
-    // Then click the button
-    const button = typeof selector === 'string' 
-      ? this.page.locator(selector)
-      : this.page.getByRole('button', { name: selector });
-    
-    await button.click(options);
-  }
 }
 
 /**

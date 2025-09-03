@@ -43,11 +43,7 @@ export const mockTouchEvent = {
   onTouchCancel: vi.fn(),
 };
 
-// Mock PWA install prompt
-export const mockBeforeInstallPrompt = {
-  prompt: vi.fn().mockResolvedValue({ outcome: 'accepted' }),
-  userChoice: Promise.resolve({ outcome: 'accepted' }),
-};
+
 
 // Mock online/offline events
 export const mockOnlineStatus = {
@@ -124,11 +120,7 @@ export const setupTestMocks = () => {
     writable: true,
   });
 
-  // Mock window.beforeinstallprompt
-  Object.defineProperty(window, 'beforeinstallprompt', {
-    value: mockBeforeInstallPrompt,
-    writable: true,
-  });
+
 
   // Mock navigator.onLine
   Object.defineProperty(navigator, 'onLine', {

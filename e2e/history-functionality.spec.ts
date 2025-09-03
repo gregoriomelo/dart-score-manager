@@ -45,7 +45,7 @@ test.describe('History Functionality', () => {
     await helper.submitScore(60);
 
     // Click "All History" button
-    await helper.clickButtonSafely(/All History/i);
+    await page.getByRole('button', { name: /All History/i }).click();
 
     // Verify consolidated history modal opens
     await expect(page.getByText('Game History - All Players')).toBeVisible();

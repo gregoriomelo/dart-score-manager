@@ -15,7 +15,7 @@ A modern web application for managing dart game scores, built with React, TypeSc
 - **Persistent game state**: Automatically saves progress - resume after browser refresh
 - **Game management**: Reset current game or start completely new games
 - **Responsive design**: Works great on desktop and mobile devices
-- **PWA support**: Installable web app with offline capabilities
+
 - **Performance monitoring**: Built-in performance dashboard
 - **Accessibility**: Screen reader support and ARIA compliance
 
@@ -26,7 +26,7 @@ A modern web application for managing dart game scores, built with React, TypeSc
 - **Testing**: Vitest + Playwright (E2E)
 - **Styling**: CSS3 with modern features
 - **State Management**: React hooks and context
-- **PWA**: Service worker and manifest
+
 - **CI/CD**: GitHub Actions with automated deployment
 
 ## Getting Started
@@ -102,7 +102,7 @@ Open [http://localhost:3000](http://localhost:3000) to view the app in your brow
 ```
 src/
 ├── app/                    # App-level components and contexts
-├── components/             # Shared components (PWA install, etc.)
+├── components/             # Shared components
 ├── features/               # Feature-based modules
 │   ├── game/              # Game logic and components
 │   ├── player/            # Player management

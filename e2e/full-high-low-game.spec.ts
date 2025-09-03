@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { setupTest, createTestHelper } from './test-helpers';
+import { setupTest } from './test-helpers';
 
 test.describe('Full High-Low Game', () => {
   test.setTimeout(120000); // 2 minutes for the full game test
@@ -103,9 +103,8 @@ test.describe('Full High-Low Game', () => {
     // Test history functionality works even after game completion
     const historyBtn = page.getByRole('button', { name: /All History/ });
     if (await historyBtn.isVisible()) {
-      // Use the helper to safely click the history button
-      const helper = createTestHelper(page);
-      await helper.clickButtonSafely(/All History/);
+      // Click the history button
+      await historyBtn.click();
       await expect(page.getByText('Game History - All Players')).toBeVisible({ timeout: 800 });
       
       // Close history and wait for it to actually close
