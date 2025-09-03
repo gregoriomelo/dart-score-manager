@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { validateScore } from '../../../shared/utils/validation';
 import { UI_TEXT } from '../../../shared/utils/constants';
-import { useNotifications } from '../../../app/contexts/NotificationContext';
+// Remove the useNotifications hook since we don't want popup notifications
 
 interface UseScoreSubmissionProps {
   onSubmitScore: (playerId: string, score: number) => void;
@@ -16,7 +16,7 @@ export const useScoreSubmission = ({
 }: UseScoreSubmissionProps) => {
   const [scoreInput, setScoreInput] = useState<string>('');
   const [error, setError] = useState<string>('');
-  const { showNotification } = useNotifications();
+  // Remove the useNotifications hook since we don't want popup notifications
 
   const handleSubmitScore = useCallback((currentPlayerId: string) => {
     if (!currentPlayerId) return;
@@ -27,7 +27,7 @@ export const useScoreSubmission = ({
     if (!validation.isValid) {
       const errorMessage = validation.errorMessage || UI_TEXT.INVALID_SCORE_ERROR;
       setError(errorMessage);
-      showNotification('error', errorMessage);
+      // Remove the showNotification call - keep only the inline error
       return;
     }
 
@@ -43,9 +43,9 @@ export const useScoreSubmission = ({
     } catch {
       const errorMessage = UI_TEXT.INVALID_SCORE_ENTRY_ERROR;
       setError(errorMessage);
-      showNotification('error', errorMessage);
+      // Remove the showNotification call - keep only the inline error
     }
-  }, [scoreInput, onSubmitScore, gameFinished, onNextPlayer, showNotification]);
+  }, [scoreInput, onSubmitScore, gameFinished, onNextPlayer]);
 
   const handleScoreInputChange = useCallback((value: string) => {
     setScoreInput(value);

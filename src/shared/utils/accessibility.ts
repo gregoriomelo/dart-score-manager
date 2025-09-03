@@ -17,7 +17,7 @@ export const ACCESSIBILITY = {
     HISTORY_BUTTON: 'View player history',
     ALL_HISTORY_BUTTON: 'View all players history',
     CLOSE_MODAL_BUTTON: 'Close modal',
-    NOTIFICATION_CLOSE_BUTTON: 'Close notification',
+    // NOTIFICATION_CLOSE_BUTTON: 'Close notification', // Removed since we no longer use notifications
     HIGH_LOW_CHALLENGE_BUTTON: 'Set high-low challenge',
   } as const,
 

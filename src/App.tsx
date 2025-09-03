@@ -2,10 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GameMode } from './shared/types/game';
 import { useGameManager } from './features/game/hooks/useGameManager';
-import { NotificationProvider } from './app/contexts/NotificationContext';
 import { LazyComponent, LazyPlayerSetup } from './app/components/LazyComponents';
 import GameModeRouter from './features/game/components/GameModeRouter';
-import NotificationContainer from './app/components/NotificationContainer';
 import PerformanceDashboard from './features/performance/components/PerformanceDashboard';
 import { announceToScreenReader } from './shared/utils/accessibility';
 import { usePerformanceTracking } from './features/performance/utils/performance';
@@ -113,7 +111,6 @@ function AppContent() {
             <LazyPlayerSetup onStartGame={handleStartGame} />
           </LazyComponent>
         </main>
-        <NotificationContainer />
         {isDevelopment && (
           <PerformanceDashboard
             isVisible={showPerformanceDashboard}
@@ -158,7 +155,6 @@ function AppContent() {
             onSubmitHighLowScore={submitHighLowScore}
           />
         </main>
-      <NotificationContainer />
       {isDevelopment && (
         <PerformanceDashboard
           isVisible={showPerformanceDashboard}
@@ -171,9 +167,7 @@ function AppContent() {
 
 function App() {
   return (
-    <NotificationProvider>
-      <AppContent />
-    </NotificationProvider>
+    <AppContent />
   );
 }
 

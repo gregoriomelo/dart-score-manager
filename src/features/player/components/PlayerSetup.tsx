@@ -4,7 +4,7 @@ import { GameMode } from '../../../shared/types/game';
 import { GAME_CONSTANTS, UI_TEXT_KEYS, CSS_CLASSES } from '../../../shared/utils/i18nConstants';
 import { validatePlayerName } from '../../../shared/utils/validation';
 import { sanitizePlayerNames } from '../../../shared/utils/textUtils';
-import { useNotifications } from '../../../app/contexts/NotificationContext';
+// Remove the useNotifications import since we don't want popup notifications
 import { ACCESSIBILITY, generateAriaId } from '../../../shared/utils/accessibility';
 import './PlayerSetup.css';
 
@@ -21,8 +21,9 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
   const [startingScoreInput, setStartingScoreInput] = useState<string>(GAME_CONSTANTS.DEFAULT_STARTING_SCORE.toString());
   const [startingLivesInput, setStartingLivesInput] = useState<string>(GAME_CONSTANTS.DEFAULT_STARTING_LIVES.toString());
   const [lastAddedPlayerIndex, setLastAddedPlayerIndex] = useState<number | null>(null);
+  const [validationError, setValidationError] = useState<string>('');
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const { showNotification } = useNotifications();
+  // Remove the useNotifications hook since we don't want popup notifications
 
   // Generate unique IDs for accessibility
   const gameModeId = generateAriaId('game-mode');
@@ -34,43 +35,47 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
     const updatedNames = [...playerNames];
     updatedNames[index] = name;
     setPlayerNames(updatedNames);
+    // Clear validation error when user starts typing
+    if (validationError) {
+      setValidationError('');
+    }
+  }, [playerNames, validationError]);
+
+  const addPlayer = useCallback(() => {
+    if (playerNames.length < GAME_CONSTANTS.MAX_PLAYERS) {
+      const newIndex = playerNames.length;
+      setPlayerNames([...playerNames, '']);
+      setLastAddedPlayerIndex(newIndex);
+      setValidationError(''); // Clear any previous errors
+    }
+    // Remove the showNotification call - just don't add the player if limit reached
   }, [playerNames]);
 
-           const addPlayer = useCallback(() => {
-           if (playerNames.length < GAME_CONSTANTS.MAX_PLAYERS) {
-             const newIndex = playerNames.length;
-             setPlayerNames([...playerNames, '']);
-             setLastAddedPlayerIndex(newIndex);
-           } else {
-             showNotification('warning', t(UI_TEXT_KEYS.TOO_MANY_PLAYERS_ERROR));
-           }
-         }, [playerNames, showNotification, t]);
+  const removePlayer = useCallback((index: number) => {
+    if (playerNames.length > GAME_CONSTANTS.MIN_PLAYERS) {
+      const updatedNames = playerNames.filter((_, i) => i !== index);
+      setPlayerNames(updatedNames);
+      setValidationError(''); // Clear any previous errors
+    }
+    // Remove the showNotification call - just don't remove the player if at minimum
+  }, [playerNames]);
 
-           const removePlayer = useCallback((index: number) => {
-           if (playerNames.length > GAME_CONSTANTS.MIN_PLAYERS) {
-             const updatedNames = playerNames.filter((_, i) => i !== index);
-             setPlayerNames(updatedNames);
-           } else {
-             showNotification('warning', t(UI_TEXT_KEYS.TOO_FEW_PLAYERS_ERROR));
-           }
-         }, [playerNames, showNotification, t]);
+  const handleStartGame = useCallback(() => {
+    const validNames = sanitizePlayerNames(playerNames);
 
-           const handleStartGame = useCallback(() => {
-           const validNames = sanitizePlayerNames(playerNames);
+    // Validate all player names
+    const invalidNames = validNames.filter(name => !validatePlayerName(name).isValid);
+    if (invalidNames.length > 0) {
+      setValidationError(t(UI_TEXT_KEYS.INVALID_PLAYER_NAME_ERROR));
+      return;
+    }
 
-           // Validate all player names
-           const invalidNames = validNames.filter(name => !validatePlayerName(name).isValid);
-           if (invalidNames.length > 0) {
-             showNotification('error', t(UI_TEXT_KEYS.INVALID_PLAYER_NAME_ERROR));
-             return;
-           }
-
-           if (validNames.length >= GAME_CONSTANTS.MIN_PLAYERS) {
-             onStartGame(validNames, gameMode, startingScore, startingLives);
-           } else {
-             showNotification('error', t(UI_TEXT_KEYS.TOO_FEW_PLAYERS_ERROR));
-           }
-         }, [playerNames, gameMode, startingScore, startingLives, onStartGame, showNotification, t]);
+    if (validNames.length >= GAME_CONSTANTS.MIN_PLAYERS) {
+      onStartGame(validNames, gameMode, startingScore, startingLives);
+    } else {
+      setValidationError(t(UI_TEXT_KEYS.TOO_FEW_PLAYERS_ERROR));
+    }
+  }, [playerNames, gameMode, startingScore, startingLives, onStartGame, t]);
 
   // Focus on the newly added player input field
   useEffect(() => {
@@ -278,10 +283,18 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
           disabled={!isValidToStart}
           className={CSS_CLASSES.START_GAME_BTN}
           aria-label={ACCESSIBILITY.LABELS.START_GAME_BUTTON}
-          aria-describedby={!isValidToStart ? 'start-game-error' : undefined}
+          aria-describedby={validationError ? 'validation-error' : undefined}
         >
           {t(UI_TEXT_KEYS.START_GAME_BUTTON)}
         </button>
+        
+        {/* Display validation errors inline */}
+        {validationError && (
+          <div id="validation-error" className="validation-error" role="alert" aria-live="polite">
+            {validationError}
+          </div>
+        )}
+        
         {!isValidToStart && (
           <div id="start-game-error" className="sr-only" role="alert">
             {t('errors.tooFewPlayers')}

@@ -140,9 +140,5 @@ export const CSS_CLASSES = {
   CURRENT_SCORE_ITEM: 'current-score-item',
   WINNER_BADGE: 'winner-badge',
   
-  // Notifications
-  NOTIFICATION: 'notification',
-  NOTIFICATION_ICON: 'notification-icon',
-  NOTIFICATION_MESSAGE: 'notification-message',
-  NOTIFICATION_CLOSE: 'notification-close'
+  // Notifications - removed since we no longer use popup notifications
 } as const;

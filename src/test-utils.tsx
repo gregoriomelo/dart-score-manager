@@ -1,12 +1,12 @@
 import React, { ReactElement } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
-import { NotificationProvider } from './app/contexts/NotificationContext';
+// Remove the NotificationProvider since we no longer need notifications
 
 const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
   return (
-    <NotificationProvider>
+    <>
       {children}
-    </NotificationProvider>
+    </>
   );
 };
 
