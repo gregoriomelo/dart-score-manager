@@ -18,6 +18,15 @@ vi.mock('react-i18next', () => ({
         'game.calculator.hideButton': 'Hide Calculator',
         'game.placeholders.scoreInput': 'Enter score (0-180)',
         'game.actions.submit': 'Submit',
+        'game.calculator.dartLabel': 'Dart {{number}}',
+        'game.calculator.dartInputLabel': 'Dart {{number}} score (0-60)',
+        'game.calculator.resetLabel': 'Reset calculator',
+        'game.calculator.cancelLabel': 'Cancel calculator',
+        'game.calculator.submitLabel': 'Submit total score',
+        'game.calculator.resetButton': 'Reset',
+        'game.calculator.cancelButton': 'Cancel',
+        'game.calculator.submitButton': 'Submit',
+        'game.calculator.helpText': 'Enter individual dart scores (0-60 each). The total will be calculated and submitted automatically.',
       };
       
       let result = translations[key] || key;
@@ -40,6 +49,7 @@ vi.mock('react-i18next', () => ({
 describe('ScoreInput', () => {
   const mockOnScoreInputChange = vi.fn();
   const mockOnSubmitScore = vi.fn();
+  const mockOnSubmitScoreWithValue = vi.fn();
   
   const createMockPlayer = (name: string): Player => ({
     id: `player-${name.toLowerCase()}`,
@@ -151,5 +161,104 @@ describe('ScoreInput', () => {
     // The flash functionality is tested through the actual user interaction
     // in the browser, where typing "201" will trigger the red border flash
     // This test verifies the component is properly structured to support that functionality
+  });
+
+  it('clears main input when calculator is opened', async () => {
+    const user = userEvent.setup();
+    const currentPlayer = createMockPlayer('Alice');
+    
+    render(
+      <ScoreInput
+        currentPlayer={currentPlayer}
+        scoreInput="150"
+        onScoreInputChange={mockOnScoreInputChange}
+        onSubmitScore={mockOnSubmitScore}
+        onSubmitScoreWithValue={mockOnSubmitScoreWithValue}
+        error={undefined}
+      />
+    );
+
+    // Verify main input has a value
+    const scoreInput = screen.getByPlaceholderText('Enter score (0-180)');
+    expect(scoreInput).toHaveValue(150);
+
+    // Click calculator toggle button to open calculator
+    const calculatorButton = screen.getByRole('button', { name: /show calculator/i });
+    await user.click(calculatorButton);
+
+    // Verify main input was cleared
+    expect(mockOnScoreInputChange).toHaveBeenCalledWith('');
+  });
+
+  it('clears main input when calculator inputs are submitted', async () => {
+    const user = userEvent.setup();
+    const currentPlayer = createMockPlayer('Alice');
+    
+    render(
+      <ScoreInput
+        currentPlayer={currentPlayer}
+        scoreInput="150"
+        onScoreInputChange={mockOnScoreInputChange}
+        onSubmitScore={mockOnSubmitScore}
+        onSubmitScoreWithValue={mockOnSubmitScoreWithValue}
+        error={undefined}
+      />
+    );
+
+    // Open calculator
+    const calculatorButton = screen.getByRole('button', { name: /show calculator/i });
+    await user.click(calculatorButton);
+
+    // Clear previous calls
+    vi.clearAllMocks();
+
+    // Input scores in calculator - select by their position in the DOM
+    const dartInputs = screen.getAllByLabelText('Dart {{number}} score (0-60)');
+    const dart1Input = dartInputs[0];
+    const dart2Input = dartInputs[1];
+    const dart3Input = dartInputs[2];
+
+    await user.type(dart1Input, '25');
+    await user.type(dart2Input, '30');
+    await user.type(dart3Input, '15');
+
+    // Submit calculator score - use the specific calculator submit button
+    const submitButton = screen.getByRole('button', { name: 'Submit total score' });
+    await user.click(submitButton);
+
+    // Verify main input was cleared
+    expect(mockOnScoreInputChange).toHaveBeenCalledWith('');
+    // Verify calculator score was submitted
+    expect(mockOnSubmitScoreWithValue).toHaveBeenCalledWith(70);
+  });
+
+  it('does not clear main input when calculator is closed without submitting', async () => {
+    const user = userEvent.setup();
+    const currentPlayer = createMockPlayer('Alice');
+    
+    render(
+      <ScoreInput
+        currentPlayer={currentPlayer}
+        scoreInput="150"
+        onScoreInputChange={mockOnScoreInputChange}
+        onSubmitScore={mockOnSubmitScore}
+        onSubmitScoreWithValue={mockOnSubmitScoreWithValue}
+        error={undefined}
+      />
+    );
+
+    // Open calculator
+    const calculatorButton = screen.getByRole('button', { name: /show calculator/i });
+    await user.click(calculatorButton);
+
+    // Clear previous calls
+    vi.clearAllMocks();
+
+    // Close calculator without submitting
+    const hideCalculatorButton = screen.getByRole('button', { name: /hide calculator/i });
+    await user.click(hideCalculatorButton);
+
+    // Verify main input was NOT cleared when just closing calculator
+    expect(mockOnScoreInputChange).not.toHaveBeenCalledWith('');
   });
 });

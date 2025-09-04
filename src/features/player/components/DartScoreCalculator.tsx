@@ -160,6 +160,13 @@ const DartScoreCalculator: React.FC<DartScoreCalculatorProps> = React.memo(React
     setDartScores([0, 0, 0]);
     setInputValues(['', '', '']);
     setActiveDartIndex(0);
+    
+    // Focus the first dart input after reset
+    setTimeout(() => {
+      if (firstDartInputRef.current) {
+        firstDartInputRef.current.focus();
+      }
+    }, 0);
   }, []);
 
 

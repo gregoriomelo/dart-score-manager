@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Player } from '../../../shared/types/game';
 import { UI_TEXT_KEYS, CSS_CLASSES } from '../../../shared/utils/i18nConstants';
@@ -33,6 +33,19 @@ const ScoreInput: React.FC<ScoreInputProps> = React.memo(({
 
   const scoreInputId = generateAriaId('score-input');
   const errorId = generateAriaId('score-error');
+  const mainInputRef = useRef<HTMLInputElement>(null);
+
+  // Focus main input when current player changes and calculator is not shown
+  useEffect(() => {
+    if (!showCalculator && mainInputRef.current) {
+      // Use a small delay to ensure the component has fully rendered
+      setTimeout(() => {
+        if (mainInputRef.current) {
+          mainInputRef.current.focus();
+        }
+      }, 0);
+    }
+  }, [currentPlayer.id, showCalculator]);
 
   const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
     if (e.key === ACCESSIBILITY.KEYBOARD.ENTER) {
@@ -85,11 +98,20 @@ const ScoreInput: React.FC<ScoreInputProps> = React.memo(({
   }, []);
 
   const handleCalculatorToggle = useCallback(() => {
-    setShowCalculator(!showCalculator);
-  }, [showCalculator]);
+    const newShowCalculator = !showCalculator;
+    setShowCalculator(newShowCalculator);
+    
+    // Clear main input when opening calculator
+    if (newShowCalculator) {
+      onScoreInputChange('');
+    }
+  }, [showCalculator, onScoreInputChange]);
 
   const handleCalculatorScoreSubmit = useCallback((totalScore: number) => {
     setShowCalculator(false);
+    // Clear main input when calculator inputs are submitted
+    onScoreInputChange('');
+    
     if (onSubmitScoreWithValue) {
       // Use the direct score submission if available
       onSubmitScoreWithValue(totalScore);
@@ -98,10 +120,24 @@ const ScoreInput: React.FC<ScoreInputProps> = React.memo(({
       onScoreInputChange(totalScore.toString());
       onSubmitScore();
     }
+    
+    // Focus the main input after calculator submission
+    setTimeout(() => {
+      if (mainInputRef.current) {
+        mainInputRef.current.focus();
+      }
+    }, 0);
   }, [onScoreInputChange, onSubmitScore, onSubmitScoreWithValue]);
 
   const handleCalculatorCancel = useCallback(() => {
     setShowCalculator(false);
+    
+    // Focus the main input after cancelling calculator
+    setTimeout(() => {
+      if (mainInputRef.current) {
+        mainInputRef.current.focus();
+      }
+    }, 0);
   }, []);
 
   return (
@@ -142,6 +178,7 @@ const ScoreInput: React.FC<ScoreInputProps> = React.memo(({
           {ACCESSIBILITY.LABELS.SCORE_INPUT}
         </label>
         <input
+          ref={mainInputRef}
           id={scoreInputId}
           type="number"
           value={scoreInput}

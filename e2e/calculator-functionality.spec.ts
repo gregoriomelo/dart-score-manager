@@ -176,4 +176,170 @@ test.describe('Calculator Functionality', () => {
     // Verify Alice's score was updated (501 - 90 = 411)
     await expect(page.locator('.player-card').first().getByText('411')).toBeVisible();
   });
+
+  test('should clear main input when calculator opens', async ({ page }) => {
+    // Remove webpack overlay before interactions
+    await removeWebpackOverlay(page);
+    
+    // Type a score in the main input
+    const scoreInput = page.getByPlaceholder('Enter score (0-180)');
+    await scoreInput.fill('150');
+    
+    // Verify the main input has the value
+    await expect(scoreInput).toHaveValue('150');
+    
+    // Open calculator
+    await page.getByRole('button', { name: 'Show calculator' }).click();
+    
+    // Verify the main input is now cleared
+    await expect(scoreInput).toHaveValue('');
+    
+    // Verify calculator is visible
+    await expect(page.getByText('Dart 1')).toBeVisible();
+  });
+
+  test('should clear main input when calculator inputs are submitted', async ({ page }) => {
+    // Remove webpack overlay before interactions
+    await removeWebpackOverlay(page);
+    
+    // Type a score in the main input
+    const scoreInput = page.getByPlaceholder('Enter score (0-180)');
+    await scoreInput.fill('150');
+    
+    // Open calculator
+    await page.getByRole('button', { name: 'Show calculator' }).click();
+    
+    // Input scores using calculator
+    const dart1Input = page.locator('input[aria-label*="Dart 1 score"]');
+    const dart2Input = page.locator('input[aria-label*="Dart 2 score"]');
+    const dart3Input = page.locator('input[aria-label*="Dart 3 score"]');
+    
+    await dart1Input.fill('25');
+    await dart2Input.fill('30');
+    await dart3Input.fill('15');
+    
+    // Submit score from calculator
+    await page.locator('.calculator-btn.primary').click();
+    
+    // Verify calculator is hidden
+    await expect(page.getByText('Dart 1')).not.toBeVisible();
+    
+    // Verify the main input is cleared
+    await expect(scoreInput).toHaveValue('');
+    
+    // Verify Alice's score was updated (501 - 70 = 431)
+    await expect(page.locator('.player-card').first().getByText('431')).toBeVisible();
+  });
+
+  test('should focus main input field after submitting score with main input', async ({ page }) => {
+    // Remove webpack overlay before interactions
+    await removeWebpackOverlay(page);
+    
+    // Type a score in the main input
+    const scoreInput = page.getByPlaceholder('Enter score (0-180)');
+    await scoreInput.fill('45');
+    
+    // Submit the score
+    await page.getByRole('button', { name: 'Submit' }).click();
+    
+    // Wait for auto advance to next player (Bob)
+    await page.waitForSelector('.player-card:nth-child(2).current-player', { timeout: 5000 });
+    
+    // Verify it's Bob's turn
+    await expect(page.locator('.player-card').nth(1).getByText('Bob')).toBeVisible();
+    
+    // Verify the main input field has focus after player switch
+    await expect(scoreInput).toBeFocused();
+  });
+
+  test('should focus main input field after submitting score with calculator', async ({ page }) => {
+    // Remove webpack overlay before interactions
+    await removeWebpackOverlay(page);
+    
+    // Open calculator
+    await page.getByRole('button', { name: 'Show calculator' }).click();
+    
+    // Input scores using calculator
+    const dart1Input = page.locator('input[aria-label*="Dart 1 score"]');
+    const dart2Input = page.locator('input[aria-label*="Dart 2 score"]');
+    const dart3Input = page.locator('input[aria-label*="Dart 3 score"]');
+    
+    await dart1Input.fill('25');
+    await dart2Input.fill('30');
+    await dart3Input.fill('15');
+    
+    // Submit score from calculator
+    await page.locator('.calculator-btn.primary').click();
+    
+    // Wait for auto advance to next player (Bob)
+    await page.waitForSelector('.player-card:nth-child(2).current-player', { timeout: 5000 });
+    
+    // Verify it's Bob's turn
+    await expect(page.locator('.player-card').nth(1).getByText('Bob')).toBeVisible();
+    
+    // Verify the main input field has focus after calculator submission and player switch
+    const scoreInput = page.getByPlaceholder('Enter score (0-180)');
+    await expect(scoreInput).toBeFocused();
+  });
+
+  test('should focus first dart input when calculator is reset', async ({ page }) => {
+    // Remove webpack overlay before interactions
+    await removeWebpackOverlay(page);
+    
+    // Open calculator
+    await page.getByRole('button', { name: 'Show calculator' }).click();
+    
+    // Input scores using calculator
+    const dart1Input = page.locator('input[aria-label*="Dart 1 score"]');
+    const dart2Input = page.locator('input[aria-label*="Dart 2 score"]');
+    const dart3Input = page.locator('input[aria-label*="Dart 3 score"]');
+    
+    await dart1Input.fill('25');
+    await dart2Input.fill('30');
+    await dart3Input.fill('15');
+    
+    // Focus on the third dart input
+    await dart3Input.focus();
+    
+    // Click reset button
+    await page.getByRole('button', { name: 'Reset calculator' }).click();
+    
+    // Verify the first dart input has focus after reset
+    await expect(dart1Input).toBeFocused();
+    
+    // Verify inputs are cleared
+    await expect(dart1Input).toHaveValue('');
+    await expect(dart2Input).toHaveValue('');
+    await expect(dart3Input).toHaveValue('');
+  });
+
+  test('should focus main input when calculator is cancelled', async ({ page }) => {
+    // Remove webpack overlay before interactions
+    await removeWebpackOverlay(page);
+    
+    // Open calculator
+    await page.getByRole('button', { name: 'Show calculator' }).click();
+    
+    // Input some scores in calculator
+    const dart1Input = page.locator('input[aria-label*="Dart 1 score"]');
+    const dart2Input = page.locator('input[aria-label*="Dart 2 score"]');
+    const dart3Input = page.locator('input[aria-label*="Dart 3 score"]');
+    
+    await dart1Input.fill('25');
+    await dart2Input.fill('30');
+    await dart3Input.fill('15');
+    
+    // Focus on the second dart input
+    await dart2Input.focus();
+    
+    // Click cancel button
+    await page.getByRole('button', { name: 'Cancel calculator' }).click();
+    
+    // Verify calculator is hidden
+    await expect(page.getByText('Dart 1')).not.toBeVisible();
+    
+    // Verify the main input field has focus after cancelling calculator
+    const scoreInput = page.getByPlaceholder('Enter score (0-180)');
+    await expect(scoreInput).toBeFocused();
+  });
 });
