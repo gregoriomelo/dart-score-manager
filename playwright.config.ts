@@ -26,6 +26,10 @@ export default defineConfig({
     /* Global timeout settings - reduced for faster feedback */
     actionTimeout: 5000,
     navigationTimeout: 15000,
+
+    /* Visual testing configuration */
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
   },
 
   /* Configure projects for major browsers */
@@ -33,6 +37,7 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      testMatch: '**/functional/*.spec.ts',
     },
 
     {
@@ -50,22 +55,49 @@ export default defineConfig({
           }
         }
       },
-      testMatch: '**/full-*.spec.ts', // Only run full game scenarios in Firefox
+      testMatch: '**/functional/full-*.spec.ts', // Only run full game scenarios in Firefox
     },
 
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
+      testMatch: '**/functional/*.spec.ts',
     },
 
     /* Test against mobile viewports. */
     {
       name: 'Mobile Chrome',
       use: { ...devices['Pixel 5'] },
+      testMatch: '**/functional/game-setup.spec.ts', // Only run game setup tests on mobile
     },
     {
       name: 'Mobile Safari',
       use: { ...devices['iPhone 12'] },
+      testMatch: '**/functional/game-setup.spec.ts', // Only run game setup tests on mobile
+    },
+
+    /* Visual regression testing projects */
+    {
+      name: 'visual-chromium',
+      use: { 
+        ...devices['Desktop Chrome'],
+        // Visual testing specific settings
+        screenshot: 'only-on-failure',
+        video: 'retain-on-failure',
+      },
+      testMatch: '**/visual/visual-*.spec.ts',
+      testIgnore: '**/functional-*.spec.ts',
+    },
+
+    {
+      name: 'visual-mobile',
+      use: { 
+        ...devices['Pixel 5'],
+        screenshot: 'only-on-failure',
+        video: 'retain-on-failure',
+      },
+      testMatch: '**/visual/visual-*.spec.ts',
+      testIgnore: '**/functional-*.spec.ts',
     },
 
     /* Test against branded browsers. */

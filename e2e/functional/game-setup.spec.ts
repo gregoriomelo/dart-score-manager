@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { setupTest, removeWebpackOverlay } from './test-helpers';
+import { setupTest, removeWebpackOverlay } from '../test-helpers';
 
 test.describe('Game Setup', () => {
   test('should allow setting up a countdown game with custom settings', async ({ page }) => {

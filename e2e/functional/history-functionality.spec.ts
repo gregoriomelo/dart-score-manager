@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { setupTest } from './test-helpers';
+import { setupTest } from '../test-helpers';
 
 test.describe('History Functionality', () => {
   test('should open and close individual player history during countdown game', async ({ page }) => {

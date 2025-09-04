@@ -76,9 +76,85 @@ jobs:
         path: playwright-report/
         retention-days: 30
 
+  firefox-tests:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Use Node.js 22.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22.x
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps
+
+    - name: Build application
+      run: npm run build
+
+    - name: Run Firefox E2E tests
+      run: npm run test:e2e:firefox
+
+    - name: Upload Firefox test results
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: firefox-test-results
+        path: playwright-report/
+        retention-days: 30
+
+  visual-tests:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Use Node.js 22.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22.x
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps
+
+    - name: Build application
+      run: npm run build
+
+    - name: Run Visual Regression Tests
+      run: npx playwright test --project=visual-chromium --project=visual-mobile
+
+    - name: Upload Visual Test Results
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: visual-test-results
+        path: test-results/
+        retention-days: 30
+
+    - name: Upload Visual Test Screenshots
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: visual-screenshots
+        path: playwright-report/
+        retention-days: 30
+
   build:
     runs-on: ubuntu-latest
-    needs: [test, e2e-tests]
+    needs: [test, e2e-tests, firefox-tests, visual-tests]
 
     steps:
     - name: Checkout code

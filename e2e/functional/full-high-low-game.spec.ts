@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { setupTest } from './test-helpers';
+import { setupTest } from '../test-helpers';
 
 test.describe('Full High-Low Game', () => {
   test.setTimeout(120000); // 2 minutes for the full game test

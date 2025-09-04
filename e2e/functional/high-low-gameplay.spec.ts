@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { setupTest, removeWebpackOverlay } from './test-helpers';
+import { setupTest, removeWebpackOverlay } from '../test-helpers';
 
 test.describe('High-Low Gameplay', () => {
   test.beforeEach(async ({ page }) => {

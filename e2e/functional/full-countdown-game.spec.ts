@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { setupTest, removeWebpackOverlay, createTestHelper } from './test-helpers';
+import { setupTest, removeWebpackOverlay, createTestHelper } from '../test-helpers';
 
 test.describe('Full Countdown Game - 5 Players', () => {
   test.beforeEach(async ({ page }) => {
