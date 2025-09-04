@@ -51,6 +51,13 @@ const HighLowGameBoard: React.FC<HighLowGameBoardProps> = React.memo(({
     }
   }, [currentPlayer, handleSubmitScore]);
 
+  const handleScoreSubmitWithValue = useCallback((score: number) => {
+    if (currentPlayer) {
+      // Directly call the game logic with the score, bypassing the scoreInput state
+      onSubmitHighLowScore(currentPlayer.id, score);
+    }
+  }, [currentPlayer, onSubmitHighLowScore]);
+
   const handleSetChallenge = useCallback((direction: 'higher' | 'lower', targetScore: number) => {
     onSetChallenge(direction, targetScore);
   }, [onSetChallenge]);
@@ -132,13 +139,7 @@ const HighLowGameBoard: React.FC<HighLowGameBoardProps> = React.memo(({
             scoreInput={scoreInput}
             onScoreInputChange={handleScoreInputChange}
             onSubmitScore={handleScoreSubmit}
-            onSubmitScoreDirect={(score: number) => {
-              if (currentPlayer) {
-                onSubmitHighLowScore(currentPlayer.id, score);
-                // For high-low game, the game logic automatically handles player switching
-                // after processing the turn, so we don't need to call onNextPlayer here
-              }
-            }}
+            onSubmitScoreWithValue={handleScoreSubmitWithValue}
             error={error}
           />
         )}

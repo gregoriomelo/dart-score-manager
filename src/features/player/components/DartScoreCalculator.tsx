@@ -23,6 +23,7 @@ const DartScoreCalculator: React.FC<DartScoreCalculatorProps> = React.memo(React
   const [dartScores, setDartScores] = useState<[number, number, number]>([0, 0, 0]);
   const [inputValues, setInputValues] = useState<[string, string, string]>(['', '', '']);
   const [activeDartIndex, setActiveDartIndex] = useState<number>(0);
+  const [showInvalidFlash, setShowInvalidFlash] = useState<[boolean, boolean, boolean]>([false, false, false]);
 
   // Generate unique IDs for accessibility
   const calculatorId = generateAriaId('dart-calculator');
@@ -61,25 +62,53 @@ const DartScoreCalculator: React.FC<DartScoreCalculatorProps> = React.memo(React
 
   // Handle dart score input change
   const handleDartScoreChange = useCallback((index: number, value: string) => {
-    // Update the display value
+    // Allow empty input
+    if (value === '') {
+      const newInputValues = [...inputValues] as [string, string, string];
+      newInputValues[index] = value;
+      setInputValues(newInputValues);
+      
+      const newDartScores = [...dartScores] as [number, number, number];
+      newDartScores[index] = 0;
+      setDartScores(newDartScores);
+      return;
+    }
+
+    // Only allow numeric input
+    if (!/^\d+$/.test(value)) {
+      return;
+    }
+
+    const numValue = parseInt(value, 10);
+    
+    // Check if the complete number would exceed 60
+    if (numValue > 60) {
+      // Show brief visual feedback for invalid input
+      const newFlashState = [...showInvalidFlash] as [boolean, boolean, boolean];
+      newFlashState[index] = true;
+      setShowInvalidFlash(newFlashState);
+      setTimeout(() => {
+        setShowInvalidFlash(prev => {
+          const newState = [...prev] as [boolean, boolean, boolean];
+          newState[index] = false;
+          return newState;
+        });
+      }, 300); // Flash for 300ms
+      return; // Don't update if the number is too large
+    }
+    
+    // Input is valid, update it
     const newInputValues = [...inputValues] as [string, string, string];
     newInputValues[index] = value;
     setInputValues(newInputValues);
     
-    // Update the numeric score (0 if empty, otherwise parsed value)
-    const numValue = value === '' ? 0 : parseInt(value, 10);
-    
-    if (isNaN(numValue) || numValue < 0 || numValue > 60) {
-      return; // Invalid input
-    }
-
     const newDartScores = [...dartScores] as [number, number, number];
     newDartScores[index] = numValue;
     setDartScores(newDartScores);
 
     // Don't auto-advance - let user control navigation manually
     // Auto-advance was removed to prevent premature field switching
-  }, [dartScores, inputValues]);
+  }, [dartScores, inputValues, showInvalidFlash]);
 
   // Handle key navigation between dart inputs
   const handleDartKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
@@ -153,7 +182,7 @@ const DartScoreCalculator: React.FC<DartScoreCalculatorProps> = React.memo(React
                 onChange={(e) => handleDartScoreChange(index, e.target.value)}
                 onKeyDown={(e) => handleDartKeyDown(e, index)}
                 onFocus={() => setActiveDartIndex(index)}
-                className={`dart-input ${activeDartIndex === index ? 'active' : ''}`}
+                className={`dart-input ${activeDartIndex === index ? 'active' : ''} ${showInvalidFlash[index] ? 'dart-input-invalid' : ''}`}
                 placeholder="0"
                 min="0"
                 max="60"

@@ -188,11 +188,16 @@ describe('GameModeRouter', () => {
       const scoreInput = screen.getByPlaceholderText('Enter score (0-180)');
       const submitButton = screen.getByText('Submit');
 
+      // With the new validation, typing "200" will be blocked at keystroke level
+      // The input will only show "20" (the first two valid keystrokes)
       await user.type(scoreInput, '200');
+      
+      // The input should only show the valid part "20"
+      expect(scoreInput).toHaveValue(20);
+      
+      // Submit should work with the valid score
       await user.click(submitButton);
-
-      expect(screen.getByText('Score cannot exceed 180')).toBeInTheDocument();
-      expect(mockOnSubmitScore).not.toHaveBeenCalled();
+      expect(mockOnSubmitScore).toHaveBeenCalledWith('player-alice', 20);
     });
 
     it('allows scores that exceed remaining points (will be handled as bust by game logic)', async () => {
@@ -423,10 +428,14 @@ describe('GameModeRouter', () => {
 
       const scoreInput = screen.getByPlaceholderText('Enter score (0-180)');
       
-      // First, create an error
+      // With the new validation, typing "400" will be blocked at keystroke level
+      // The input will only show "40" (the first two valid keystrokes)
       await user.type(scoreInput, '400');
+      expect(scoreInput).toHaveValue(40);
+      
+      // Submit should work with the valid score
       await user.click(screen.getByText('Submit'));
-      expect(screen.getByText('Score cannot exceed 180')).toBeInTheDocument();
+      expect(mockOnSubmitScore).toHaveBeenCalledWith('player-alice', 40);
 
       // Clear and enter valid score
       await user.clear(scoreInput);
@@ -434,7 +443,7 @@ describe('GameModeRouter', () => {
       await user.click(screen.getByText('Submit'));
 
       expect(scoreInput).toHaveValue(null);
-      expect(screen.queryByText('Please enter a valid score (0-180)')).not.toBeInTheDocument();
+      expect(mockOnSubmitScore).toHaveBeenCalledWith('player-alice', 50);
     });
   });
 });

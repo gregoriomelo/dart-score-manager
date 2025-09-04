@@ -75,6 +75,17 @@ const CountdownGameBoard: React.FC<CountdownGameBoardProps> = React.memo(({
     }
   }, [currentPlayer, handleSubmitScore]);
 
+  const handleScoreSubmitWithValue = useCallback((score: number) => {
+    if (currentPlayer) {
+      // Directly call the game logic with the score, bypassing the scoreInput state
+      onSubmitScore(currentPlayer.id, score);
+      // Auto advance to next player immediately if game isn't finished
+      if (!gameState.gameFinished && onNextPlayer) {
+        onNextPlayer();
+      }
+    }
+  }, [currentPlayer, onSubmitScore, gameState.gameFinished, onNextPlayer]);
+
   if (gameState.gameFinished && gameState.winner) {
     return (
       <>
@@ -130,15 +141,7 @@ const CountdownGameBoard: React.FC<CountdownGameBoardProps> = React.memo(({
             scoreInput={scoreInput}
             onScoreInputChange={handleScoreInputChange}
             onSubmitScore={handleScoreSubmit}
-            onSubmitScoreDirect={(score: number) => {
-              if (currentPlayer) {
-                onSubmitScore(currentPlayer.id, score);
-                // Auto advance to next player after direct score submission
-                if (!gameState.gameFinished) {
-                  onNextPlayer();
-                }
-              }
-            }}
+            onSubmitScoreWithValue={handleScoreSubmitWithValue}
             error={error}
           />
         )}

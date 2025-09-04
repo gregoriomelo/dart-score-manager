@@ -117,6 +117,7 @@ export const CSS_CLASSES = {
   // Score input
   SCORE_INPUT_SECTION: 'score-input-section',
   SCORE_INPUT: 'score-input',
+  SCORE_INPUT_INVALID: 'score-input-invalid',
   SUBMIT_SCORE_BTN: 'submit-score-btn',
   BUST_MESSAGE: 'bust-message',
   BUST_BANNER: 'bust-banner',

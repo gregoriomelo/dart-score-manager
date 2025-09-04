@@ -63,6 +63,41 @@
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
 }
 
+.dart-input.dart-input-invalid {
+  border-color: #dc2626 !important;
+  border-width: 2px !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2) !important;
+  background-color: #fef2f2;
+  animation: invalid-flash 0.3s ease-in-out;
+}
+
+.dart-input.dart-input-invalid:focus {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.3) !important;
+  background-color: #fef2f2;
+}
+
+@keyframes invalid-flash {
+  0% { 
+    border-color: #e5e7eb;
+    border-width: 2px;
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  50% { 
+    border-color: #dc2626;
+    border-width: 2px;
+    background-color: #fef2f2;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
+  }
+  100% { 
+    border-color: #e5e7eb;
+    border-width: 2px;
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+}
+
 .dart-input.active {
   border-color: #007bff;
   background: #ffffff;

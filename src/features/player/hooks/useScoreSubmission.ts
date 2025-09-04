@@ -21,7 +21,7 @@ export const useScoreSubmission = ({
   const handleSubmitScore = useCallback((currentPlayerId: string) => {
     if (!currentPlayerId) return;
     
-    const score = parseInt(scoreInput);
+    const score = parseInt(scoreInput, 10);
     const validation = validateScore(score);
     
     if (!validation.isValid) {

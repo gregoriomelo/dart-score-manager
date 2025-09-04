@@ -41,19 +41,25 @@ test.describe('Countdown Gameplay', () => {
     // Remove webpack overlay before interactions
     await removeWebpackOverlay(page);
     
-    // Submit an invalid score (over 180)
+    // Try to submit an invalid score (over 180)
     const scoreInput = page.getByPlaceholder('Enter score (0-180)');
-    await scoreInput.fill('200');
     
-    // Remove overlay before clicking
+    // Type "200" character by character to simulate real user behavior
+    // This will trigger the input validation at each keystroke
+    await scoreInput.click();
+    await scoreInput.type('2'); // This should work
+    await scoreInput.type('0'); // This should work  
+    await scoreInput.type('0'); // This should be blocked because 200 > 180
+    
+    // Verify that only valid input was accepted (should be "20" not "200")
+    await expect(scoreInput).toHaveValue('20');
+    
+    // Submit the valid score
     await removeWebpackOverlay(page);
     await page.getByRole('button', { name: 'Submit' }).click();
     
-    // Verify error message appears (check the inline error message, not the notification)
-    await expect(page.locator('.bust-message').filter({ hasText: 'Score cannot exceed 180' })).toBeVisible();
-    
-    // Verify score remains unchanged
-    await expect(page.locator('.player-card').first().getByText('501')).toBeVisible();
+    // Verify score was updated with the valid input (501 - 20 = 481)
+    await expect(page.locator('.player-card').first().getByText('481')).toBeVisible();
   });
 
   test('should allow valid score submission', async ({ page }) => {

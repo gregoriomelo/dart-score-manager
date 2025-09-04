@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { vi } from 'vitest';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import DartScoreCalculator from '../DartScoreCalculator';
 
 // Mock the i18n hook
