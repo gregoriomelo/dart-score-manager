@@ -135,7 +135,6 @@ jobs:
 
     - name: Run Visual Regression Tests
       run: npx playwright test --project=visual-chromium --project=visual-mobile
-      continue-on-error: true
 
     - name: Upload Visual Test Results
       uses: actions/upload-artifact@v4
@@ -155,7 +154,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    needs: [test, e2e-tests, firefox-tests]
+    needs: [test, e2e-tests, firefox-tests, visual-tests]
 
     steps:
     - name: Checkout code
