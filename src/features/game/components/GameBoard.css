@@ -261,19 +261,58 @@
   cursor: not-allowed;
 }
 
+.bust-btn {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 0.875rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  min-height: 44px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.bust-btn:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+.bust-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
 .bust-message {
   background: #fef2f2;
   color: #dc2626;
-  border: 1.5px solid #fecaca;
-  padding: 1rem;
+  border: 2px solid #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
+  padding: 1.25rem;
   border-radius: 6px;
   margin-bottom: 1.25rem;
   text-align: center;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 1.125rem;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  animation: invalid-flash 0.3s ease-in-out;
 }
 
 /* Smooth show/hide for the bust banner */
 .bust-banner {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 2px solid #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
+  padding: 1.25rem;
+  border-radius: 6px;
+  margin-bottom: 1.25rem;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.125rem;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
   animation: bust-fade 2s ease-in-out forwards;
 }
 

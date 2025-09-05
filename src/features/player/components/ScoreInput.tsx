@@ -13,6 +13,7 @@ interface ScoreInputProps {
   onScoreInputChange: (value: string) => void;
   onSubmitScore: () => void;
   onSubmitScoreWithValue?: (score: number) => void;
+  onSubmitBust?: () => void;
   error?: string;
 }
 
@@ -22,6 +23,7 @@ const ScoreInput: React.FC<ScoreInputProps> = React.memo(({
   onScoreInputChange,
   onSubmitScore,
   onSubmitScoreWithValue,
+  onSubmitBust,
   error
 }) => {
   const { t } = useTranslation();
@@ -30,6 +32,9 @@ const ScoreInput: React.FC<ScoreInputProps> = React.memo(({
   
   // Performance tracking
   usePerformanceTracking('ScoreInput');
+
+  // Determine if bust is possible (only when score is less than 180)
+  const canBust = currentPlayer.score < 180;
 
   const scoreInputId = generateAriaId('score-input');
   const errorId = generateAriaId('score-error');
@@ -207,6 +212,17 @@ const ScoreInput: React.FC<ScoreInputProps> = React.memo(({
         >
           {t(UI_TEXT_KEYS.SUBMIT_BUTTON)}
         </button>
+        {onSubmitBust && (
+          <button 
+            className={CSS_CLASSES.BUST_BTN} 
+            onClick={onSubmitBust}
+            disabled={!canBust}
+            aria-label={t('game.actions.bust')}
+            title={canBust ? t('game.actions.bust') : t('game.messages.bustNotPossible', 'Bust not possible when score is 180 or higher')}
+          >
+            {t(UI_TEXT_KEYS.BUST_BUTTON)}
+          </button>
+        )}
       </div>
       {error && (
         <div 

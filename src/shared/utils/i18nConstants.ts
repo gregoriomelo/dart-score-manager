@@ -44,6 +44,7 @@ export const UI_TEXT_KEYS = {
   ADD_PLAYER_BUTTON: 'game.setup.addPlayer',
   START_GAME_BUTTON: 'game.setup.startGame',
   SUBMIT_BUTTON: 'game.actions.submit',
+  BUST_BUTTON: 'game.actions.bust',
   RESET_GAME_BUTTON: 'game.actions.resetGame',
   PLAY_AGAIN_BUTTON: 'game.actions.playAgain',
   BACK_TO_SETUP_BUTTON: 'game.actions.backToSetup',
@@ -119,6 +120,7 @@ export const CSS_CLASSES = {
   SCORE_INPUT: 'score-input',
   SCORE_INPUT_INVALID: 'score-input-invalid',
   SUBMIT_SCORE_BTN: 'submit-score-btn',
+  BUST_BTN: 'bust-btn',
   BUST_MESSAGE: 'bust-message',
   BUST_BANNER: 'bust-banner',
   

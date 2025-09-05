@@ -22,6 +22,7 @@
     },
     "actions": {
       "submit": "Submit",
+      "bust": "BUST",
       "resetGame": "Reset Game",
       "playAgain": "Play Again",
       "backToSetup": "Back to Setup",
@@ -40,7 +41,7 @@
       "playerRemoved": "Player removed successfully!",
       "gameReset": "Game reset successfully!",
       "challengeSet": "Challenge set successfully!",
-      "bust": "BUST! Score reverted to turn start.",
+      "bust": "BUST!",
       "winnerCongratulations": "🎉 Congratulations!",
       "winnerWins": "{name} wins!",
       "finalScoresCountdown": "Final Scores & History",

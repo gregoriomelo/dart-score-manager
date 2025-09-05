@@ -89,6 +89,17 @@ const CountdownGameBoard: React.FC<CountdownGameBoardProps> = React.memo(({
     }
   }, [currentPlayer, onSubmitScore, gameState.gameFinished, onNextPlayer]);
 
+  const handleBustSubmit = useCallback(() => {
+    if (currentPlayer) {
+      // Submit a score that will cause a bust (score higher than current player's score)
+      onSubmitScore(currentPlayer.id, currentPlayer.score + 1);
+      // Auto advance to next player immediately if game isn't finished
+      if (!gameState.gameFinished && onNextPlayer) {
+        onNextPlayer();
+      }
+    }
+  }, [currentPlayer, onSubmitScore, gameState.gameFinished, onNextPlayer]);
+
   if (gameState.gameFinished && gameState.winner) {
     return (
       <>
@@ -145,6 +156,7 @@ const CountdownGameBoard: React.FC<CountdownGameBoardProps> = React.memo(({
             onScoreInputChange={handleScoreInputChange}
             onSubmitScore={handleScoreSubmit}
             onSubmitScoreWithValue={handleScoreSubmitWithValue}
+            onSubmitBust={handleBustSubmit}
             error={error}
           />
         )}

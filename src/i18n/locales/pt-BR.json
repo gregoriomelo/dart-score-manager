@@ -22,6 +22,7 @@
     },
     "actions": {
       "submit": "Enviar",
+      "bust": "ERROU",
       "resetGame": "Reiniciar Jogo",
       "playAgain": "Jogar Novamente",
       "backToSetup": "Voltar à Configuração",
@@ -40,7 +41,7 @@
       "playerRemoved": "Jogador removido com sucesso!",
       "gameReset": "Jogo reiniciado com sucesso!",
       "challengeSet": "Desafio definido com sucesso!",
-      "bust": "ERROU! Pontuação revertida para o início da rodada.",
+      "bust": "ERROU!",
       "winnerCongratulations": "🎉 Parabéns!",
       "winnerWins": "{name} vence!",
       "finalScoresCountdown": "Pontuações Finais e Histórico",
