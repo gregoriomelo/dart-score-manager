@@ -1,0 +1,78 @@
+.audio-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.audio-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.875rem 0.8rem;
+  border: 1.5px solid var(--primary-color, #007bff);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--primary-color, #007bff);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 100px;
+  min-height: 44px; /* Match input field height */
+  justify-content: center;
+}
+
+.audio-toggle-btn:hover {
+  background: var(--primary-color, #007bff);
+  color: white;
+  transform: translateY(-1px);
+}
+
+.audio-toggle-btn:active {
+  transform: translateY(0);
+}
+
+.audio-toggle-btn.enabled {
+  background: var(--primary-color, #007bff);
+  color: white;
+}
+
+.audio-toggle-btn.disabled {
+  background: transparent;
+  color: var(--text-muted, #6c757d);
+  border-color: var(--text-muted, #6c757d);
+}
+
+.audio-toggle-btn.disabled:hover {
+  background: var(--text-muted, #6c757d);
+  color: white;
+}
+
+.audio-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.audio-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .audio-toggle-btn {
+    padding: 0.875rem 0.6rem;
+    font-size: 0.75rem;
+    min-width: 90px;
+    min-height: 44px; /* Keep same height as input */
+    gap: 0.3rem;
+  }
+  
+  .audio-icon {
+    font-size: 0.9rem;
+  }
+  
+  .audio-label {
+    font-size: 0.75rem;
+  }
+}

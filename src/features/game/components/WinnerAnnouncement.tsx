@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Player } from '../../../shared/types/game';
 import { UI_TEXT_KEYS, CSS_CLASSES } from '../../../shared/utils/i18nConstants';
 import { formatWinnerAnnouncement } from '../../../shared/utils/textUtils';
+import { soundManager } from '../../../utils/audio/soundManager';
 import PlayerList from '../../player/components/PlayerList';
 import GameActions from './GameActions';
 import './GameBoard.css';
@@ -27,6 +28,11 @@ const WinnerAnnouncement: React.FC<WinnerAnnouncementProps> = React.memo(({
   onNewGame
 }) => {
   const { t } = useTranslation();
+  
+  // Play celebration sound when winner is announced
+  useEffect(() => {
+    soundManager.playSound('celebration');
+  }, []);
   
   return (
     <div className={CSS_CLASSES.GAME_BOARD}>

@@ -3,6 +3,7 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 
 // Polyfills for Web Crypto API in Vitest environment
 if (typeof global !== 'undefined') {
@@ -32,6 +33,50 @@ if (typeof global !== 'undefined') {
       },
       randomUUID: () => 'mock-uuid-' + Math.random().toString(36).substr(2, 9),
     },
+    writable: true,
+    configurable: true,
+  });
+}
+
+// Mock AudioContext for testing
+if (typeof global !== 'undefined') {
+  const mockAudioContext = {
+    createBuffer: vi.fn(() => ({
+      getChannelData: vi.fn(() => new Float32Array(44100)),
+      length: 44100,
+      sampleRate: 44100,
+    })),
+    createBufferSource: vi.fn(() => ({
+      buffer: null,
+      connect: vi.fn(),
+      start: vi.fn(),
+    })),
+    createGain: vi.fn(() => ({
+      gain: { value: 1 },
+      connect: vi.fn(),
+    })),
+    destination: {},
+    sampleRate: 44100,
+    state: 'running',
+    resume: vi.fn(),
+    decodeAudioData: vi.fn(() => Promise.resolve({
+      getChannelData: vi.fn(() => new Float32Array(44100)),
+      length: 44100,
+      sampleRate: 44100,
+    })),
+  };
+
+  const MockAudioContext = vi.fn(() => mockAudioContext);
+  const MockWebkitAudioContext = vi.fn(() => mockAudioContext);
+
+  Object.defineProperty(global, 'AudioContext', {
+    value: MockAudioContext,
+    writable: true,
+    configurable: true,
+  });
+
+  Object.defineProperty(global, 'webkitAudioContext', {
+    value: MockWebkitAudioContext,
     writable: true,
     configurable: true,
   });

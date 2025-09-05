@@ -1,7 +1,8 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Player, HighLowGameState, HighLowPlayer } from '../../../shared/types/game';
 import { UI_TEXT_KEYS, CSS_CLASSES } from '../../../shared/utils/i18nConstants';
+import { soundManager } from '../../../utils/audio/soundManager';
 import { useScoreSubmission } from '../../player/hooks/useScoreSubmission';
 import HighLowChallenge from './HighLowChallenge';
 import HighLowPlayerHistoryModal from '../../history/components/HighLowPlayerHistoryModal';
@@ -34,6 +35,7 @@ const HighLowGameBoard: React.FC<HighLowGameBoardProps> = React.memo(({
   const { t } = useTranslation();
   const [historyPlayer, setHistoryPlayer] = useState<Player | null>(null);
   const [showConsolidatedHistory, setShowConsolidatedHistory] = useState(false);
+  const previousPlayersRef = useRef<HighLowPlayer[]>([]);
 
   const {
     scoreInput,
@@ -81,6 +83,36 @@ const HighLowGameBoard: React.FC<HighLowGameBoardProps> = React.memo(({
   }, [gameState.players]);
   
   const needsChallengeSet = useMemo(() => !gameState.highLowChallenge, [gameState.highLowChallenge]);
+
+  // Monitor for life lost and elimination sounds
+  useEffect(() => {
+    const previousPlayers = previousPlayersRef.current;
+    const currentPlayers = gameState.players;
+
+    // Don't play life lost/elimination sounds if game just finished (winner sound will play instead)
+    if (gameState.gameFinished) {
+      previousPlayersRef.current = currentPlayers;
+      return;
+    }
+
+    // Check for life lost or elimination
+    currentPlayers.forEach((currentPlayer, index) => {
+      const previousPlayer = previousPlayers[index];
+      if (previousPlayer && currentPlayer.lives !== undefined && previousPlayer.lives !== undefined) {
+        // Life lost (but not eliminated)
+        if (currentPlayer.lives < previousPlayer.lives && currentPlayer.lives > 0) {
+          soundManager.playSound('lifeLost');
+        }
+        // Elimination (lives went to 0)
+        else if (currentPlayer.lives === 0 && previousPlayer.lives > 0) {
+          soundManager.playSound('elimination');
+        }
+      }
+    });
+
+    // Update the ref for next comparison
+    previousPlayersRef.current = currentPlayers;
+  }, [gameState.players, gameState.gameFinished]);
 
   if (gameState.gameFinished && gameState.winner) {
     return (

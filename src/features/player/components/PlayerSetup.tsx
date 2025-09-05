@@ -6,6 +6,7 @@ import { validatePlayerName } from '../../../shared/utils/validation';
 import { sanitizePlayerNames } from '../../../shared/utils/textUtils';
 // Remove the useNotifications import since we don't want popup notifications
 import { ACCESSIBILITY, generateAriaId } from '../../../shared/utils/accessibility';
+import { AudioToggle } from '../../../shared/components';
 import './PlayerSetup.css';
 
 interface PlayerSetupProps {
@@ -124,8 +125,9 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
         </div>
 
         {gameMode === GAME_CONSTANTS.GAME_MODES.COUNTDOWN && (
-          <div>
-            <label htmlFor={startingScoreId}>{t(UI_TEXT_KEYS.STARTING_SCORE_LABEL)}</label>
+          <div className="input-with-audio">
+            <div className="input-field">
+              <label htmlFor={startingScoreId}>{t(UI_TEXT_KEYS.STARTING_SCORE_LABEL)}</label>
             <input
               id={startingScoreId}
               type="number"
@@ -169,17 +171,22 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
               inputMode="numeric"
               pattern="[0-9]*"
             />
-            <div id={`${startingScoreId}-description`} className="sr-only">
-              {ACCESSIBILITY.DESCRIPTIONS.SCORE_LIMITS}
+              <div id={`${startingScoreId}-description`} className="sr-only">
+                {ACCESSIBILITY.DESCRIPTIONS.SCORE_LIMITS}
+              </div>
+            </div>
+            <div className="audio-toggle-inline">
+              <AudioToggle />
             </div>
           </div>
         )}
 
         {gameMode === GAME_CONSTANTS.GAME_MODES.HIGH_LOW && (
-          <div>
-            <label htmlFor={startingLivesId}>
-              {t(UI_TEXT_KEYS.STARTING_LIVES_LABEL)}
-            </label>
+          <div className="input-with-audio">
+            <div className="input-field">
+              <label htmlFor={startingLivesId}>
+                {t(UI_TEXT_KEYS.STARTING_LIVES_LABEL)}
+              </label>
             <input
               id={startingLivesId}
               type="number"
@@ -223,8 +230,12 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
               inputMode="numeric"
               pattern="[0-9]*"
             />
-            <div id={`${startingLivesId}-description`} className="sr-only">
-              {ACCESSIBILITY.DESCRIPTIONS.LIVES_LIMITS}
+              <div id={`${startingLivesId}-description`} className="sr-only">
+                {ACCESSIBILITY.DESCRIPTIONS.LIVES_LIMITS}
+              </div>
+            </div>
+            <div className="audio-toggle-inline">
+              <AudioToggle />
             </div>
           </div>
         )}

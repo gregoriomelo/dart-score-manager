@@ -10,3 +10,6 @@ export type { ModalProps } from './Modal';
 export { Input } from './Input';
 export type { InputProps } from './Input';
 
+// AudioToggle component
+export { AudioToggle } from './AudioToggle';
+

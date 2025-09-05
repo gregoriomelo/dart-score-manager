@@ -271,3 +271,33 @@
     font-size: 1.2rem;
   }
 }
+
+.input-with-audio {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.input-field {
+  flex: 1;
+}
+
+.audio-toggle-inline {
+  flex-shrink: 0;
+  margin-top: 2.25rem; /* Align with input field (label height + margin) */
+}
+
+/* Mobile responsive for inline layout */
+@media (max-width: 768px) {
+  .input-with-audio {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  
+  .audio-toggle-inline {
+    margin-top: 0;
+    align-self: center;
+  }
+}

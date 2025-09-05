@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Player, CountdownGameState, CountdownPlayer } from '../../../shared/types/game';
 import { UI_TEXT_KEYS, CSS_CLASSES } from '../../../shared/utils/i18nConstants';
+import { soundManager } from '../../../utils/audio/soundManager';
 import { useScoreSubmission } from '../../player/hooks/useScoreSubmission';
 import { formatCountdownModeIndicator } from '../../../shared/utils/textUtils';
 import CountdownPlayerHistoryModal from '../../history/components/CountdownPlayerHistoryModal';
@@ -60,6 +61,8 @@ const CountdownGameBoard: React.FC<CountdownGameBoardProps> = React.memo(({
     if (gameState.lastThrowWasBust) {
       setShowBustBanner(true);
       setBustAnimKey((k) => k + 1);
+      // Play bust sound
+      soundManager.playSound('bust');
       timer = setTimeout(() => setShowBustBanner(false), 2000);
     } else {
       setShowBustBanner(false);
