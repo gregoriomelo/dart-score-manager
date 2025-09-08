@@ -1,8 +1,9 @@
 import React from 'react';
-import { Player, isHighLowPlayer } from '../../../shared/types/game';
+import { Player, isHighLowPlayer, CountdownPlayer } from '../../../shared/types/game';
 import { getPlayerColor } from '../../../shared/utils/playerColors';
 import { CSS_CLASSES } from '../../../shared/utils/constants';
 import { formatPlayerLivesLabel, formatHistoryButtonTitle } from '../../../shared/utils/textUtils';
+import { getPlayerRank } from '../../../shared/utils/rankingUtils';
 import '../../game/components/GameBoard.css';
 
 interface PlayerListProps {
@@ -31,7 +32,15 @@ const PlayerList: React.FC<PlayerListProps> = React.memo(({
             {player.name}
           </span>
           {gameMode === 'countdown' ? (
-            <span className={CSS_CLASSES.PLAYER_SCORE}>{player.score}</span>
+            <div className="player-score-container">
+              <span className={CSS_CLASSES.PLAYER_SCORE}>{player.score}</span>
+              {(() => {
+                const rank = getPlayerRank(player as CountdownPlayer, players as CountdownPlayer[]);
+                return rank !== null ? (
+                  <span className={`player-rank ${rank <= 3 ? `rank-${rank}` : ''}`}>#{rank}</span>
+                ) : null;
+              })()}
+            </div>
           ) : (
             <span className={CSS_CLASSES.PLAYER_LIVES}>{formatPlayerLivesLabel(isHighLowPlayer(player) ? player.lives : 0)}</span>
           )}

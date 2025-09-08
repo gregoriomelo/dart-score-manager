@@ -108,8 +108,8 @@ export class TestHelper {
     await submitButton.waitFor({ state: 'visible', timeout: 5000 });
     await submitButton.click();
     
-    // Wait for score update
-    await this.page.waitForSelector('.player-card.current-player .player-score, .player-card.current-player .score', { timeout: 5000 });
+    // Wait for score update - check for either score or lives depending on game mode
+    await this.page.waitForSelector('.player-card.current-player .player-score, .player-card.current-player .player-lives, .player-card.current-player .score', { timeout: 5000 });
   }
 
   /**

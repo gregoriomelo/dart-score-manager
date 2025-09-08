@@ -53,7 +53,9 @@
       "historyButtonTitle": "Ver histórico de pontuação de {name}",
       "countdownModeIndicator": "Contagem Regressiva ({score})",
       "highLowModeIndicator": "Desafio Alto-Baixo",
-      "playerTurn": "Vez de {name}"
+      "playerTurn": "Vez de {name}",
+      "playerRank": "Posição #{rank}",
+      "rankingTitle": "Classificação"
     },
     "challenge": {
       "currentChallenge": "Desafio Atual",

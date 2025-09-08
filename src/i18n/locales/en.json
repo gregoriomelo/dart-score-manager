@@ -53,7 +53,9 @@
       "historyButtonTitle": "View {name}'s score history",
       "countdownModeIndicator": "Countdown ({score})",
       "highLowModeIndicator": "High-Low Challenge",
-      "playerTurn": "{name}'s Turn"
+      "playerTurn": "{name}'s Turn",
+      "playerRank": "Rank #{rank}",
+      "rankingTitle": "Rankings"
     },
     "challenge": {
       "currentChallenge": "Current Challenge",
