@@ -9,6 +9,8 @@ interface HighLowAllPlayersHistoryModalProps {
   players: HighLowPlayer[];
   isOpen: boolean;
   onClose: () => void;
+  onUndoLastMove: () => void;
+  canUndo: boolean;
 }
 
 interface ConsolidatedEntry {
@@ -16,7 +18,7 @@ interface ConsolidatedEntry {
   entry: ScoreHistoryEntry;
 }
 
-const HighLowAllPlayersHistoryModal: React.FC<HighLowAllPlayersHistoryModalProps> = ({ players, isOpen, onClose }) => {
+const HighLowAllPlayersHistoryModal: React.FC<HighLowAllPlayersHistoryModalProps> = ({ players, isOpen, onClose, onUndoLastMove, canUndo }) => {
   const [sortBy, setSortBy] = useState<'time' | 'turn' | 'player'>('time');
 
   // Collect all entries from all players
@@ -42,16 +44,29 @@ const HighLowAllPlayersHistoryModal: React.FC<HighLowAllPlayersHistoryModalProps
   });
 
   const footer = (
-    <div className="current-scores">
-      <h4>Current Scores:</h4>
-      <div className="current-scores-list">
-        {players.map(player => (
-          <span key={player.id} className="current-score-item" style={{color: getPlayerColor(player.id)}}>
-            <strong>{player.name}:</strong> Lives {player.lives}
-            {player.isWinner && <span className="winner-badge">🏆</span>}
-          </span>
-        ))}
+    <div className="history-modal-footer">
+      <div className="current-scores">
+        <h4>Current Scores:</h4>
+        <div className="current-scores-list">
+          {players.map(player => (
+            <span key={player.id} className="current-score-item" style={{color: getPlayerColor(player.id)}}>
+              <strong>{player.name}:</strong> Lives {player.lives}
+              {player.isWinner && <span className="winner-badge">🏆</span>}
+            </span>
+          ))}
+        </div>
       </div>
+      {canUndo && (
+        <div className="undo-section">
+          <button 
+            className="undo-button"
+            onClick={onUndoLastMove}
+            title="Undo last score submission"
+          >
+            ↶ Undo Last Move
+          </button>
+        </div>
+      )}
     </div>
   );
 

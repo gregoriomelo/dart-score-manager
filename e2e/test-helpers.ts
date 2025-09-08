@@ -170,6 +170,97 @@ export class TestHelper {
     await this.page.waitForSelector('input[placeholder="Player 1 name"]', { timeout: 10000 });
   }
 
+  /**
+   * Set up players with specific names
+   */
+  async setupPlayers(playerNames: string[]) {
+    for (let i = 0; i < playerNames.length; i++) {
+      const input = this.page.locator(`input[placeholder="Player ${i + 1} name"]`);
+      await input.fill(playerNames[i]);
+    }
+  }
+
+  /**
+   * Select game mode
+   */
+  async selectGameMode(mode: 'countdown' | 'high-low') {
+    if (mode === 'countdown') {
+      await this.page.getByRole('button', { name: 'Countdown' }).click();
+    } else if (mode === 'high-low') {
+      await this.page.getByRole('button', { name: 'High-Low' }).click();
+    }
+  }
+
+  /**
+   * Set starting score
+   */
+  async setStartingScore(score: number) {
+    const scoreInput = this.page.locator('input[type="number"]').first();
+    await scoreInput.fill(score.toString());
+  }
+
+  /**
+   * Set starting lives
+   */
+  async setStartingLives(lives: number) {
+    const livesInput = this.page.locator('input[type="number"]').last();
+    await livesInput.fill(lives.toString());
+  }
+
+  /**
+   * Start the game
+   */
+  async startGame() {
+    await this.page.getByRole('button', { name: 'Start Game' }).click();
+    await this.page.waitForSelector('.player-card.current-player', { timeout: 10000 });
+  }
+
+  /**
+   * Submit a score for a specific player
+   */
+  async submitScoreForPlayer(playerName: string, score: string | number) {
+    // Wait for the player's turn
+    await this.waitForPlayerTurn(playerName);
+    
+    // Submit the score
+    await this.submitScore(Number(score));
+  }
+
+  /**
+   * Set a challenge in high-low mode
+   */
+  async setChallenge(direction: 'higher' | 'lower') {
+    if (direction === 'higher') {
+      await this.page.getByRole('button', { name: /higher/i }).click();
+    } else if (direction === 'lower') {
+      await this.page.getByRole('button', { name: /lower/i }).click();
+    }
+  }
+
+  /**
+   * Open all players history modal
+   */
+  async openAllPlayersHistory() {
+    // Close any open modals first
+    const closeButton = this.page.locator('.close-button, .modal-close, [aria-label="Close"]');
+    if (await closeButton.isVisible()) {
+      await closeButton.click();
+      await this.page.waitForTimeout(100); // Wait for modal to close
+    }
+    
+    await this.page.getByRole('button', { name: '📊 All History' }).click();
+    await this.page.waitForSelector('.history-view-modal', { timeout: 5000 });
+  }
+
+  /**
+   * Open individual player history modal
+   */
+  async openPlayerHistory(playerName: string) {
+    const playerCard = this.page.locator('.player-card').filter({ hasText: playerName });
+    await playerCard.getByRole('button', { name: 'History' }).click();
+    await this.page.waitForSelector('.history-view-modal', { timeout: 5000 });
+  }
+
 
 }
 

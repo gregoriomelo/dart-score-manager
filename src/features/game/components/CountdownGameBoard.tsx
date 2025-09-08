@@ -20,6 +20,8 @@ interface CountdownGameBoardProps {
   onNextPlayer: () => void;
   onResetGame: () => void;
   onNewGame: () => void;
+  onUndoLastMove: () => void;
+  canUndo: boolean;
 }
 
 const CountdownGameBoard: React.FC<CountdownGameBoardProps> = React.memo(({
@@ -29,6 +31,8 @@ const CountdownGameBoard: React.FC<CountdownGameBoardProps> = React.memo(({
   onNextPlayer,
   onResetGame,
   onNewGame,
+  onUndoLastMove,
+  canUndo,
 }) => {
   const { t } = useTranslation();
   const [historyPlayer, setHistoryPlayer] = useState<Player | null>(null);
@@ -123,6 +127,8 @@ const CountdownGameBoard: React.FC<CountdownGameBoardProps> = React.memo(({
           players={gameState.players as CountdownPlayer[]}
           isOpen={showConsolidatedHistory}
           onClose={() => setShowConsolidatedHistory(false)}
+          onUndoLastMove={onUndoLastMove}
+          canUndo={canUndo}
         />
       </>
     );
@@ -179,6 +185,8 @@ const CountdownGameBoard: React.FC<CountdownGameBoardProps> = React.memo(({
         players={gameState.players as CountdownPlayer[]}
         isOpen={showConsolidatedHistory}
         onClose={() => setShowConsolidatedHistory(false)}
+        onUndoLastMove={onUndoLastMove}
+        canUndo={canUndo}
       />
     </>
   );

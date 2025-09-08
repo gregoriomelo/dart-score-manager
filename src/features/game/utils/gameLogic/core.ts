@@ -1,4 +1,4 @@
-import { Player, GameState, GameMode, CountdownPlayer, HighLowPlayer, CountdownGameState, HighLowGameState, isHighLowPlayer } from '../../../../shared/types/game';
+import { Player, GameState, GameMode, CountdownPlayer, HighLowPlayer, CountdownGameState, HighLowGameState, isHighLowPlayer, ScoreHistoryEntry, isCountdownGameState, isHighLowGameState } from '../../../../shared/types/game';
 
 export const createPlayer = (
   name: string, 
@@ -377,4 +377,101 @@ export const resetGame = (gameState: GameState, startingLives?: number, starting
       lastThrowWasBust: false,
     };
   }
+};
+
+/**
+ * Undo the last score submission
+ * Returns the game state with the last score removed and current player reverted
+ */
+export const undoLastScore = (gameState: GameState): GameState => {
+  // Find the most recent score entry across all players
+  let lastEntry: { playerIndex: number; entryIndex: number; entry: ScoreHistoryEntry } | null = null;
+  let latestTimestamp = new Date(0);
+
+  gameState.players.forEach((player, playerIndex) => {
+    player.scoreHistory.forEach((entry, entryIndex) => {
+      if (entry.timestamp > latestTimestamp) {
+        latestTimestamp = entry.timestamp;
+        lastEntry = { playerIndex, entryIndex, entry };
+      }
+    });
+  });
+
+  // If no entries found, return current state
+  if (!lastEntry) {
+    return gameState;
+  }
+
+  const { playerIndex, entryIndex, entry } = lastEntry;
+  const player = gameState.players[playerIndex];
+
+  // Remove the last entry from the player's history
+  const updatedScoreHistory = player.scoreHistory.filter((_, index) => index !== entryIndex);
+
+  // Revert the player's score to the previous score
+  const updatedPlayer = {
+    ...player,
+    score: (entry as ScoreHistoryEntry).previousScore,
+    scoreHistory: updatedScoreHistory,
+    isWinner: false, // Reset winner status
+  };
+
+  // Update the players array
+  const updatedPlayers = [...gameState.players];
+  updatedPlayers[playerIndex] = updatedPlayer;
+
+  // Determine the new current player index
+  // We need to go back to the player who made the last move
+  let newCurrentPlayerIndex = playerIndex;
+
+  // Handle game mode specific logic
+  if (isCountdownGameState(gameState)) {
+    // For countdown, set the turnStartScore to the reverted score
+    const countdownPlayer = updatedPlayer as CountdownPlayer;
+    updatedPlayers[playerIndex] = {
+      ...countdownPlayer,
+      turnStartScore: (entry as ScoreHistoryEntry).previousScore,
+    };
+    
+    // Check if game is still finished
+    const winner = updatedPlayers.find(p => p.isWinner) as CountdownPlayer | null;
+    const gameFinished = winner !== null && winner !== undefined;
+    
+
+    return {
+      ...gameState,
+      players: updatedPlayers as CountdownPlayer[],
+      currentPlayerIndex: newCurrentPlayerIndex,
+      gameFinished,
+      winner: winner || null,
+      lastThrowWasBust: false,
+    };
+  } else if (isHighLowGameState(gameState)) {
+    // For high-low, we might need to restore lives if this was a failed challenge
+    let highLowPlayer = updatedPlayer as HighLowPlayer;
+    const scoreEntry = entry as ScoreHistoryEntry;
+    if (scoreEntry.livesAfter !== undefined && scoreEntry.livesBefore !== undefined) {
+      highLowPlayer = {
+        ...highLowPlayer,
+        lives: scoreEntry.livesBefore,
+      };
+    }
+    updatedPlayers[playerIndex] = highLowPlayer;
+    
+    // Check if game is still finished
+    const winner = updatedPlayers.find(p => p.isWinner) as HighLowPlayer | null;
+    const gameFinished = winner !== null && winner !== undefined;
+
+    return {
+      ...gameState,
+      players: updatedPlayers as HighLowPlayer[],
+      currentPlayerIndex: newCurrentPlayerIndex,
+      gameFinished,
+      winner: winner || null,
+      lastThrowWasBust: false,
+    };
+  }
+
+  // Fallback - should not reach here
+  return gameState;
 };

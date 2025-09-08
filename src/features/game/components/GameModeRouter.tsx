@@ -12,6 +12,8 @@ interface GameModeRouterProps {
   onNewGame: () => void;
   onSetChallenge?: (direction: 'higher' | 'lower', targetScore: number) => void;
   onSubmitHighLowScore?: (playerId: string, score: number) => void;
+  onUndoLastMove: () => void;
+  canUndo: boolean;
 }
 
 const GameModeRouter: React.FC<GameModeRouterProps> = ({
@@ -23,6 +25,8 @@ const GameModeRouter: React.FC<GameModeRouterProps> = ({
   onNewGame,
   onSetChallenge,
   onSubmitHighLowScore,
+  onUndoLastMove,
+  canUndo,
 }) => {
   if (isHighLowGameState(gameState)) {
     return (
@@ -34,6 +38,8 @@ const GameModeRouter: React.FC<GameModeRouterProps> = ({
         onNextPlayer={onNextPlayer}
         onResetGame={onResetGame}
         onNewGame={onNewGame}
+        onUndoLastMove={onUndoLastMove}
+        canUndo={canUndo}
       />
     );
   }
@@ -47,6 +53,8 @@ const GameModeRouter: React.FC<GameModeRouterProps> = ({
         onNextPlayer={onNextPlayer}
         onResetGame={onResetGame}
         onNewGame={onNewGame}
+        onUndoLastMove={onUndoLastMove}
+        canUndo={canUndo}
       />
     );
   }

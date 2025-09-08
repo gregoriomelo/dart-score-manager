@@ -228,6 +228,12 @@
   background-color: #f9fafb;
 }
 
+.history-modal-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .current-scores h4 {
   margin: 0 0 12px;
   font-size: 1.2rem;
@@ -246,6 +252,47 @@
 .winner-badge {
   margin-left: 8px;
   font-size: 1.2rem;
+}
+
+.undo-section {
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.undo-button {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+}
+
+.undo-button:hover {
+  background-color: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+}
+
+.undo-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+}
+
+.undo-button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 /* Mobile-first responsive design */
@@ -286,6 +333,11 @@
     grid-template-columns: repeat(6, 1fr);
     gap: 8px;
     padding: 8px 0;
+    font-size: 0.9rem;
+  }
+  
+  .undo-button {
+    padding: 10px 20px;
     font-size: 0.9rem;
   }
 }
@@ -336,6 +388,11 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     padding: 0 2px;
+  }
+  
+  .undo-button {
+    padding: 8px 16px;
+    font-size: 0.8rem;
   }
 }
 

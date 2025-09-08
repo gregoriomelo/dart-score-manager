@@ -21,6 +21,8 @@ interface HighLowGameBoardProps {
   onNextPlayer: () => void;
   onResetGame: () => void;
   onNewGame: () => void;
+  onUndoLastMove: () => void;
+  canUndo: boolean;
 }
 
 const HighLowGameBoard: React.FC<HighLowGameBoardProps> = React.memo(({
@@ -31,6 +33,8 @@ const HighLowGameBoard: React.FC<HighLowGameBoardProps> = React.memo(({
   // onNextPlayer, // Unused parameter
   onResetGame,
   onNewGame,
+  onUndoLastMove,
+  canUndo,
 }) => {
   const { t } = useTranslation();
   const [historyPlayer, setHistoryPlayer] = useState<Player | null>(null);
@@ -137,6 +141,8 @@ const HighLowGameBoard: React.FC<HighLowGameBoardProps> = React.memo(({
           players={gameState.players as HighLowPlayer[]}
           isOpen={showConsolidatedHistory}
           onClose={() => setShowConsolidatedHistory(false)}
+          onUndoLastMove={onUndoLastMove}
+          canUndo={canUndo}
         />
       </>
     );
@@ -194,6 +200,8 @@ const HighLowGameBoard: React.FC<HighLowGameBoardProps> = React.memo(({
         players={gameState.players as HighLowPlayer[]}
         isOpen={showConsolidatedHistory}
         onClose={() => setShowConsolidatedHistory(false)}
+        onUndoLastMove={onUndoLastMove}
+        canUndo={canUndo}
       />
     </>
   );

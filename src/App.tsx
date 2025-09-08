@@ -70,6 +70,8 @@ function AppContent() {
     clearStoredGame,
     setChallengeForHighLow,
     submitHighLowScore,
+    undoLastMove,
+    canUndo,
   } = useGameManager();
 
   const handleStartGame = (playerNames: string[], gameMode: GameMode, startingScore: number, startingLives: number) => {
@@ -153,6 +155,8 @@ function AppContent() {
             onNewGame={handleNewGame}
             onSetChallenge={setChallengeForHighLow}
             onSubmitHighLowScore={submitHighLowScore}
+            onUndoLastMove={undoLastMove}
+            canUndo={canUndo}
           />
         </main>
       {isDevelopment && (

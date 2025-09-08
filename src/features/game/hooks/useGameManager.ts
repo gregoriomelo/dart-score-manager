@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useMemo } from 'react';
 import { GameState, GameMode, CountdownGameState, isHighLowGameState, isCountdownGameState } from '../../../shared/types/game';
 import { getCurrentPlayer, startGame } from '../utils/gameLogic/core';
 import { isHighLowGameMode } from '../utils/gameLogic/highLow';
-import { createGameState, resetGame } from '../utils/gameLogic/core';
+import { createGameState, resetGame, undoLastScore } from '../utils/gameLogic/core';
 import { saveGameState, loadGameState, clearGameState } from '../../../shared/utils/localStorage';
 import { useCountdownGame } from './useCountdownGame';
 import { useHighLowGame } from './useHighLowGame';
@@ -70,10 +70,26 @@ export const useGameManager = () => {
     } as CountdownGameState);
   }, []);
 
+  const undoLastMove = useCallback(() => {
+    setGameState(prevState => {
+      try {
+        return undoLastScore(prevState);
+      } catch (error) {
+        console.error('Error undoing last move:', error);
+        return prevState;
+      }
+    });
+  }, []);
+
   const countdownActions = useCountdownGame(setGameState);
   const highLowActions = useHighLowGame(setGameState);
 
   const currentPlayer = useMemo(() => getCurrentPlayer(gameState), [gameState]);
+
+  // Check if undo is available (if there are any score history entries)
+  const canUndo = useMemo(() => {
+    return gameState.players.some(player => player.scoreHistory.length > 0);
+  }, [gameState.players]);
 
   return {
     gameState,
@@ -82,6 +98,8 @@ export const useGameManager = () => {
     startNewGame,
     resetCurrentGame,
     clearStoredGame,
+    undoLastMove,
+    canUndo,
     isHighLowMode: isHighLowGameMode(gameState),
     ...countdownActions,
     ...highLowActions,
