@@ -13,6 +13,7 @@ import { useResponsive } from './hooks/useResponsive';
 import { useDeviceCapabilities } from './hooks/useTouch';
 
 import LanguageSwitcher from './components/LanguageSwitcher';
+import GitHubRibbon from './components/GitHubRibbon';
 import { onOnlineStatusChange } from './utils/serviceWorker';
 import './i18n';
 import './App.css';
@@ -87,6 +88,7 @@ function AppContent() {
   if (gameState.players.length === 0) {
     return (
       <div className="App">
+        <GitHubRibbon />
         <LanguageSwitcher />
         {/* Offline indicator */}
         {!isOnline && (
@@ -125,6 +127,7 @@ function AppContent() {
 
   return (
     <div className="App">
+      <GitHubRibbon />
       {/* Offline indicator */}
       {!isOnline && (
         <div className="offline-indicator show">

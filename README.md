@@ -1,5 +1,7 @@
 # Dart Score Manager
 
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-blue?style=flat-square&logo=github)](https://github.com/gregoriomelo/dart-score-manager)
+
 A modern web application for managing dart game scores, built with React, TypeScript, and Vite. Features a clean, responsive interface with support for both countdown and high-low game modes.
 
 ## Features
@@ -40,7 +42,7 @@ A modern web application for managing dart game scores, built with React, TypeSc
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/gregoriomelo/dart-score-manager.git
 cd dart-score-manager
 ```
 

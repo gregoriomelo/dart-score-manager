@@ -1,0 +1,146 @@
+/* GitHub Octocat Styles */
+.github-octocat {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background: #24292e;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.github-octocat:hover {
+  background: #586069;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  color: white;
+}
+
+.github-octocat:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.octocat-icon {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.3s ease;
+}
+
+.github-octocat:hover .octocat-icon {
+  transform: scale(1.1);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .github-octocat {
+    bottom: 15px;
+    right: 15px;
+    width: 44px;
+    height: 44px;
+  }
+  
+  .octocat-icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Small mobile screens */
+@media (max-width: 480px) {
+  .github-octocat {
+    bottom: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+  }
+  
+  .octocat-icon {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .github-octocat:hover {
+    transform: none;
+    background: #24292e;
+  }
+  
+  .github-octocat:active {
+    transform: scale(0.95);
+    background: #586069;
+  }
+  
+  .github-octocat:hover .octocat-icon {
+    transform: none;
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .github-octocat {
+    transition: none;
+  }
+  
+  .github-octocat:hover {
+    transform: none;
+  }
+  
+  .octocat-icon {
+    transition: none;
+  }
+  
+  .github-octocat:hover .octocat-icon {
+    transform: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .github-octocat {
+    background: #000;
+    border: 2px solid #fff;
+  }
+  
+  .github-octocat:hover {
+    background: #333;
+  }
+  
+  .github-octocat:focus {
+    outline: 3px solid #007bff;
+    outline-offset: 2px;
+  }
+}
+
+/* Focus styles for accessibility */
+.github-octocat:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+.github-octocat:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .github-octocat {
+    background: #f6f8fa;
+    color: #24292e;
+  }
+  
+  .github-octocat:hover {
+    background: #e1e4e8;
+    color: #24292e;
+  }
+}
