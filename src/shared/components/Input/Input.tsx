@@ -30,6 +30,10 @@ export interface InputProps {
   max?: number;
   /** Step value for number inputs */
   step?: number;
+  /** Input mode for mobile keyboards */
+  inputMode?: 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search';
+  /** Pattern for input validation */
+  pattern?: string;
   /** Change handler */
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   /** Blur handler */
@@ -58,6 +62,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
   min,
   max,
   step,
+  inputMode,
+  pattern,
   onChange,
   onBlur,
   onFocus,
@@ -97,6 +103,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
         min={min}
         max={max}
         step={step}
+        inputMode={inputMode}
+        pattern={pattern}
         onChange={onChange}
         onBlur={onBlur}
         onFocus={onFocus}

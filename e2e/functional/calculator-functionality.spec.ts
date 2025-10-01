@@ -19,7 +19,7 @@ test.describe('Calculator Functionality', () => {
     await expect(page.locator('.player-card').first().getByText('501')).toBeVisible();
     
     // Open calculator
-    await page.getByRole('button', { name: 'Show calculator' }).click();
+    await page.getByRole('button', { name: 'Show dart inputs' }).click();
     
     // Verify calculator is visible
     await expect(page.getByText('Dart 1')).toBeVisible();
@@ -75,7 +75,7 @@ test.describe('Calculator Functionality', () => {
     await removeWebpackOverlay(page);
     
     // Open calculator
-    await page.getByRole('button', { name: 'Show calculator' }).click();
+    await page.getByRole('button', { name: 'Show dart inputs' }).click();
     
     // Input valid scores
     const dart1Input = page.locator('input[aria-label*="Dart 1 score"]');
@@ -102,7 +102,7 @@ test.describe('Calculator Functionality', () => {
     await removeWebpackOverlay(page);
     
     // Open calculator
-    await page.getByRole('button', { name: 'Show calculator' }).click();
+    await page.getByRole('button', { name: 'Show dart inputs' }).click();
     
     // Input some scores
     const dart1Input = page.locator('input[aria-label*="Dart 1 score"]');
@@ -145,7 +145,7 @@ test.describe('Calculator Functionality', () => {
     await removeWebpackOverlay(page);
     
     // Open calculator
-    await page.getByRole('button', { name: 'Show calculator' }).click();
+    await page.getByRole('button', { name: 'Show dart inputs' }).click();
     
     // Input scores using calculator
     const dart1Input = page.locator('input[aria-label*="Dart 1 score"]');
@@ -189,7 +189,7 @@ test.describe('Calculator Functionality', () => {
     await expect(scoreInput).toHaveValue('150');
     
     // Open calculator
-    await page.getByRole('button', { name: 'Show calculator' }).click();
+    await page.getByRole('button', { name: 'Show dart inputs' }).click();
     
     // Verify the main input is now cleared
     await expect(scoreInput).toHaveValue('');
@@ -207,7 +207,7 @@ test.describe('Calculator Functionality', () => {
     await scoreInput.fill('150');
     
     // Open calculator
-    await page.getByRole('button', { name: 'Show calculator' }).click();
+    await page.getByRole('button', { name: 'Show dart inputs' }).click();
     
     // Input scores using calculator
     const dart1Input = page.locator('input[aria-label*="Dart 1 score"]');
@@ -257,7 +257,7 @@ test.describe('Calculator Functionality', () => {
     await removeWebpackOverlay(page);
     
     // Open calculator
-    await page.getByRole('button', { name: 'Show calculator' }).click();
+    await page.getByRole('button', { name: 'Show dart inputs' }).click();
     
     // Input scores using calculator
     const dart1Input = page.locator('input[aria-label*="Dart 1 score"]');
@@ -287,7 +287,7 @@ test.describe('Calculator Functionality', () => {
     await removeWebpackOverlay(page);
     
     // Open calculator
-    await page.getByRole('button', { name: 'Show calculator' }).click();
+    await page.getByRole('button', { name: 'Show dart inputs' }).click();
     
     // Input scores using calculator
     const dart1Input = page.locator('input[aria-label*="Dart 1 score"]');
@@ -318,7 +318,7 @@ test.describe('Calculator Functionality', () => {
     await removeWebpackOverlay(page);
     
     // Open calculator
-    await page.getByRole('button', { name: 'Show calculator' }).click();
+    await page.getByRole('button', { name: 'Show dart inputs' }).click();
     
     // Input some scores in calculator
     const dart1Input = page.locator('input[aria-label*="Dart 1 score"]');

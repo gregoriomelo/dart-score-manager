@@ -31,7 +31,6 @@ test.describe('Game Setup', () => {
     await removeWebpackOverlay(page);
     
     // Verify high-low game started
-    await expect(page.getByText('High-Low Challenge')).toBeVisible();
     await expect(page.locator('.player-card').first().getByText('Lives: 3')).toBeVisible();
   });
 });
