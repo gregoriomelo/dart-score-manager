@@ -2,8 +2,9 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 
-// Detect if we're building for GitHub Pages
+// Detect deployment target
 const isGitHubPages = process.env.GITHUB_PAGES === 'true';
+const isCloudflare = process.env.CLOUDFLARE === 'true';
 const base = isGitHubPages ? '/dart-score-manager/' : '/';
 
 export default defineConfig({
@@ -11,6 +12,7 @@ export default defineConfig({
   base,
   define: {
     'import.meta.env.GITHUB_PAGES': JSON.stringify(process.env.GITHUB_PAGES === 'true'),
+    'import.meta.env.CLOUDFLARE': JSON.stringify(process.env.CLOUDFLARE === 'true'),
   },
   resolve: {
     alias: {
