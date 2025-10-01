@@ -183,7 +183,7 @@ describe('ScoreInput', () => {
     expect(scoreInput).toHaveValue(150);
 
     // Click calculator toggle button to open calculator
-    const calculatorButton = screen.getByRole('button', { name: /show calculator/i });
+    const calculatorButton = screen.getByRole('button', { name: /game\.darts\.showDarts/i });
     await user.click(calculatorButton);
 
     // Verify main input was cleared
@@ -206,7 +206,7 @@ describe('ScoreInput', () => {
     );
 
     // Open calculator
-    const calculatorButton = screen.getByRole('button', { name: /show calculator/i });
+    const calculatorButton = screen.getByRole('button', { name: /game\.darts\.showDarts/i });
     await user.click(calculatorButton);
 
     // Clear previous calls
@@ -248,14 +248,14 @@ describe('ScoreInput', () => {
     );
 
     // Open calculator
-    const calculatorButton = screen.getByRole('button', { name: /show calculator/i });
+    const calculatorButton = screen.getByRole('button', { name: /game\.darts\.showDarts/i });
     await user.click(calculatorButton);
 
     // Clear previous calls
     vi.clearAllMocks();
 
     // Close calculator without submitting
-    const hideCalculatorButton = screen.getByRole('button', { name: /hide calculator/i });
+    const hideCalculatorButton = screen.getByRole('button', { name: /game\.darts\.hideDarts/i });
     await user.click(hideCalculatorButton);
 
     // Verify main input was NOT cleared when just closing calculator

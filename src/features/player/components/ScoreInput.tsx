@@ -106,7 +106,7 @@ const ScoreInput: React.FC<ScoreInputProps> = React.memo(({
     const newShowCalculator = !showCalculator;
     setShowCalculator(newShowCalculator);
     
-    // Clear main input when opening calculator
+    // Clear main input when opening dart inputs
     if (newShowCalculator) {
       onScoreInputChange('');
     }
@@ -114,7 +114,7 @@ const ScoreInput: React.FC<ScoreInputProps> = React.memo(({
 
   const handleCalculatorScoreSubmit = useCallback((totalScore: number) => {
     setShowCalculator(false);
-    // Clear main input when calculator inputs are submitted
+    // Clear main input when dart inputs are submitted
     onScoreInputChange('');
     
     if (onSubmitScoreWithValue) {
@@ -126,7 +126,7 @@ const ScoreInput: React.FC<ScoreInputProps> = React.memo(({
       onSubmitScore();
     }
     
-    // Focus the main input after calculator submission
+    // Focus the main input after dart submission
     setTimeout(() => {
       if (mainInputRef.current) {
         mainInputRef.current.focus();
@@ -137,7 +137,7 @@ const ScoreInput: React.FC<ScoreInputProps> = React.memo(({
   const handleCalculatorCancel = useCallback(() => {
     setShowCalculator(false);
     
-    // Focus the main input after cancelling calculator
+    // Focus the main input after cancelling dart inputs
     setTimeout(() => {
       if (mainInputRef.current) {
         mainInputRef.current.focus();
@@ -149,27 +149,8 @@ const ScoreInput: React.FC<ScoreInputProps> = React.memo(({
     <div className={CSS_CLASSES.SCORE_INPUT_SECTION} role="region" aria-labelledby="turn-title">
       <h3 id="turn-title">{t('game.display.playerTurn', { name: currentPlayer.name })}</h3>
       
-      {/* Calculator toggle button */}
-      <div className="calculator-toggle-section">
-        <button
-          type="button"
-          className={`calculator-toggle-btn ${showCalculator ? 'active' : ''}`}
-          onClick={handleCalculatorToggle}
-          aria-label={showCalculator ? 
-            t('game.calculator.hideCalculator', 'Hide calculator') : 
-            t('game.calculator.showCalculator', 'Show calculator')
-          }
-          aria-expanded={showCalculator}
-          aria-controls="dart-calculator"
-        >
-          🧮 {showCalculator ? 
-            t('game.calculator.hideButton', 'Hide Calculator') : 
-            t('game.calculator.showButton', 'Show Calculator')
-          }
-        </button>
-      </div>
 
-      {/* Calculator component */}
+      {/* Individual dart inputs component */}
       {showCalculator && (
         <DartScoreCalculator
           onScoreSubmit={handleCalculatorScoreSubmit}
@@ -223,6 +204,19 @@ const ScoreInput: React.FC<ScoreInputProps> = React.memo(({
             {t(UI_TEXT_KEYS.BUST_BUTTON)}
           </button>
         )}
+        <button
+          type="button"
+          className={`calculator-toggle-btn ${showCalculator ? 'active' : ''}`}
+          onClick={handleCalculatorToggle}
+          aria-label={showCalculator ? 
+            t('game.darts.hideDarts', 'Hide dart inputs') : 
+            t('game.darts.showDarts', 'Show dart inputs')
+          }
+          aria-expanded={showCalculator}
+          aria-controls="dart-calculator"
+        >
+          🎯🎯🎯
+        </button>
       </div>
       {error && (
         <div 

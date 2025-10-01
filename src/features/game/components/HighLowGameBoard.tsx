@@ -152,16 +152,6 @@ const HighLowGameBoard: React.FC<HighLowGameBoardProps> = React.memo(({
     <>
       <div className={CSS_CLASSES.GAME_BOARD}>
         <h1>{t(UI_TEXT_KEYS.APP_TITLE)}</h1>
-        <div className={CSS_CLASSES.GAME_MODE_INDICATOR}>
-          {t(UI_TEXT_KEYS.HIGH_LOW_MODE_INDICATOR)}
-        </div>
-        
-        <PlayerList
-          players={gameState.players}
-          currentPlayer={currentPlayer}
-          gameMode="highLow"
-          onHistoryClick={setHistoryPlayer}
-        />
 
         <HighLowChallenge
           currentChallenge={gameState.highLowChallenge}
@@ -181,6 +171,13 @@ const HighLowGameBoard: React.FC<HighLowGameBoardProps> = React.memo(({
             error={error}
           />
         )}
+        
+        <PlayerList
+          players={gameState.players}
+          currentPlayer={currentPlayer}
+          gameMode="highLow"
+          onHistoryClick={setHistoryPlayer}
+        />
         
         <GameActions
           onShowAllHistory={() => setShowConsolidatedHistory(true)}
