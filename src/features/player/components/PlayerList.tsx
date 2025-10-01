@@ -1,5 +1,5 @@
 import React from 'react';
-import { Player, isHighLowPlayer, CountdownPlayer } from '../../../shared/types/game';
+import { Player, isHighLowPlayer, isRoundsPlayer, CountdownPlayer } from '../../../shared/types/game';
 import { getPlayerColor } from '../../../shared/utils/playerColors';
 import { CSS_CLASSES } from '../../../shared/utils/constants';
 import { formatPlayerLivesLabel, formatHistoryButtonTitle } from '../../../shared/utils/textUtils';
@@ -9,7 +9,7 @@ import '../../game/components/GameBoard.css';
 interface PlayerListProps {
   players: Player[];
   currentPlayer: Player | null;
-  gameMode: 'countdown' | 'highLow';
+  gameMode: 'countdown' | 'highLow' | 'rounds';
   onHistoryClick: (player: Player) => void;
   showWinner?: boolean;
 }
@@ -33,13 +33,24 @@ const PlayerList: React.FC<PlayerListProps> = React.memo(({
           </span>
           {gameMode === 'countdown' ? (
             <div className="player-score-container">
-              <span className={CSS_CLASSES.PLAYER_SCORE}>{player.score}</span>
+              <span className={CSS_CLASSES.PLAYER_SCORE}>{(player as CountdownPlayer).score}</span>
               {(() => {
                 const rank = getPlayerRank(player as CountdownPlayer, players as CountdownPlayer[]);
                 return rank !== null ? (
                   <span className={`player-rank ${rank <= 3 ? `rank-${rank}` : ''}`}>#{rank}</span>
                 ) : null;
               })()}
+            </div>
+          ) : gameMode === 'rounds' ? (
+            <div className="player-score-container">
+              <span className={CSS_CLASSES.PLAYER_SCORE}>
+                {isRoundsPlayer(player) ? player.totalScore : 0}
+              </span>
+              {isRoundsPlayer(player) && (
+                <span className="round-info">
+                  Round {player.currentRoundScore}
+                </span>
+              )}
             </div>
           ) : (
             <span className={CSS_CLASSES.PLAYER_LIVES}>{formatPlayerLivesLabel(isHighLowPlayer(player) ? player.lives : 0)}</span>

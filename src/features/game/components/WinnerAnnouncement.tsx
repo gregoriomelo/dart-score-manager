@@ -11,7 +11,7 @@ import './GameBoard.css';
 interface WinnerAnnouncementProps {
   winner: Player;
   players: Player[];
-  gameMode: 'countdown' | 'highLow';
+  gameMode: 'countdown' | 'highLow' | 'rounds';
   onHistoryClick: (player: Player) => void;
   onShowAllHistory: () => void;
   onResetGame: () => void;
@@ -42,7 +42,7 @@ const WinnerAnnouncement: React.FC<WinnerAnnouncementProps> = React.memo(({
       </div>
       
       <div className={CSS_CLASSES.FINAL_SCORES}>
-        <h3>{gameMode === 'countdown' ? t(UI_TEXT_KEYS.FINAL_SCORES_COUNTDOWN) : t(UI_TEXT_KEYS.FINAL_RESULTS_HIGH_LOW)}</h3>
+        <h3>{gameMode === 'countdown' ? t(UI_TEXT_KEYS.FINAL_SCORES_COUNTDOWN) : gameMode === 'rounds' ? t(UI_TEXT_KEYS.FINAL_RESULTS_ROUNDS) : t(UI_TEXT_KEYS.FINAL_RESULTS_HIGH_LOW)}</h3>
         <PlayerList
           players={players}
           currentPlayer={null}

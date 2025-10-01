@@ -11,11 +11,13 @@
     "modes": {
       "label": "Modo de Jogo:",
       "countdown": "Contagem Regressiva (501/301)",
-      "highLow": "Desafio Alto-Baixo"
+      "highLow": "Desafio Alto-Baixo",
+      "rounds": "Maior Pontuação (N Rodadas)"
     },
     "setup": {
       "startingScore": "Pontuação Inicial:",
       "startingLives": "Vidas Iniciais:",
+      "totalRounds": "Total de Rodadas:",
       "playersSection": "Jogadores (mínimo 2):",
       "addPlayer": "Adicionar Jogador",
       "startGame": "Iniciar Jogo"
@@ -32,7 +34,8 @@
       "scoreInput": "Digite a pontuação (0-180)",
       "playerName": "Nome do jogador {index}",
       "startingScore": "501",
-      "startingLives": "5"
+      "startingLives": "5",
+      "totalRounds": "10"
     },
     "messages": {
       "gameStarted": "Jogo iniciado com sucesso!",
@@ -45,14 +48,18 @@
       "winnerCongratulations": "🎉 Parabéns!",
       "winnerWins": "{name} vence!",
       "finalScoresCountdown": "Pontuações Finais e Histórico",
-      "finalResultsHighLow": "Resultados Finais"
+      "finalResultsHighLow": "Resultados Finais",
+      "finalResultsRounds": "Pontuações Finais e Classificação"
     },
     "display": {
       "playerLives": "Vidas: {lives}",
       "playerScore": "{name}: Vidas {lives}",
+      "playerTotalScore": "{name}: {totalScore} pontos",
+      "playerRoundScore": "{name}: {roundScore} (Rodada {round})",
       "historyButtonTitle": "Ver histórico de pontuação de {name}",
       "countdownModeIndicator": "Contagem Regressiva ({score})",
       "highLowModeIndicator": "Desafio Alto-Baixo",
+      "roundsModeIndicator": "Rodadas ({currentRound}/{totalRounds})",
       "playerTurn": "Vez de {name}",
       "playerRank": "Posição #{rank}",
       "rankingTitle": "Classificação"

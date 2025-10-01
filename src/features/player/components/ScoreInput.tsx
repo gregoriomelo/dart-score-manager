@@ -34,7 +34,8 @@ const ScoreInput: React.FC<ScoreInputProps> = React.memo(({
   usePerformanceTracking('ScoreInput');
 
   // Determine if bust is possible (only when score is less than 180)
-  const canBust = currentPlayer.score < 180;
+  // For rounds mode, bust is not applicable, so always false
+  const canBust = 'score' in currentPlayer ? currentPlayer.score < 180 : false;
 
   const scoreInputId = generateAriaId('score-input');
   const errorId = generateAriaId('score-error');

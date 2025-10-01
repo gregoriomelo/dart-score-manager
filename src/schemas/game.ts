@@ -22,7 +22,7 @@ export interface ScoreHistoryEntry {
 export interface GameState {
   players: Player[];
   currentPlayerIndex: number;
-  gameMode: 'countdown' | 'highlow';
+  gameMode: 'countdown' | 'highlow' | 'rounds';
   targetScore?: number;
   startingLives?: number;
   currentRound: number;
@@ -37,7 +37,7 @@ export interface GameHistoryEntry {
   score: number;
   timestamp: number;
   round: number;
-  gameMode: 'countdown' | 'highlow';
+  gameMode: 'countdown' | 'highlow' | 'rounds';
   isBust?: boolean;
   challenge?: string;
 }
@@ -107,7 +107,7 @@ export const gameValidators = {
   },
 
   validateGameMode: (mode: string): boolean => {
-    return mode === 'countdown' || mode === 'highlow';
+    return mode === 'countdown' || mode === 'highlow' || mode === 'rounds';
   },
 
   validateChallenge: (challenge: string): boolean => {

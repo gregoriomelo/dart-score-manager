@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GameMode } from '../../../shared/types/game';
-import { GAME_CONSTANTS, UI_TEXT_KEYS, CSS_CLASSES } from '../../../shared/utils/i18nConstants';
+import { GAME_CONSTANTS } from '../../../shared/utils/constants';
+import { UI_TEXT_KEYS, CSS_CLASSES } from '../../../shared/utils/i18nConstants';
 import { validatePlayerName } from '../../../shared/utils/validation';
 import { sanitizePlayerNames } from '../../../shared/utils/textUtils';
 // Remove the useNotifications import since we don't want popup notifications
@@ -10,7 +11,7 @@ import { AudioToggle } from '../../../shared/components';
 import './PlayerSetup.css';
 
 interface PlayerSetupProps {
-  onStartGame: (playerNames: string[], gameMode: GameMode, startingScore: number, startingLives: number) => void;
+  onStartGame: (playerNames: string[], gameMode: GameMode, startingScore: number, startingLives: number, totalRounds?: number) => void;
 }
 
 const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => {
@@ -19,8 +20,10 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
   const [gameMode, setGameMode] = useState<GameMode>(GAME_CONSTANTS.GAME_MODES.COUNTDOWN);
   const [startingScore, setStartingScore] = useState<number>(GAME_CONSTANTS.DEFAULT_STARTING_SCORE);
   const [startingLives, setStartingLives] = useState<number>(GAME_CONSTANTS.DEFAULT_STARTING_LIVES);
+  const [totalRounds, setTotalRounds] = useState<number>(10);
   const [startingScoreInput, setStartingScoreInput] = useState<string>(GAME_CONSTANTS.DEFAULT_STARTING_SCORE.toString());
   const [startingLivesInput, setStartingLivesInput] = useState<string>(GAME_CONSTANTS.DEFAULT_STARTING_LIVES.toString());
+  const [totalRoundsInput, setTotalRoundsInput] = useState<string>('10');
   const [lastAddedPlayerIndex, setLastAddedPlayerIndex] = useState<number | null>(null);
   const [validationError, setValidationError] = useState<string>('');
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -72,11 +75,11 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
     }
 
     if (validNames.length >= GAME_CONSTANTS.MIN_PLAYERS) {
-      onStartGame(validNames, gameMode, startingScore, startingLives);
+      onStartGame(validNames, gameMode, startingScore, startingLives, totalRounds);
     } else {
       setValidationError(t(UI_TEXT_KEYS.TOO_FEW_PLAYERS_ERROR));
     }
-  }, [playerNames, gameMode, startingScore, startingLives, onStartGame, t]);
+  }, [playerNames, gameMode, startingScore, startingLives, totalRounds, onStartGame, t]);
 
   // Focus on the newly added player input field
   useEffect(() => {
@@ -116,11 +119,22 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
             >
               {t(GAME_CONSTANTS.GAME_MODE_NAMES.HIGH_LOW)}
             </button>
+            <button
+              type="button"
+              className={`${CSS_CLASSES.GAME_MODE_BUTTON} ${gameMode === GAME_CONSTANTS.GAME_MODES.ROUNDS ? CSS_CLASSES.GAME_MODE_BUTTON_ACTIVE : ''}`}
+              onClick={() => setGameMode(GAME_CONSTANTS.GAME_MODES.ROUNDS)}
+              aria-pressed={gameMode === GAME_CONSTANTS.GAME_MODES.ROUNDS}
+              aria-describedby={`${gameModeId}-description`}
+            >
+              {t(GAME_CONSTANTS.GAME_MODE_NAMES.ROUNDS)}
+            </button>
           </div>
           <div id={`${gameModeId}-description`} className="sr-only">
             {gameMode === GAME_CONSTANTS.GAME_MODES.COUNTDOWN 
               ? ACCESSIBILITY.DESCRIPTIONS.GAME_MODE_COUNTDOWN 
-              : ACCESSIBILITY.DESCRIPTIONS.GAME_MODE_HIGH_LOW}
+              : gameMode === GAME_CONSTANTS.GAME_MODES.HIGH_LOW
+              ? ACCESSIBILITY.DESCRIPTIONS.GAME_MODE_HIGH_LOW
+              : ACCESSIBILITY.DESCRIPTIONS.GAME_MODE_ROUNDS}
           </div>
         </div>
 
@@ -240,6 +254,62 @@ const PlayerSetup: React.FC<PlayerSetupProps> = React.memo(({ onStartGame }) => 
           </div>
         )}
 
+        {gameMode === GAME_CONSTANTS.GAME_MODES.ROUNDS && (
+          <div className="input-with-audio">
+            <div className="input-field">
+              <label htmlFor="totalRoundsId">{t(UI_TEXT_KEYS.TOTAL_ROUNDS_LABEL)}</label>
+            <input
+              id="totalRoundsId"
+              type="number"
+              value={totalRoundsInput}
+              onChange={(e) => setTotalRoundsInput(e.target.value)}
+              onBlur={(e) => {
+                const value = e.target.value;
+                if (value === '') {
+                  setTotalRounds(10);
+                  setTotalRoundsInput('10');
+                } else {
+                  const numValue = parseInt(value, 10);
+                  if (numValue >= 1 && numValue <= 50) {
+                    setTotalRounds(numValue);
+                  } else {
+                    setTotalRoundsInput(totalRounds.toString()); // Revert to previous valid value
+                  }
+                }
+              }}
+              onKeyDown={(e) => {
+                // Allow: backspace, delete, tab, escape, enter, and navigation keys
+                const allowedKeys = [
+                  'Backspace', 'Delete', 'Tab', 'Escape', 'Enter',
+                  'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+                  'Home', 'End'
+                ];
+                
+                // Allow numbers 0-9
+                const isNumber = /^[0-9]$/.test(e.key);
+                
+                if (!allowedKeys.includes(e.key) && !isNumber) {
+                  e.preventDefault();
+                }
+              }}
+              placeholder={t(UI_TEXT_KEYS.TOTAL_ROUNDS_PLACEHOLDER)}
+              aria-label={ACCESSIBILITY.LABELS.TOTAL_ROUNDS_INPUT}
+              aria-describedby="totalRoundsId-description"
+              min="1"
+              max="50"
+              step="1"
+              inputMode="numeric"
+              pattern="[0-9]*"
+            />
+              <div id="totalRoundsId-description" className="sr-only">
+                {ACCESSIBILITY.DESCRIPTIONS.ROUNDS_LIMITS}
+              </div>
+            </div>
+            <div className="audio-toggle-inline">
+              <AudioToggle />
+            </div>
+          </div>
+        )}
 
         <div className={CSS_CLASSES.PLAYERS_SECTION} id={playersSectionId} role="group" aria-labelledby="players-title">
           <h3 id="players-title">{t(UI_TEXT_KEYS.PLAYERS_SECTION_TITLE)}</h3>

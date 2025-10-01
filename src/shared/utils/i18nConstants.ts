@@ -38,6 +38,7 @@ export const UI_TEXT_KEYS = {
   GAME_MODE_LABEL: 'game.modes.label',
   STARTING_SCORE_LABEL: 'game.setup.startingScore',
   STARTING_LIVES_LABEL: 'game.setup.startingLives',
+  TOTAL_ROUNDS_LABEL: 'game.setup.totalRounds',
   PLAYERS_SECTION_TITLE: 'game.setup.playersSection',
   
   // Buttons
@@ -55,6 +56,7 @@ export const UI_TEXT_KEYS = {
   PLAYER_NAME_PLACEHOLDER: 'game.placeholders.playerName',
   STARTING_SCORE_PLACEHOLDER: 'game.placeholders.startingScore',
   STARTING_LIVES_PLACEHOLDER: 'game.placeholders.startingLives',
+  TOTAL_ROUNDS_PLACEHOLDER: 'game.placeholders.totalRounds',
   
   // Error messages
   INVALID_SCORE_ERROR: 'errors.invalidScore',
@@ -81,13 +83,15 @@ export const UI_TEXT_KEYS = {
   WINNER_WINS: 'game.messages.winnerWins',
   FINAL_SCORES_COUNTDOWN: 'game.messages.finalScoresCountdown',
   FINAL_RESULTS_HIGH_LOW: 'game.messages.finalResultsHighLow',
+  FINAL_RESULTS_ROUNDS: 'game.messages.finalResultsRounds',
   
   // Player display
   PLAYER_LIVES_LABEL: 'game.display.playerLives',
   PLAYER_SCORE_LABEL: 'game.display.playerScore',
   HISTORY_BUTTON_TITLE: 'game.display.historyButtonTitle',
   COUNTDOWN_MODE_INDICATOR: 'game.display.countdownModeIndicator',
-  HIGH_LOW_MODE_INDICATOR: 'game.display.highLowModeIndicator'
+  HIGH_LOW_MODE_INDICATOR: 'game.display.highLowModeIndicator',
+  ROUNDS_MODE_INDICATOR: 'game.display.roundsModeIndicator'
 } as const;
 
 // CSS Class Names

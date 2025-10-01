@@ -1,7 +1,8 @@
 import React from 'react';
-import { GameState, Player, isHighLowGameState, isCountdownGameState, isHighLowPlayer, isCountdownPlayer } from '../../../shared/types/game';
+import { GameState, Player, isHighLowGameState, isCountdownGameState, isRoundsGameState, isHighLowPlayer, isCountdownPlayer, isRoundsPlayer } from '../../../shared/types/game';
 import CountdownGameBoard from './CountdownGameBoard';
 import HighLowGameBoard from './HighLowGameBoard';
+import RoundsGameBoard from './RoundsGameBoard';
 
 interface GameModeRouterProps {
   gameState: GameState;
@@ -49,6 +50,21 @@ const GameModeRouter: React.FC<GameModeRouterProps> = ({
       <CountdownGameBoard
         gameState={gameState}
         currentPlayer={currentPlayer && isCountdownPlayer(currentPlayer) ? currentPlayer : null}
+        onSubmitScore={onSubmitScore}
+        onNextPlayer={onNextPlayer}
+        onResetGame={onResetGame}
+        onNewGame={onNewGame}
+        onUndoLastMove={onUndoLastMove}
+        canUndo={canUndo}
+      />
+    );
+  }
+
+  if (isRoundsGameState(gameState)) {
+    return (
+      <RoundsGameBoard
+        gameState={gameState}
+        currentPlayer={currentPlayer && isRoundsPlayer(currentPlayer) ? currentPlayer : null}
         onSubmitScore={onSubmitScore}
         onNextPlayer={onNextPlayer}
         onResetGame={onResetGame}

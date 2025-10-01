@@ -75,8 +75,8 @@ function AppContent() {
     canUndo,
   } = useGameManager();
 
-  const handleStartGame = (playerNames: string[], gameMode: GameMode, startingScore: number, startingLives: number) => {
-    initializeGame(playerNames, gameMode, startingScore, startingLives);
+  const handleStartGame = (playerNames: string[], gameMode: GameMode, startingScore: number, startingLives: number, totalRounds?: number) => {
+    initializeGame(playerNames, gameMode, startingScore, startingLives, totalRounds);
     startNewGame();
     announceToScreenReader(`Game started with ${playerNames.length} players in ${gameMode} mode`);
   };

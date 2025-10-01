@@ -1,4 +1,4 @@
-export type GameMode = 'countdown' | 'high-low';
+export type GameMode = 'countdown' | 'high-low' | 'rounds';
 
 export interface ScoreHistoryEntry {
   score: number;
@@ -38,16 +38,28 @@ export interface HighLowPlayer extends BasePlayer {
   turnStartScore: number; // Score at the beginning of current turn
 }
 
+// Rounds game specific player
+export interface RoundsPlayer extends BasePlayer {
+  totalScore: number; // Accumulated score across all rounds
+  currentRoundScore: number; // Score for current round
+  roundsCompleted: number; // Number of rounds completed
+  turnStartScore: number; // Score at the beginning of current turn
+}
+
 // Union type for backward compatibility
-export type Player = CountdownPlayer | HighLowPlayer;
+export type Player = CountdownPlayer | HighLowPlayer | RoundsPlayer;
 
 // Type guards for better type safety
 export const isCountdownPlayer = (player: Player): player is CountdownPlayer => {
-  return 'turnStartScore' in player && !('lives' in player);
+  return 'turnStartScore' in player && !('lives' in player) && !('totalScore' in player);
 };
 
 export const isHighLowPlayer = (player: Player): player is HighLowPlayer => {
   return 'lives' in player && typeof player.lives === 'number';
+};
+
+export const isRoundsPlayer = (player: Player): player is RoundsPlayer => {
+  return 'totalScore' in player && 'currentRoundScore' in player && 'roundsCompleted' in player;
 };
 
 export interface HighLowChallenge {
@@ -81,8 +93,17 @@ export interface HighLowGameState extends BaseGameState {
   highLowChallenge?: HighLowChallenge;
 }
 
+// Rounds game specific state
+export interface RoundsGameState extends BaseGameState {
+  gameMode: 'rounds';
+  players: RoundsPlayer[];
+  winner: RoundsPlayer | null;
+  totalRounds: number;
+  currentRound: number;
+}
+
 // Union type for backward compatibility
-export type GameState = CountdownGameState | HighLowGameState;
+export type GameState = CountdownGameState | HighLowGameState | RoundsGameState;
 
 // Type guards for game state
 export const isCountdownGameState = (gameState: GameState): gameState is CountdownGameState => {
@@ -91,6 +112,10 @@ export const isCountdownGameState = (gameState: GameState): gameState is Countdo
 
 export const isHighLowGameState = (gameState: GameState): gameState is HighLowGameState => {
   return gameState.gameMode === 'high-low';
+};
+
+export const isRoundsGameState = (gameState: GameState): gameState is RoundsGameState => {
+  return gameState.gameMode === 'rounds';
 };
 
 export interface ScoreEntry {

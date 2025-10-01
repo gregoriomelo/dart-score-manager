@@ -1,4 +1,4 @@
-import { Player, GameState, GameMode, CountdownPlayer, HighLowPlayer, CountdownGameState, HighLowGameState, isHighLowPlayer, ScoreHistoryEntry, isCountdownGameState, isHighLowGameState } from '../../../../shared/types/game';
+import { Player, GameState, GameMode, CountdownPlayer, HighLowPlayer, RoundsPlayer, CountdownGameState, HighLowGameState, RoundsGameState, isHighLowPlayer, ScoreHistoryEntry, isCountdownGameState, isHighLowGameState, isRoundsGameState } from '../../../../shared/types/game';
 
 export const createPlayer = (
   name: string, 
@@ -21,6 +21,20 @@ export const createPlayer = (
     return player;
   }
   
+  if (gameMode === 'rounds') {
+    const player: RoundsPlayer = {
+      id: (Date.now() + Math.random()).toString(),
+      name: trimmedName,
+      totalScore: 0,
+      currentRoundScore: 0,
+      roundsCompleted: 0,
+      scoreHistory: [],
+      isWinner: false,
+      turnStartScore: 0,
+    };
+    return player;
+  }
+  
   const player: CountdownPlayer = {
     id: (Date.now() + Math.random()).toString(),
     name: trimmedName,
@@ -36,7 +50,8 @@ export const createGameState = (
   playerNames: string[], 
   startingScore: number = 501,
   gameMode: GameMode = 'countdown',
-  lives: number = 5
+  lives: number = 5,
+  totalRounds: number = 10
 ): GameState => {
   if (gameMode === 'countdown') {
     const players: CountdownPlayer[] = playerNames.map(name => {
@@ -52,7 +67,7 @@ export const createGameState = (
       gameMode: 'countdown',
       startingScore,
     };
-  } else {
+  } else if (gameMode === 'high-low') {
     const players: HighLowPlayer[] = playerNames.map(name => {
       const player = createPlayer(name, startingScore, gameMode, lives);
       return player as HighLowPlayer;
@@ -67,6 +82,21 @@ export const createGameState = (
       startingLives: lives,
       highLowChallenge: undefined,
     };
+  } else {
+    const players: RoundsPlayer[] = playerNames.map(name => {
+      const player = createPlayer(name, startingScore, gameMode, lives);
+      return player as RoundsPlayer;
+    });
+    return {
+      players,
+      currentPlayerIndex: 0,
+      gameFinished: false,
+      winner: null,
+      lastThrowWasBust: false,
+      gameMode: 'rounds',
+      totalRounds,
+      currentRound: 1,
+    };
   }
 };
 
@@ -77,6 +107,10 @@ export const isValidScore = (currentScore: number, scoreToSubtract: number): boo
   
   const newScore = currentScore - scoreToSubtract;
   return newScore >= 0;
+};
+
+export const isValidRoundsScore = (score: number): boolean => {
+  return score >= 0 && score <= 180;
 };
 
 export const isBust = (currentScore: number, scoreToSubtract: number): boolean => {
@@ -121,6 +155,9 @@ export const nextPlayer = (gameState: GameState): GameState => {
         break;
       }
     } while (isHighLowPlayer(gameState.players[nextIndex]) && gameState.players[nextIndex].lives <= 0);
+  } else if (gameState.gameMode === 'rounds') {
+    // For rounds mode, just move to next player
+    nextIndex = (nextIndex + 1) % totalPlayers;
   } else {
     nextIndex = (nextIndex + 1) % totalPlayers;
   }
@@ -144,7 +181,7 @@ export const nextPlayer = (gameState: GameState): GameState => {
       players: updatedPlayers,
     };
   } else {
-    // For High-Low mode, preserve existing players array
+    // For High-Low and Rounds modes, preserve existing players array
     return {
       ...gameState,
       currentPlayerIndex: nextIndex,
@@ -184,8 +221,10 @@ export const updatePlayerScore = (
 ): GameState => {
   if (gameState.gameMode === 'countdown') {
     return updateCountdownPlayerScore(gameState as CountdownGameState, playerId, scoreToSubtract);
-  } else {
+  } else if (gameState.gameMode === 'high-low') {
     return updateHighLowPlayerScore(gameState as HighLowGameState, playerId, scoreToSubtract);
+  } else {
+    return updateRoundsPlayerScore(gameState as RoundsGameState, playerId, scoreToSubtract);
   }
 };
 
@@ -339,7 +378,7 @@ const updateHighLowPlayerScore = (
   };
 };
 
-export const resetGame = (gameState: GameState, startingLives?: number, startingScore?: number): GameState => {
+export const resetGame = (gameState: GameState, startingLives?: number, startingScore?: number, totalRounds?: number): GameState => {
   if (gameState.gameMode === 'high-low') {
     const resetPlayers = gameState.players.map(player => ({
       ...player,
@@ -358,6 +397,27 @@ export const resetGame = (gameState: GameState, startingLives?: number, starting
       winner: null,
       lastThrowWasBust: false,
       highLowChallenge: undefined,
+    };
+  } else if (gameState.gameMode === 'rounds') {
+    const resetPlayers = gameState.players.map(player => ({
+      ...player,
+      totalScore: 0,
+      currentRoundScore: 0,
+      roundsCompleted: 0,
+      scoreHistory: [],
+      isWinner: false,
+      turnStartScore: 0,
+    })) as RoundsPlayer[];
+
+    return {
+      ...gameState,
+      players: resetPlayers,
+      currentPlayerIndex: 0,
+      gameFinished: false,
+      winner: null,
+      lastThrowWasBust: false,
+      currentRound: 1,
+      totalRounds: totalRounds || gameState.totalRounds || 10,
     };
   } else {
     const resetPlayers = gameState.players.map(player => ({
@@ -470,8 +530,124 @@ export const undoLastScore = (gameState: GameState): GameState => {
       winner: winner || null,
       lastThrowWasBust: false,
     };
+  } else if (isRoundsGameState(gameState)) {
+    // For rounds, revert the total score and current round score
+    const roundsPlayer = updatedPlayer as RoundsPlayer;
+    const scoreEntry = entry as ScoreHistoryEntry;
+    
+    updatedPlayers[playerIndex] = {
+      ...roundsPlayer,
+      totalScore: roundsPlayer.totalScore - scoreEntry.score,
+      currentRoundScore: scoreEntry.previousScore,
+    };
+    
+    // Check if game is still finished
+    const winner = updatedPlayers.find(p => p.isWinner) as RoundsPlayer | null;
+    const gameFinished = winner !== null && winner !== undefined;
+
+    return {
+      ...gameState,
+      players: updatedPlayers as RoundsPlayer[],
+      currentPlayerIndex: newCurrentPlayerIndex,
+      gameFinished,
+      winner: winner || null,
+      lastThrowWasBust: false,
+    };
   }
 
   // Fallback - should not reach here
   return gameState;
+};
+
+const updateRoundsPlayerScore = (
+  gameState: RoundsGameState,
+  playerId: string,
+  score: number
+): RoundsGameState => {
+  const playerIndex = gameState.players.findIndex(p => p.id === playerId);
+  
+  if (playerIndex === -1) {
+    throw new Error('Player not found');
+  }
+
+  const currentPlayer = gameState.players[playerIndex];
+  
+  if (!isValidRoundsScore(score)) {
+    throw new Error('Invalid score: must be between 0 and 180');
+  }
+
+  const updatedPlayers = [...gameState.players];
+  
+  // Calculate turn number based on existing history
+  const turnNumber = currentPlayer.scoreHistory.length + 1;
+  
+  // Add score to current round score
+  const newRoundScore = currentPlayer.currentRoundScore + score;
+  const newTotalScore = currentPlayer.totalScore + score;
+  
+  const historyEntry = {
+    score,
+    previousScore: currentPlayer.currentRoundScore,
+    timestamp: new Date(),
+    turnNumber,
+    roundNumber: gameState.currentRound,
+  };
+  
+  updatedPlayers[playerIndex] = {
+    ...currentPlayer,
+    currentRoundScore: newRoundScore,
+    totalScore: newTotalScore,
+    scoreHistory: [...currentPlayer.scoreHistory, historyEntry],
+  };
+
+  // Check if all players have completed their turn for this round
+  const allPlayersCompletedRound = updatedPlayers.every(player => 
+    player.scoreHistory.some(entry => 
+      entry.roundNumber === gameState.currentRound
+    )
+  );
+
+  let newCurrentRound = gameState.currentRound;
+  let newCurrentPlayerIndex = gameState.currentPlayerIndex;
+  let gameFinished = gameState.gameFinished;
+  let winner = gameState.winner;
+
+  if (allPlayersCompletedRound) {
+    // Round completed, move to next round
+    newCurrentRound = gameState.currentRound + 1;
+    
+    // Reset all players' current round scores for the new round
+    updatedPlayers.forEach((player, index) => {
+      updatedPlayers[index] = {
+        ...player,
+        currentRoundScore: 0,
+        roundsCompleted: player.roundsCompleted + 1,
+      };
+    });
+
+    // Check if game is finished (all rounds completed)
+    if (newCurrentRound > gameState.totalRounds) {
+      gameFinished = true;
+      // Find winner (player with highest total score)
+      const sortedPlayers = [...updatedPlayers].sort((a, b) => b.totalScore - a.totalScore);
+      winner = sortedPlayers[0];
+      winner.isWinner = true;
+    } else {
+      // Move to first player for next round
+      newCurrentPlayerIndex = 0;
+    }
+  } else {
+    // Move to next player in current round
+    newCurrentPlayerIndex = (gameState.currentPlayerIndex + 1) % gameState.players.length;
+  }
+
+  return {
+    ...gameState,
+    players: updatedPlayers,
+    currentPlayerIndex: newCurrentPlayerIndex,
+    currentRound: newCurrentRound,
+    gameFinished,
+    winner,
+    lastThrowWasBust: false,
+  };
 };

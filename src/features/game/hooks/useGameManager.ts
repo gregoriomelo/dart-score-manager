@@ -36,8 +36,8 @@ export const useGameManager = () => {
   }, [gameState]);
 
   const initializeGame = useCallback(
-    (playerNames: string[], gameMode: GameMode = 'countdown', startingScore: number = 501, startingLives: number = 5) => {
-      setGameState(createGameState(playerNames, startingScore, gameMode, startingLives));
+    (playerNames: string[], gameMode: GameMode = 'countdown', startingScore: number = 501, startingLives: number = 5, totalRounds?: number) => {
+      setGameState(createGameState(playerNames, startingScore, gameMode, startingLives, totalRounds));
     },
     []
   );

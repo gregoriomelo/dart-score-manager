@@ -11,11 +11,13 @@
     "modes": {
       "label": "Game Mode:",
       "countdown": "Countdown (501/301)",
-      "highLow": "High-Low Challenge"
+      "highLow": "High-Low Challenge",
+      "rounds": "Highest Score (N Rounds)"
     },
     "setup": {
       "startingScore": "Starting Score:",
       "startingLives": "Starting Lives:",
+      "totalRounds": "Total Rounds:",
       "playersSection": "Players (minimum 2):",
       "addPlayer": "Add Player",
       "startGame": "Start Game"
@@ -32,7 +34,8 @@
       "scoreInput": "Enter score (0-180)",
       "playerName": "Player {index} name",
       "startingScore": "501",
-      "startingLives": "5"
+      "startingLives": "5",
+      "totalRounds": "10"
     },
     "messages": {
       "gameStarted": "Game started successfully!",
@@ -45,14 +48,18 @@
       "winnerCongratulations": "🎉 Congratulations!",
       "winnerWins": "{name} wins!",
       "finalScoresCountdown": "Final Scores & History",
-      "finalResultsHighLow": "Final Results"
+      "finalResultsHighLow": "Final Results",
+      "finalResultsRounds": "Final Scores & Rankings"
     },
     "display": {
       "playerLives": "Lives: {lives}",
       "playerScore": "{name}: Lives {lives}",
+      "playerTotalScore": "{name}: {totalScore} points",
+      "playerRoundScore": "{name}: {roundScore} (Round {round})",
       "historyButtonTitle": "View {name}'s score history",
       "countdownModeIndicator": "Countdown ({score})",
       "highLowModeIndicator": "High-Low Challenge",
+      "roundsModeIndicator": "Rounds ({currentRound}/{totalRounds})",
       "playerTurn": "{name}'s Turn",
       "playerRank": "Rank #{rank}",
       "rankingTitle": "Rankings"

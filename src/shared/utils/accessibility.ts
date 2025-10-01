@@ -5,6 +5,7 @@ export const ACCESSIBILITY = {
     GAME_MODE_SELECT: 'Select game mode',
     STARTING_SCORE_INPUT: 'Enter starting score',
     STARTING_LIVES_INPUT: 'Enter starting lives',
+    TOTAL_ROUNDS_INPUT: 'Enter total number of rounds',
     PLAYER_NAME_INPUT: 'Enter player name',
     SCORE_INPUT: 'Enter score for current turn',
     ADD_PLAYER_BUTTON: 'Add new player',
@@ -25,10 +26,12 @@ export const ACCESSIBILITY = {
   DESCRIPTIONS: {
     GAME_MODE_COUNTDOWN: 'Countdown mode: Players start with a score and count down to zero',
     GAME_MODE_HIGH_LOW: 'High-Low mode: Players compete with lives and set challenges',
+    GAME_MODE_ROUNDS: 'Rounds mode: Players accumulate scores over multiple rounds, highest total wins',
     SCORE_INPUT_HELP: 'Enter a score between 0 and 180. Press Enter to submit.',
     PLAYER_LIMITS: 'Minimum 2 players, maximum 8 players allowed',
     SCORE_LIMITS: 'Score must be between 0 and 180 points',
     LIVES_LIMITS: 'Starting lives must be between 1 and 10',
+    ROUNDS_LIMITS: 'Total rounds must be between 1 and 50',
   } as const,
 
   // Keyboard shortcuts

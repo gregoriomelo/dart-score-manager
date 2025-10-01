@@ -18,13 +18,15 @@ export const GAME_CONSTANTS = {
   // Game modes
   GAME_MODES: {
     COUNTDOWN: 'countdown',
-    HIGH_LOW: 'high-low'
+    HIGH_LOW: 'high-low',
+    ROUNDS: 'rounds'
   } as const,
   
   // Display names
   GAME_MODE_NAMES: {
     COUNTDOWN: 'Countdown (501/301)',
-    HIGH_LOW: 'High-Low Challenge'
+    HIGH_LOW: 'High-Low Challenge',
+    ROUNDS: 'Highest Score (N Rounds)'
   } as const
 } as const;
 

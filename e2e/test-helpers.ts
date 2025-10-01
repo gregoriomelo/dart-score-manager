@@ -2,9 +2,10 @@ import { Page, expect } from '@playwright/test';
 
 export interface GameSetupOptions {
   players?: string[];
-  gameMode?: 'countdown' | 'high-low';
+  gameMode?: 'countdown' | 'high-low' | 'rounds';
   startingScore?: number;
   startingLives?: number;
+  totalRounds?: number;
 }
 
 export class TestHelper {
@@ -44,7 +45,8 @@ export class TestHelper {
       players = ['Alice', 'Bob'],
       gameMode = 'countdown',
       startingScore = 501,
-      startingLives = 5
+      startingLives = 5,
+      totalRounds = 10
     } = options;
 
     // Fill in the first 2 player names (which are always present)
@@ -69,7 +71,7 @@ export class TestHelper {
       }
     }
 
-    // Set game mode if high-low
+    // Set game mode
     if (gameMode === 'high-low') {
       await this.page.locator('button').filter({ hasText: 'High-Low Challenge' }).click();
       
@@ -77,6 +79,14 @@ export class TestHelper {
       if (startingLives !== 5) {
         const livesInput = this.page.locator('input[type="number"][min="1"][max="10"]');
         await livesInput.fill(startingLives.toString());
+      }
+    } else if (gameMode === 'rounds') {
+      await this.page.locator('button').filter({ hasText: 'Highest Score (N Rounds)' }).click();
+      
+      // Set total rounds if specified
+      if (totalRounds !== 10) {
+        const roundsInput = this.page.locator('input[type="number"][min="1"][max="50"]');
+        await roundsInput.fill(totalRounds.toString());
       }
     } else {
       // Set starting score if specified
@@ -139,6 +149,25 @@ export class TestHelper {
   }
 
   /**
+   * Get the total score for a player (rounds mode)
+   */
+  async getPlayerTotalScore(playerName: string): Promise<number> {
+    const playerCard = this.page.locator('.player-card').filter({ hasText: playerName });
+    const scoreText = await playerCard.getByText(/^\d+$/).first().textContent();
+    return parseInt(scoreText || '0');
+  }
+
+  /**
+   * Get the current round score for a player (rounds mode)
+   */
+  async getPlayerRoundScore(playerName: string): Promise<number> {
+    const playerCard = this.page.locator('.player-card').filter({ hasText: playerName });
+    const roundInfo = await playerCard.getByText(/Round \d+/).textContent();
+    const match = roundInfo?.match(/Round (\d+)/);
+    return match ? parseInt(match[1]) : 0;
+  }
+
+  /**
    * Verify that a player has a specific score
    */
   async expectPlayerScore(playerName: string, expectedScore: number) {
@@ -155,6 +184,22 @@ export class TestHelper {
   }
 
   /**
+   * Verify that a player has a specific total score (rounds mode)
+   */
+  async expectPlayerTotalScore(playerName: string, expectedScore: number) {
+    const actualScore = await this.getPlayerTotalScore(playerName);
+    expect(actualScore).toBe(expectedScore);
+  }
+
+  /**
+   * Verify that a player has a specific round score (rounds mode)
+   */
+  async expectPlayerRoundScore(playerName: string, expectedScore: number) {
+    const actualScore = await this.getPlayerRoundScore(playerName);
+    expect(actualScore).toBe(expectedScore);
+  }
+
+  /**
    * Reset the game
    */
   async resetGame() {
@@ -166,7 +211,7 @@ export class TestHelper {
    * Go back to setup
    */
   async goToSetup() {
-    await this.page.getByRole('button', { name: 'New Game' }).click();
+    await this.page.getByRole('button', { name: 'Back to Setup' }).click();
     await this.page.waitForSelector('input[placeholder="Player 1 name"]', { timeout: 10000 });
   }
 
@@ -183,11 +228,13 @@ export class TestHelper {
   /**
    * Select game mode
    */
-  async selectGameMode(mode: 'countdown' | 'high-low') {
+  async selectGameMode(mode: 'countdown' | 'high-low' | 'rounds') {
     if (mode === 'countdown') {
       await this.page.getByRole('button', { name: 'Countdown' }).click();
     } else if (mode === 'high-low') {
       await this.page.getByRole('button', { name: 'High-Low' }).click();
+    } else if (mode === 'rounds') {
+      await this.page.getByRole('button', { name: 'Highest Score (N Rounds)' }).click();
     }
   }
 
@@ -205,6 +252,14 @@ export class TestHelper {
   async setStartingLives(lives: number) {
     const livesInput = this.page.locator('input[type="number"]').last();
     await livesInput.fill(lives.toString());
+  }
+
+  /**
+   * Set total rounds (rounds mode)
+   */
+  async setTotalRounds(rounds: number) {
+    const roundsInput = this.page.locator('input[type="number"][min="1"][max="50"]');
+    await roundsInput.fill(rounds.toString());
   }
 
   /**

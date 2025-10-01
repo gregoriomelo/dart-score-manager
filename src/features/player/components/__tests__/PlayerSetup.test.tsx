@@ -183,7 +183,7 @@ describe('PlayerSetup', () => {
     
     await user.click(screen.getByText('Start Game'));
     
-    expect(mockOnStartGame).toHaveBeenCalledWith(['Alice', 'Bob'], 'countdown', 301, 5);
+    expect(mockOnStartGame).toHaveBeenCalledWith(['Alice', 'Bob'], 'countdown', 301, 5, 10);
   });
 
   it('filters out empty player names when starting game', async () => {
@@ -197,7 +197,7 @@ describe('PlayerSetup', () => {
     
     await user.click(screen.getByText('Start Game'));
     
-    expect(mockOnStartGame).toHaveBeenCalledWith(['Alice', 'Bob'], 'countdown', 501, 5);
+    expect(mockOnStartGame).toHaveBeenCalledWith(['Alice', 'Bob'], 'countdown', 501, 5, 10);
   });
 
   it('trims whitespace from player names', async () => {
@@ -209,7 +209,7 @@ describe('PlayerSetup', () => {
     
     await user.click(screen.getByText('Start Game'));
     
-    expect(mockOnStartGame).toHaveBeenCalledWith(['Alice', 'Bob'], 'countdown', 501, 5);
+    expect(mockOnStartGame).toHaveBeenCalledWith(['Alice', 'Bob'], 'countdown', 501, 5, 10);
   });
 
   it('prevents adding more than 8 players', async () => {
