@@ -1,5 +1,5 @@
 import React from 'react';
-import { Player, ScoreHistoryEntry, RoundsPlayer } from '../../../shared/types/game';
+import { Player, ScoreHistoryEntry } from '../../../shared/types/game';
 import { getPlayerColor } from '../../../shared/utils/playerColors';
 import './HistoryView.css';
 

@@ -1,4 +1,4 @@
-import { GameState, Player, CountdownGameState, HighLowGameState } from '../types/game';
+import { GameState, Player, CountdownGameState, HighLowGameState, RoundsGameState, GameMode } from '../types/game';
 import { secureStorage, legacyStorage } from '../../utils/storage/secureStorage';
 
 // Check if we're in a test environment
@@ -16,6 +16,7 @@ interface StorageEntry {
   score?: number;
   previousScore?: number;
   turnNumber?: number;
+  roundNumber?: number;
   [key: string]: unknown;
 }
 
@@ -40,7 +41,8 @@ export const saveGameState = async (gameState: GameState): Promise<void> => {
                 score: entry.score,
                 previousScore: entry.previousScore,
                 timestamp: entry.timestamp instanceof Date ? entry.timestamp.getTime() : entry.timestamp,
-                turnNumber: entry.turnNumber
+                turnNumber: entry.turnNumber,
+                roundNumber: entry.roundNumber
               })) || []
             }))
     };
@@ -75,7 +77,7 @@ export const loadGameState = async (): Promise<GameState | null> => {
       if (legacyData) {
         const parsedState = JSON.parse(legacyData as string) as ParsedGameState;
         // Convert timestamps back to Date objects
-        const gameMode = (parsedState.gameMode as 'countdown' | 'high-low') || 'countdown';
+        const gameMode = (parsedState.gameMode as GameMode) || 'countdown';
         const baseState = {
           currentPlayerIndex: (parsedState.currentPlayerIndex as number) || 0,
           gameFinished: (parsedState.gameFinished as boolean) || false,
@@ -87,7 +89,8 @@ export const loadGameState = async (): Promise<GameState | null> => {
               score: entry.score || 0,
               previousScore: entry.previousScore || 0,
               timestamp: entry.timestamp instanceof Date ? entry.timestamp : new Date(entry.timestamp),
-              turnNumber: entry.turnNumber || 0
+              turnNumber: entry.turnNumber || 0,
+              roundNumber: entry.roundNumber || 0
             })) || []
           }))
         };
@@ -99,12 +102,19 @@ export const loadGameState = async (): Promise<GameState | null> => {
             gameMode: 'countdown',
             startingScore: (parsedState.startingScore as number) || 501,
           } as CountdownGameState;
-        } else {
+        } else if (gameMode === 'high-low') {
           gameState = {
             ...baseState,
             gameMode: 'high-low',
             startingLives: (parsedState.startingLives as number) || 3,
           } as HighLowGameState;
+        } else {
+          gameState = {
+            ...baseState,
+            gameMode: 'rounds',
+            totalRounds: (parsedState.totalRounds as number) || 10,
+            currentRound: (parsedState.currentRound as number) || 1,
+          } as RoundsGameState;
         }
         return gameState;
       }
@@ -115,7 +125,7 @@ export const loadGameState = async (): Promise<GameState | null> => {
     const secureData = await secureStorage.getItem<ParsedGameState>(STORAGE_KEY);
     if (secureData) {
       // Convert timestamps back to Date objects
-      const gameMode = (secureData.gameMode as 'countdown' | 'high-low') || 'countdown';
+      const gameMode = (secureData.gameMode as GameMode) || 'countdown';
       const baseState = {
         currentPlayerIndex: (secureData.currentPlayerIndex as number) || 0,
         gameFinished: (secureData.gameFinished as boolean) || false,
@@ -139,12 +149,19 @@ export const loadGameState = async (): Promise<GameState | null> => {
           gameMode: 'countdown',
           startingScore: (secureData.startingScore as number) || 501,
         } as CountdownGameState;
-      } else {
+      } else if (gameMode === 'high-low') {
         gameState = {
           ...baseState,
           gameMode: 'high-low',
           startingLives: (secureData.startingLives as number) || 3,
         } as HighLowGameState;
+      } else {
+        gameState = {
+          ...baseState,
+          gameMode: 'rounds',
+          totalRounds: (secureData.totalRounds as number) || 10,
+          currentRound: (secureData.currentRound as number) || 1,
+        } as RoundsGameState;
       }
 
       // Return the loaded data
@@ -155,7 +172,7 @@ export const loadGameState = async (): Promise<GameState | null> => {
     const legacyData = legacyStorage.getItem<ParsedGameState>(STORAGE_KEY);
     if (legacyData) {
       // Migrate legacy data to secure storage
-      const gameMode = (legacyData.gameMode as 'countdown' | 'high-low') || 'countdown';
+      const gameMode = (legacyData.gameMode as GameMode) || 'countdown';
       const baseState = {
         currentPlayerIndex: (legacyData.currentPlayerIndex as number) || 0,
         gameFinished: (legacyData.gameFinished as boolean) || false,
@@ -179,12 +196,19 @@ export const loadGameState = async (): Promise<GameState | null> => {
           gameMode: 'countdown',
           startingScore: (legacyData.startingScore as number) || 501,
         } as CountdownGameState;
-      } else {
+      } else if (gameMode === 'high-low') {
         gameState = {
           ...baseState,
           gameMode: 'high-low',
           startingLives: (legacyData.startingLives as number) || 3,
         } as HighLowGameState;
+      } else {
+        gameState = {
+          ...baseState,
+          gameMode: 'rounds',
+          totalRounds: (legacyData.totalRounds as number) || 10,
+          currentRound: (legacyData.currentRound as number) || 1,
+        } as RoundsGameState;
       }
       await saveGameState(gameState);
       return gameState;
@@ -201,7 +225,7 @@ export const loadGameState = async (): Promise<GameState | null> => {
 
       const parsedState = JSON.parse(serializedState as string) as ParsedGameState;
       // Migrate to secure storage
-      const gameMode = (parsedState.gameMode as 'countdown' | 'high-low') || 'countdown';
+      const gameMode = (parsedState.gameMode as GameMode) || 'countdown';
       const baseState = {
         currentPlayerIndex: (parsedState.currentPlayerIndex as number) || 0,
         gameFinished: (parsedState.gameFinished as boolean) || false,
@@ -225,12 +249,19 @@ export const loadGameState = async (): Promise<GameState | null> => {
           gameMode: 'countdown',
           startingScore: (parsedState.startingScore as number) || 501,
         } as CountdownGameState;
-      } else {
+      } else if (gameMode === 'high-low') {
         gameState = {
           ...baseState,
           gameMode: 'high-low',
           startingLives: (parsedState.startingLives as number) || 3,
         } as HighLowGameState;
+      } else {
+        gameState = {
+          ...baseState,
+          gameMode: 'rounds',
+          totalRounds: (parsedState.totalRounds as number) || 10,
+          currentRound: (parsedState.currentRound as number) || 1,
+        } as RoundsGameState;
       }
       await saveGameState(gameState);
       return gameState;
