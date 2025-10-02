@@ -1,9 +1,9 @@
 import React from 'react';
-import { Player, isHighLowPlayer, isRoundsPlayer, CountdownPlayer } from '../../../shared/types/game';
+import { Player, isHighLowPlayer, isRoundsPlayer, CountdownPlayer, RoundsPlayer } from '../../../shared/types/game';
 import { getPlayerColor } from '../../../shared/utils/playerColors';
 import { CSS_CLASSES } from '../../../shared/utils/constants';
 import { formatPlayerLivesLabel, formatHistoryButtonTitle } from '../../../shared/utils/textUtils';
-import { getPlayerRank } from '../../../shared/utils/rankingUtils';
+import { getPlayerRank, getRoundsPlayerRank } from '../../../shared/utils/rankingUtils';
 import '../../game/components/GameBoard.css';
 
 interface PlayerListProps {
@@ -46,11 +46,15 @@ const PlayerList: React.FC<PlayerListProps> = React.memo(({
               <span className={CSS_CLASSES.PLAYER_SCORE}>
                 {isRoundsPlayer(player) ? player.totalScore : 0}
               </span>
-              {isRoundsPlayer(player) && (
-                <span className="round-info">
-                  Round {player.currentRoundScore}
-                </span>
-              )}
+              {(() => {
+                if (isRoundsPlayer(player)) {
+                  const rank = getRoundsPlayerRank(player, players as RoundsPlayer[]);
+                  return rank !== null ? (
+                    <span className={`player-rank ${rank <= 3 ? `rank-${rank}` : ''}`}>#{rank}</span>
+                  ) : null;
+                }
+                return null;
+              })()}
             </div>
           ) : (
             <span className={CSS_CLASSES.PLAYER_LIVES}>{formatPlayerLivesLabel(isHighLowPlayer(player) ? player.lives : 0)}</span>

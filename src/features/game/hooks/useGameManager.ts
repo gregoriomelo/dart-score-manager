@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
-import { GameState, GameMode, CountdownGameState, isHighLowGameState, isCountdownGameState } from '../../../shared/types/game';
+import { GameState, GameMode, CountdownGameState, isHighLowGameState, isCountdownGameState, isRoundsGameState } from '../../../shared/types/game';
 import { getCurrentPlayer, startGame } from '../utils/gameLogic/core';
 import { isHighLowGameMode } from '../utils/gameLogic/highLow';
 import { createGameState, resetGame, undoLastScore } from '../utils/gameLogic/core';
@@ -52,6 +52,8 @@ export const useGameManager = () => {
         return resetGame(prevState, undefined, prevState.startingScore);
       } else if (isHighLowGameState(prevState)) {
         return resetGame(prevState, prevState.startingLives, undefined);
+      } else if (isRoundsGameState(prevState)) {
+        return resetGame(prevState, undefined, undefined, prevState.totalRounds);
       }
       return prevState;
     });

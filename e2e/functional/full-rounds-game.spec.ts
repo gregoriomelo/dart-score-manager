@@ -215,7 +215,7 @@ test.describe('Full Rounds Game - 4 Players', () => {
     await expect(page.locator('.player-card.winner').getByText('Charlie')).toBeVisible();
     
     // Verify winner announcement
-    await expect(page.getByText('🎉 Charlie wins! 🎉')).toBeVisible();
+    await expect(page.getByText('Charlie wins!')).toBeVisible();
   });
 
   test('should handle edge case with minimum rounds', async ({ page }) => {

@@ -541,16 +541,45 @@ export const undoLastScore = (gameState: GameState): GameState => {
       currentRoundScore: scoreEntry.previousScore,
     };
     
-    // Check if game is still finished
-    const winner = updatedPlayers.find(p => p.isWinner) as RoundsPlayer | null;
-    const gameFinished = winner !== null && winner !== undefined;
-
+    // Check if we need to revert round advancement
+    // If this was the last score in a round, we need to go back to the previous round
+    const currentRound = gameState.currentRound;
+    const allPlayersInCurrentRound = updatedPlayers.every(player => 
+      player.scoreHistory.some(entry => entry.roundNumber === currentRound)
+    );
+    
+    let newCurrentRound = currentRound;
+    
+    // If no players have scores in the current round, go back to previous round
+    if (!allPlayersInCurrentRound && currentRound > 1) {
+      newCurrentRound = currentRound - 1;
+      // Reset all players' current round scores for the previous round
+      updatedPlayers.forEach((player, index) => {
+        if (player.scoreHistory.some(entry => entry.roundNumber === newCurrentRound)) {
+          // Find the last score for this player in the previous round
+          const lastScoreInRound = player.scoreHistory
+            .filter(entry => entry.roundNumber === newCurrentRound)
+            .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())[0];
+          
+          if (lastScoreInRound) {
+            updatedPlayers[index] = {
+              ...player,
+              currentRoundScore: lastScoreInRound.previousScore + lastScoreInRound.score,
+            };
+          }
+        }
+      });
+    }
+    
+    // Always set game as not finished when undoing in rounds mode
+    // This ensures the game can continue after undo
     return {
       ...gameState,
       players: updatedPlayers as RoundsPlayer[],
       currentPlayerIndex: newCurrentPlayerIndex,
-      gameFinished,
-      winner: winner || null,
+      currentRound: newCurrentRound,
+      gameFinished: false,
+      winner: null,
       lastThrowWasBust: false,
     };
   }

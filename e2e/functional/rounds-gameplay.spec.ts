@@ -137,9 +137,9 @@ test.describe('Rounds Gameplay', () => {
     await helper.submitScoreForPlayer('Alice', 100);
     await helper.submitScoreForPlayer('Bob', 80);
     
-    // Check that round info is visible for both players
-    await expect(page.locator('.player-card').first().getByText('Round 100')).toBeVisible();
-    await expect(page.locator('.player-card').nth(1).getByText('Round 80')).toBeVisible();
+    // Check that ranking info is visible for both players
+    await expect(page.locator('.player-card').first().getByText('#1')).toBeVisible();
+    await expect(page.locator('.player-card').nth(1).getByText('#2')).toBeVisible();
   });
 
   test('should handle multiple players correctly', async ({ page }) => {
