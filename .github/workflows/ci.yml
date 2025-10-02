@@ -177,10 +177,6 @@ jobs:
       run: npm run build:gh-pages
       # This build includes the /dart-score-manager/ base path for GitHub Pages
 
-    - name: Build application (Cloudflare Pages)
-      run: npm run build:cloudflare
-      # This build uses root path for Cloudflare Pages deployment
-
     - name: Verify GitHub Pages build configuration
       run: |
         echo "Verifying GitHub Pages build configuration..."
@@ -191,12 +187,13 @@ jobs:
           exit 1
         fi
 
+    - name: Build application (Cloudflare Pages)
+      run: npm run build:cloudflare
+      # This build uses root path for Cloudflare Pages deployment
+
     - name: Verify Cloudflare Pages build configuration
       run: |
         echo "Verifying Cloudflare Pages build configuration..."
-        # Reset build directory for Cloudflare verification
-        rm -rf build
-        npm run build:cloudflare
         if ! grep -q "dart-score-manager" build/index.html; then
           echo "✅ Cloudflare Pages build verified - using root path"
         else
@@ -210,11 +207,19 @@ jobs:
         name: build-files
         path: build/
 
+    - name: Rebuild for GitHub Pages artifact
+      run: npm run build:gh-pages
+      # Ensure GitHub Pages build is current for artifact upload
+
     - name: Upload GitHub Pages build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: gh-pages-build
         path: build/
+
+    - name: Rebuild for Cloudflare Pages artifact
+      run: npm run build:cloudflare
+      # Ensure Cloudflare Pages build is current for artifact upload
 
     - name: Upload Cloudflare Pages build artifacts
       uses: actions/upload-artifact@v4
