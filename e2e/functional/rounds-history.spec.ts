@@ -58,13 +58,11 @@ test.describe('Rounds History Functionality', () => {
     // Verify history modal is open
     await expect(page.getByText('📊 All History')).toBeVisible();
     
-    // Verify history table has player column
+    // Verify history table has the correct columns
     await expect(page.locator('.history-table').getByText('Player', { exact: true })).toBeVisible();
     await expect(page.locator('.history-table').getByText('Round', { exact: true })).toBeVisible();
-    await expect(page.locator('.history-table').getByText('Turn', { exact: true })).toBeVisible();
-    await expect(page.locator('.history-table').getByText('Thrown', { exact: true })).toBeVisible();
-    await expect(page.getByText('Round Score')).toBeVisible();
-    await expect(page.getByText('Total Score')).toBeVisible();
+    await expect(page.locator('.history-table').getByText('Score', { exact: true })).toBeVisible();
+    await expect(page.locator('.history-table').getByText('Cumulative', { exact: true })).toBeVisible();
     
     // Verify entries for both players
     await expect(page.getByText('Alice').first()).toBeVisible();
@@ -113,7 +111,7 @@ test.describe('Rounds History Functionality', () => {
     await expect(page.locator('.player-card.current-player').getByText('Alice')).toBeVisible();
   });
 
-  test('should show correct round and turn numbers in history', async ({ page }) => {
+  test('should show correct round numbers and scores in history', async ({ page }) => {
     const helper = createTestHelper(page);
     
     // Remove webpack overlay before interactions
@@ -130,10 +128,10 @@ test.describe('Rounds History Functionality', () => {
     // Open Alice's history
     await helper.openPlayerHistory('Alice');
     
-    // Verify round and turn numbers exist
-    // Check that round and turn numbers are displayed
+    // Verify round numbers and scores are displayed
+    // Check that round numbers are displayed
     await expect(page.locator('.round-number').first()).toBeVisible();
-    await expect(page.locator('.turn-number').first()).toBeVisible();
+    await expect(page.locator('.score-thrown').first()).toBeVisible();
     
     // Verify we have at least 2 history rows
     await expect(page.locator('.history-row')).toHaveCount(2);
