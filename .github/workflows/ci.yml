@@ -295,4 +295,3 @@ jobs:
         accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         projectName: dart-score-manager
         directory: build/
-        gitHubToken: ${{ secrets.GITHUB_TOKEN }}
