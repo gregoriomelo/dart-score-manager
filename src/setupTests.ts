@@ -81,3 +81,38 @@ if (typeof global !== 'undefined') {
     configurable: true,
   });
 }
+
+// Mock localStorage for testing
+if (typeof global !== 'undefined') {
+  const localStorageMock = (() => {
+    let store: Record<string, string> = {};
+
+    return {
+      getItem: (key: string) => {
+        return store[key] || null;
+      },
+      setItem: (key: string, value: string) => {
+        store[key] = String(value);
+      },
+      removeItem: (key: string) => {
+        delete store[key];
+      },
+      clear: () => {
+        store = {};
+      },
+      get length() {
+        return Object.keys(store).length;
+      },
+      key: (index: number) => {
+        const keys = Object.keys(store);
+        return keys[index] || null;
+      },
+    };
+  })();
+
+  Object.defineProperty(global, 'localStorage', {
+    value: localStorageMock,
+    writable: true,
+    configurable: true,
+  });
+}

@@ -667,7 +667,9 @@ const updateRoundsPlayerScore = (
     }
   } else {
     // Move to next player in current round
-    newCurrentPlayerIndex = (gameState.currentPlayerIndex + 1) % gameState.players.length;
+    // Use playerIndex (the player who just submitted) instead of currentPlayerIndex
+    // to ensure we advance from the correct player
+    newCurrentPlayerIndex = (playerIndex + 1) % gameState.players.length;
   }
 
   return {

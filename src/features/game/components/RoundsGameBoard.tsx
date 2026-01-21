@@ -57,13 +57,10 @@ const RoundsGameBoard: React.FC<RoundsGameBoardProps> = React.memo(({
   const handleScoreSubmitWithValue = useCallback((score: number) => {
     if (currentPlayer) {
       // Directly call the game logic with the score, bypassing the scoreInput state
+      // Rounds mode handles player advancement internally in updateRoundsPlayerScore
       onSubmitScore(currentPlayer.id, score);
-      // Auto advance to next player immediately if game isn't finished
-      if (!gameState.gameFinished && onNextPlayer) {
-        onNextPlayer();
-      }
     }
-  }, [currentPlayer, onSubmitScore, gameState.gameFinished, onNextPlayer]);
+  }, [currentPlayer, onSubmitScore]);
 
   if (gameState.gameFinished && gameState.winner) {
     return (
