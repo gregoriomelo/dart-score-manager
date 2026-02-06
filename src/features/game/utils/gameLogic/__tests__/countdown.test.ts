@@ -10,7 +10,7 @@ describe('gameLogic/countdown', () => {
       const updatedState = updatePlayerScore(gameState, playerId, 100);
       
       expect(updatedState.players[0].score).toBe(401);
-      expect(updatedState.currentPlayerIndex).toBe(0); // Should not auto-advance player
+      expect(updatedState.currentPlayerIndex).toBe(1); // Automatically advances to next player
     });
 
     it('should mark player as winner when score reaches 0', () => {

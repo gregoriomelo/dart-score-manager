@@ -41,20 +41,15 @@ export const processHighLowTurn = (gameState: GameState, playerId: string, score
   const challenge = gameState.highLowChallenge;
   const updatedPlayers = [...gameState.players];
 
-  // Determine if challenge was successful
-  let challengeSuccessful = false;
-  if (challenge.direction === 'higher') {
-    challengeSuccessful = score > challenge.targetScore;
-  } else {
-    challengeSuccessful = score < challenge.targetScore;
-  }
+  const challengeSuccessful = challenge.direction === 'higher' 
+    ? score > challenge.targetScore 
+    : score < challenge.targetScore;
 
   const historyEntry = {
     score,
     previousScore: currentPlayer.score,
     timestamp: new Date(),
     turnNumber: currentPlayer.scoreHistory.length + 1,
-    // Add challenge and result data
     challengeDirection: challenge.direction,
     challengeTarget: challenge.targetScore,
     challengerId: challenge.playerId,
@@ -64,7 +59,6 @@ export const processHighLowTurn = (gameState: GameState, playerId: string, score
   };
 
   if (challengeSuccessful) {
-    // Player succeeded - they get to set next challenge
     updatedPlayers[playerIndex] = {
       ...currentPlayer,
       score,
@@ -74,12 +68,12 @@ export const processHighLowTurn = (gameState: GameState, playerId: string, score
     const nextState: GameState = {
       ...gameState,
       players: updatedPlayers,
-      highLowChallenge: undefined, // Clear challenge, successful player will set new one
+      highLowChallenge: undefined,
+      currentPlayerIndex: playerIndex,
     };
 
     return nextPlayer(nextState);
   } else {
-    // Player failed - lose a life
     const newLives = (currentPlayer.lives || 0) - 1;
 
     updatedPlayers[playerIndex] = {
@@ -90,7 +84,6 @@ export const processHighLowTurn = (gameState: GameState, playerId: string, score
       scoreHistory: [...currentPlayer.scoreHistory, historyEntry],
     };
 
-    // Check if game is over (only one player left with lives)
     const playersWithLives = updatedPlayers.filter(p => (p.lives || 0) > 0);
     const gameFinished = playersWithLives.length <= 1;
     const winner = gameFinished ? playersWithLives[0] || null : null;
@@ -102,6 +95,7 @@ export const processHighLowTurn = (gameState: GameState, playerId: string, score
     const nextState: GameState = {
       ...gameState,
       players: updatedPlayers,
+      currentPlayerIndex: playerIndex,
       gameFinished,
       winner,
       highLowChallenge: undefined,

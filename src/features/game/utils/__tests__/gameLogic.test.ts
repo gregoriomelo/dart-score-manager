@@ -256,13 +256,12 @@ describe('gameLogic', () => {
     it('should reset all players to starting score and game state', () => {
       let gameState = createGameState(['Alice', 'Bob']);
       
-      // Simulate some gameplay
+      // Simulate some gameplay - updatePlayerScore now handles player advancement internally
       const playerId = gameState.players[0].id;
       gameState = updatePlayerScore(gameState, playerId, 100);
-      gameState = nextPlayer(gameState);
       
       expect(gameState.players[0].score).toBe(401);
-      expect(gameState.currentPlayerIndex).toBe(1);
+      expect(gameState.currentPlayerIndex).toBe(1); // Advancement handled internally
       
       // Reset the game
       const resetState = resetGame(gameState, undefined, 501);

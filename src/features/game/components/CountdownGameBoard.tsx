@@ -28,7 +28,7 @@ const CountdownGameBoard: React.FC<CountdownGameBoardProps> = React.memo(({
   gameState,
   currentPlayer,
   onSubmitScore,
-  onNextPlayer,
+  onNextPlayer: _onNextPlayer,
   onResetGame,
   onNewGame,
   onUndoLastMove,
@@ -47,7 +47,7 @@ const CountdownGameBoard: React.FC<CountdownGameBoardProps> = React.memo(({
     handleScoreInputChange
   } = useScoreSubmission({
     onSubmitScore,
-    onNextPlayer,
+    onNextPlayer: undefined,
     gameFinished: gameState.gameFinished
   });
 
@@ -65,7 +65,6 @@ const CountdownGameBoard: React.FC<CountdownGameBoardProps> = React.memo(({
     if (gameState.lastThrowWasBust) {
       setShowBustBanner(true);
       setBustAnimKey((k) => k + 1);
-      // Play bust sound
       soundManager.playSound('bust');
       timer = setTimeout(() => setShowBustBanner(false), 2000);
     } else {
@@ -84,25 +83,15 @@ const CountdownGameBoard: React.FC<CountdownGameBoardProps> = React.memo(({
 
   const handleScoreSubmitWithValue = useCallback((score: number) => {
     if (currentPlayer) {
-      // Directly call the game logic with the score, bypassing the scoreInput state
       onSubmitScore(currentPlayer.id, score);
-      // Auto advance to next player immediately if game isn't finished
-      if (!gameState.gameFinished && onNextPlayer) {
-        onNextPlayer();
-      }
     }
-  }, [currentPlayer, onSubmitScore, gameState.gameFinished, onNextPlayer]);
+  }, [currentPlayer, onSubmitScore]);
 
   const handleBustSubmit = useCallback(() => {
     if (currentPlayer) {
-      // Submit a score that will cause a bust (score higher than current player's score)
       onSubmitScore(currentPlayer.id, currentPlayer.score + 1);
-      // Auto advance to next player immediately if game isn't finished
-      if (!gameState.gameFinished && onNextPlayer) {
-        onNextPlayer();
-      }
     }
-  }, [currentPlayer, onSubmitScore, gameState.gameFinished, onNextPlayer]);
+  }, [currentPlayer, onSubmitScore]);
 
   if (gameState.gameFinished && gameState.winner) {
     return (

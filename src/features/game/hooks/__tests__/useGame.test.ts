@@ -131,7 +131,7 @@ describe('useGameManager', () => {
     });
 
     expect(result.current.gameState.players[0].score).toBe(401);
-    expect(result.current.gameState.currentPlayerIndex).toBe(0);
+    expect(result.current.gameState.currentPlayerIndex).toBe(1); // Automatically advances to next player
 
     act(() => {
       result.current.resetCurrentGame();

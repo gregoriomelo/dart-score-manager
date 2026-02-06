@@ -253,7 +253,6 @@ const updateCountdownPlayerScore = (
   const turnNumber = currentPlayer.scoreHistory.length + 1;
   
   if (bustOccurred) {
-    // Add bust entry to history
     const historyEntry = {
       score: scoreToSubtract,
       previousScore: currentPlayer.score,
@@ -261,7 +260,6 @@ const updateCountdownPlayerScore = (
       turnNumber,
     };
     
-    // Revert to turn start score on bust
     updatedPlayers[playerIndex] = {
       ...currentPlayer,
       score: currentPlayer.turnStartScore,
@@ -275,7 +273,6 @@ const updateCountdownPlayerScore = (
     };
   }
 
-  // Normal score update
   const newScore = currentPlayer.score - scoreToSubtract;
   const historyEntry = {
     score: scoreToSubtract,
@@ -294,9 +291,22 @@ const updateCountdownPlayerScore = (
   const winner = updatedPlayers.find(p => p.isWinner) || null;
   const gameFinished = winner !== null;
 
+  const nextIndex = (playerIndex + 1) % gameState.players.length;
+  
+  const playersWithTurnStart = updatedPlayers.map((player, index) => {
+    if (index === nextIndex) {
+      return {
+        ...player,
+        turnStartScore: player.score,
+      };
+    }
+    return player;
+  });
+
   return {
     ...gameState,
-    players: updatedPlayers,
+    players: playersWithTurnStart,
+    currentPlayerIndex: nextIndex,
     gameFinished,
     winner,
     lastThrowWasBust: false,
@@ -629,7 +639,6 @@ const updateRoundsPlayerScore = (
     scoreHistory: [...currentPlayer.scoreHistory, historyEntry],
   };
 
-  // Check if all players have completed their turn for this round
   const allPlayersCompletedRound = updatedPlayers.every(player => 
     player.scoreHistory.some(entry => 
       entry.roundNumber === gameState.currentRound
@@ -642,10 +651,8 @@ const updateRoundsPlayerScore = (
   let winner = gameState.winner;
 
   if (allPlayersCompletedRound) {
-    // Round completed, move to next round
     newCurrentRound = gameState.currentRound + 1;
     
-    // Reset all players' current round scores for the new round
     updatedPlayers.forEach((player, index) => {
       updatedPlayers[index] = {
         ...player,
@@ -654,21 +661,15 @@ const updateRoundsPlayerScore = (
       };
     });
 
-    // Check if game is finished (all rounds completed)
     if (newCurrentRound > gameState.totalRounds) {
       gameFinished = true;
-      // Find winner (player with highest total score)
       const sortedPlayers = [...updatedPlayers].sort((a, b) => b.totalScore - a.totalScore);
       winner = sortedPlayers[0];
       winner.isWinner = true;
     } else {
-      // Move to first player for next round
       newCurrentPlayerIndex = 0;
     }
   } else {
-    // Move to next player in current round
-    // Use playerIndex (the player who just submitted) instead of currentPlayerIndex
-    // to ensure we advance from the correct player
     newCurrentPlayerIndex = (playerIndex + 1) % gameState.players.length;
   }
 
